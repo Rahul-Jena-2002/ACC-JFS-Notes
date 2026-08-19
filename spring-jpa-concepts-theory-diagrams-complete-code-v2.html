@@ -115,14 +115,94 @@ pre.mermaid svg{max-width:100%;height:auto}
   .scenario{ padding:16px; }
 }
 
+
+.page-nav{
+  position:relative;
+  z-index:10;
+  border-bottom:1px solid var(--line);
+  background:rgba(7,11,20,.86);
+}
+.page-nav-inner{
+  width:min(1120px,calc(100% - 36px));
+  margin:auto;
+  display:flex;
+  gap:8px;
+  padding:9px 0;
+}
+.page-nav-button{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 11px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#ffffff05;
+  color:#b9c6d8;
+  text-decoration:none;
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+}
+.page-nav-button:hover{
+  color:#fff;
+  border-color:#566983;
+  background:#ffffff0a;
+}
+@media(max-width:760px){
+  .page-nav-inner{
+    width:calc(100% - 24px);
+    padding:7px 0;
+  }
+  .page-nav-button{
+    padding:7px 10px;
+  }
+}
+
+
+.hero-page-nav{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 28px;
+}
+.hero-nav-button{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#ffffff06;
+  color:#b9c6d8;
+  text-decoration:none;
+  font:inherit;
+  font-size:.84rem;
+  cursor:pointer;
+}
+.hero-nav-button:hover{
+  color:#fff;
+  border-color:#566983;
+  background:#ffffff0b;
+}
+@media(max-width:760px){
+  .hero-page-nav{ margin-bottom:24px; }
+  .hero-nav-button{ padding:8px 11px; }
+}
+
 </style>
 </head>
 <body id="top">
 <header><div class="hero">
+
+      <div class="hero-page-nav">
+        <a class="hero-nav-button" href="index.html" aria-label="Go to home">⌂ <span>Home</span></a>
+        <button class="hero-nav-button" type="button" onclick="history.back()" aria-label="Go back">← <span>Back</span></button>
+      </div>
 <h1>Spring Transactions + <span>Spring Data JPA</span></h1>
 <p class="subtitle"><b>Learning format:</b> beginner-friendly theory → why it matters → Mermaid → small focused example → interview answer → common trap → complete connected project code. Only the concepts that matter for understanding and interviews are emphasized.</p>
 <span class="badge">Programmatic</span><span class="badge">Declarative XML</span><span class="badge">@Transactional</span><span class="badge">PlatformTransactionManager</span><span class="badge">JpaTransactionManager</span><span class="badge">Proxy</span><span class="badge">Persistence Context</span><span class="badge">Propagation</span><span class="badge">Rollback</span><span class="badge">Spring Data JPA</span>
 </div></header>
+
 <div class="layout">
 <div class="mobile-bar">
   <select class="mobile-toc" aria-label="Jump to topic" onchange="if(this.value) location.hash=this.value">
@@ -165,6 +245,7 @@ pre.mermaid svg{max-width:100%;height:auto}
 </div>
 <nav><b style="display:block;padding:8px">Concepts</b><a href="#c1">1. Transactions</a><a href="#c2">2. Programmatic Transaction</a><a href="#c3">3. Declarative Transaction</a><a href="#c4">4. Declarative Transaction — XML</a><a href="#c5">5. Declarative Transaction — @Transactional</a><a href="#c6">6. PlatformTransactionManager</a><a href="#c7">7. JpaTransactionManager</a><a href="#c8">8. Transactional Proxy</a><a href="#c9">9. Persistence Context</a><a href="#c10">10. Local Transaction</a><a href="#c11">11. Global Transaction</a><a href="#c12">12. Propagation — REQUIRED</a><a href="#c13">13. Propagation — REQUIRES_NEW</a><a href="#c14">14. Propagation — MANDATORY</a><a href="#c15">15. Propagation — NEVER</a><a href="#c16">16. Propagation — NOT_SUPPORTED</a><a href="#c17">17. Propagation — SUPPORTS</a><a href="#c18">18. Propagation — NESTED</a><a href="#c19">19. Rollback</a><a href="#c20">20. Rollback — RuntimeException</a><a href="#c21">21. Rollback — CheckedException</a><a href="#c22">22. rollbackFor</a><a href="#c23">23. noRollbackFor</a><a href="#c24">24. readOnly</a><a href="#c25">25. timeout</a><a href="#c26">26. Spring Data JPA — CrudRepository</a><a href="#c27">27. Spring Data JPA — RepositoryDefinition</a><a href="#c28">28. Spring Data JPA — Query Method</a><a href="#c29">29. Spring Data JPA — @Query</a><a href="#c30">30. Positional Parameters</a><a href="#c31">31. Named Parameters</a><a href="#c32">32. @Modifying</a><a href="#c33">33. orm.xml</a><a href="#scenario-interviews"><b>Scenario Interviews</b></a>
 <a href="#code"><b>Complete Project Code</b></a></nav>
+
 <main>
 <div class="section"><div class="callout"><b>Study sequence:</b> Concept → Theory → Diagram → small example → Complete project code. This prevents the code from becoming a collection of memorized annotations.</div></div>
 <section class="section" id="c1"><h2>Transactions</h2>
