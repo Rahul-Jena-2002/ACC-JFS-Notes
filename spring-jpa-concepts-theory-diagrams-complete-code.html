@@ -1,9 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spring Transactions + Spring Data JPA — Theory, Mermaid, Complete Code</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Spring Transactions + Spring Data JPA — Beginner Theory, Mermaid &amp; Complete Code</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <style>
 :root{--bg:#080d18;--panel:#101827;--text:#e8eef8;--muted:#9eacc0;--border:#2a3850;--cyan:#22d3ee;--purple:#8b5cf6;--green:#34d399;--yellow:#fbbf24;--code:#070b12}
@@ -32,31 +33,37 @@ footer{padding:20px 24px 50px;color:var(--muted);text-align:center}
 <body id="top">
 <header><div class="hero">
 <h1>Spring Transactions + <span>Spring Data JPA</span></h1>
-<p class="subtitle"><b>Exactly the learning format:</b> first learn each concept separately with theory + Mermaid diagram + small concept code; then study the whole connected project with comments.</p>
+<p class="subtitle"><b>Learning format:</b> beginner-friendly theory → why it matters → Mermaid → small focused example → interview answer → common trap → complete connected project code. Only the concepts that matter for understanding and interviews are emphasized.</p>
 <span class="badge">Programmatic</span><span class="badge">Declarative XML</span><span class="badge">@Transactional</span><span class="badge">PlatformTransactionManager</span><span class="badge">JpaTransactionManager</span><span class="badge">Proxy</span><span class="badge">Persistence Context</span><span class="badge">Propagation</span><span class="badge">Rollback</span><span class="badge">Spring Data JPA</span>
 </div></header>
 <div class="layout">
 <nav><b style="display:block;padding:8px">Concepts</b><a href="#c1">1. Transactions</a><a href="#c2">2. Programmatic Transaction</a><a href="#c3">3. Declarative Transaction</a><a href="#c4">4. Declarative Transaction — XML</a><a href="#c5">5. Declarative Transaction — @Transactional</a><a href="#c6">6. PlatformTransactionManager</a><a href="#c7">7. JpaTransactionManager</a><a href="#c8">8. Transactional Proxy</a><a href="#c9">9. Persistence Context</a><a href="#c10">10. Local Transaction</a><a href="#c11">11. Global Transaction</a><a href="#c12">12. Propagation — REQUIRED</a><a href="#c13">13. Propagation — REQUIRES_NEW</a><a href="#c14">14. Propagation — MANDATORY</a><a href="#c15">15. Propagation — NEVER</a><a href="#c16">16. Propagation — NOT_SUPPORTED</a><a href="#c17">17. Propagation — SUPPORTS</a><a href="#c18">18. Propagation — NESTED</a><a href="#c19">19. Rollback</a><a href="#c20">20. Rollback — RuntimeException</a><a href="#c21">21. Rollback — CheckedException</a><a href="#c22">22. rollbackFor</a><a href="#c23">23. noRollbackFor</a><a href="#c24">24. readOnly</a><a href="#c25">25. timeout</a><a href="#c26">26. Spring Data JPA — CrudRepository</a><a href="#c27">27. Spring Data JPA — RepositoryDefinition</a><a href="#c28">28. Spring Data JPA — Query Method</a><a href="#c29">29. Spring Data JPA — @Query</a><a href="#c30">30. Positional Parameters</a><a href="#c31">31. Named Parameters</a><a href="#c32">32. @Modifying</a><a href="#c33">33. orm.xml</a><a href="#code"><b>Complete Project Code</b></a></nav>
 <main>
 <div class="section"><div class="callout"><b>Study sequence:</b> Concept → Theory → Diagram → small example → Complete project code. This prevents the code from becoming a collection of memorized annotations.</div></div>
-<section class="section" id="c1"><h2>1. Transactions</h2>
-<p><b>Theory:</b> A transaction is a logical unit of work. Successful work is committed; an applicable failure causes rollback.</p>
+<section class="section" id="c1"><h2>Transactions</h2>
+<div class="callout"><b>Start with this idea:</b> A transaction is a safety boundary around a business operation. Either the required database work is committed, or the transaction is rolled back according to its rules.</div>
+<h3>1. What problem does it solve?</h3><p>Imagine creating an order and its payment record. If the order is saved but the payment fails, the database is left in an inconsistent state. A transaction lets us treat both operations as one unit.</p>
+<h3>2. Beginner mental model</h3><p>Think of a transaction like a <b>temporary agreement with the database</b>: “I am doing several related changes. Do not permanently accept them until I finish successfully.”</p>
 <pre class="mermaid">flowchart TD
-A["Business operation"] --> B["BEGIN"]
-B --> C["DAO / Repository work"]
-C --> D{"Success?"}
-D -->|Yes| E["COMMIT"]
-D -->|No| F["ROLLBACK"]</pre>
-<p class="memory"><b>Memory:</b> Transaction = one business unit with a commit/rollback boundary.</p></section><section class="section" id="c2"><h2>2. Programmatic Transaction</h2>
-<p><b>Theory:</b> Programmatic transaction management means the application code explicitly uses Spring transaction APIs such as <code>TransactionTemplate</code>. The developer controls the transactional callback and can explicitly mark rollback.</p>
+A["Business operation"] --&gt; B["Begin / join transaction"]
+B --&gt; C["DB operation 1"]
+C --&gt; D["DB operation 2"]
+D --&gt; E{"Everything successful?"}
+E --&gt;|Yes| F["COMMIT — make changes permanent"]
+E --&gt;|No| G["ROLLBACK — undo uncommitted changes"]</pre>
+<h3>3. What Spring adds</h3><p>Spring lets the service layer define the transaction boundary, while a transaction manager handles the actual transaction lifecycle. In our project, <code>@Transactional</code> is intercepted by Spring and the <code>JpaTransactionManager</code> coordinates JPA.</p>
+<h3>Interview focus</h3><p><b>Interview answer:</b> “A transaction is a logical unit of work whose database changes are committed together or rolled back according to the transaction rules. In Spring, transaction management separates this concern from business logic through a transaction manager and declarative or programmatic transaction APIs.”</p>
+<div class="warning"><b>Interview trap:</b> A transaction is not the same thing as a Java method. One transaction can contain calls to multiple methods/DAOs, depending on the transaction boundary.</div>
+<div class="memory"><b>Memory:</b> <b>Transaction = business unit + boundary + commit/rollback.</b></div></section><section class="section" id="c2"><h2>Programmatic Transaction</h2>
+<div class="callout"><b>Simple idea:</b> With a programmatic transaction, <b>your code explicitly controls the transaction API</b> instead of relying only on <code>@Transactional</code>.</div>
+<h3>Why would we use it?</h3><p>Most business services prefer declarative transactions because they are cleaner. Programmatic transactions are useful when the transaction behavior must be decided dynamically or when explicit transaction control is genuinely required.</p>
 <pre class="mermaid">flowchart LR
-S["Service code"] --> T["TransactionTemplate"]
-T --> C["Transactional callback"]
-C --> D["DAO"]
-D --> DB[("Database")]
-T --> R["Commit / Rollback"]</pre>
-<p><b>Typical code:</b></p>
-<pre><code class="language-java">transactionTemplate.execute(status -> {
+S["Service code"] --&gt; T["TransactionTemplate"]
+T --&gt; W["Transactional callback"]
+W --&gt; D["DAO / Repository"]
+D --&gt; DB[("Database")]
+T --&gt; R["Commit / Rollback"]</pre>
+<pre><code class="language-java">transactionTemplate.execute(status -&gt; {
     try {
         dao.save();
         return null;
@@ -64,231 +71,382 @@ T --> R["Commit / Rollback"]</pre>
         status.setRollbackOnly();
         throw ex;
     }
-});</code></pre></section><section class="section" id="c3"><h2>3. Declarative Transaction</h2>
-<p><b>Theory:</b> Declarative transaction management keeps transaction policy outside the business algorithm. You declare the transaction boundary and Spring applies it through transaction infrastructure.</p>
-<pre class="mermaid">flowchart LR
-A["Business method"] --> B["Transaction metadata"]
-B --> C["Spring interceptor / proxy"]
-C --> D["TransactionManager"]
-D --> A</pre>
-<p>The two styles covered here are XML configuration and <code>@Transactional</code>.</p></section><section class="section" id="c4"><h2>4. Declarative Transaction — XML</h2>
-<p><b>Theory:</b> XML configuration can enable Spring transaction interception and connect it to a transaction manager. The service does not need to put transaction metadata directly on the method.</p>
-<pre class="mermaid">flowchart TD
-X["Spring XML"] --> A["Transaction advice"]
-A --> P["Spring proxy"]
-P --> S["Service"]
-A --> T["TransactionManager"]</pre>
-<pre><code class="language-xml">&lt;tx:annotation-driven transaction-manager="transactionManager"/&gt;</code></pre>
-<p>This is the XML infrastructure used by the complete project. More elaborate XML AOP transaction advice can also define pointcuts and transaction attributes explicitly.</p></section><section class="section" id="c5"><h2>5. Declarative Transaction — @Transactional</h2>
-<p><b>Theory:</b> <code>@Transactional</code> declares transaction attributes such as propagation, read-only intent, timeout and rollback rules.</p>
+});</code></pre>
+<h3>Interview focus</h3><p><b>Answer:</b> “Programmatic transaction management means the application explicitly uses Spring transaction APIs such as <code>TransactionTemplate</code> or a transaction manager. It gives more control but adds transaction-handling code, so declarative transactions are usually preferred for normal service methods.”</p>
+<div class="warning"><b>Trap:</b> Do not confuse <code>EntityManager.getTransaction()</code> with Spring-managed transaction control. In a Spring application using <code>JpaTransactionManager</code>, let Spring manage the transaction boundary.</div>
+<div class="memory"><b>Memory:</b> <b>Programmatic = I control it in code.</b></div></section><section class="section" id="c3"><h2>Declarative Transaction</h2>
+<div class="callout"><b>Simple idea:</b> Declarative means <b>tell Spring the transaction rule; Spring performs the transaction work for you</b>.</div>
+<h3>Why is this useful?</h3><p>Business code should focus on “transfer money”, “place order”, or “create employee”, not on repeatedly writing begin/commit/rollback boilerplate.</p>
 <pre class="mermaid">sequenceDiagram
 participant C as Caller
 participant P as Spring Proxy
 participant T as TransactionManager
 participant S as Service
-C->>P: call()
-P->>T: begin / join
-P->>S: invoke target
-S-->>P: result or exception
-P->>T: commit / rollback
-P-->>C: result</pre></section><section class="section" id="c6"><h2>6. PlatformTransactionManager</h2>
-<p><b>Theory:</b> <code>PlatformTransactionManager</code> is Spring's common transaction abstraction. Different implementations integrate different transaction technologies.</p>
+C-&gt;&gt;P: call service()
+P-&gt;&gt;T: begin / join
+P-&gt;&gt;S: execute business logic
+S--&gt;&gt;P: result or exception
+P-&gt;&gt;T: commit / rollback
+P--&gt;&gt;C: return</pre>
+<h3>Two styles in this guide</h3><ul><li><b>XML:</b> transaction infrastructure/rules are configured in Spring XML.</li><li><b>@Transactional:</b> transaction rules are declared close to the service method.</li></ul>
+<h3>Interview focus</h3><p><b>Answer:</b> “Declarative transaction management defines transaction behavior through configuration or annotations. Spring's transaction infrastructure applies that behavior around the target method, usually through an interceptor/proxy and a transaction manager.”</p>
+<div class="memory"><b>Memory:</b> <b>Declarative = declare the rule, Spring does the plumbing.</b></div></section><section class="section" id="c4"><h2>Declarative Transaction — XML</h2>
+<div class="callout"><b>Simple idea:</b> XML is the older/classic configuration style for telling Spring which transaction infrastructure to enable and how it should be applied.</div>
 <pre class="mermaid">flowchart TD
-P["PlatformTransactionManager"] --> J["JpaTransactionManager"]
-P --> D["DataSourceTransactionManager"]
-P --> G["JtaTransactionManager"]</pre></section><section class="section" id="c7"><h2>7. JpaTransactionManager</h2>
-<p><b>Theory:</b> <code>JpaTransactionManager</code> is Spring's transaction manager for a JPA <code>EntityManagerFactory</code>. It coordinates JPA EntityManagers with the transaction.</p>
-<pre class="mermaid">flowchart LR
-T["JpaTransactionManager"] --> F["EntityManagerFactory"]
-F --> E["EntityManager"]
-E --> PC["Persistence Context"]
-PC --> DB[("Database")]</pre></section><section class="section" id="c8"><h2>8. Transactional Proxy</h2>
-<p><b>Theory:</b> In proxy-based Spring configuration, the caller normally receives a Spring-managed proxy. The proxy starts/joins the transaction, invokes the target method, then commits or rolls back.</p>
+X["Spring XML"] --&gt; A["Transaction configuration / advice"]
+A --&gt; P["Spring proxy / interceptor"]
+P --&gt; S["Service method"]
+A --&gt; T["TransactionManager"]</pre>
+<h3>What you should understand for interviews</h3><p>You do not need to memorize every XML attribute. Know the relationship: <b>XML config → transaction advice/interception → transaction manager → service execution</b>.</p>
+<pre><code class="language-xml">&lt;tx:annotation-driven transaction-manager="transactionManager"/&gt;</code></pre>
+<h3>Interview focus</h3><p><b>Answer:</b> “In XML-based Spring configuration, transaction infrastructure is declared in the application context. Spring then applies transaction advice through its AOP/interception mechanism and delegates transaction work to the configured transaction manager.”</p>
+<div class="warning"><b>Trap:</b> XML configuration and <code>@Transactional</code> are both declarative styles; they are not two different transaction mechanisms underneath. Both ultimately use Spring's transaction infrastructure.</div></section><section class="section" id="c5"><h2>Declarative Transaction — @Transactional</h2>
+<div class="callout"><b>Simple idea:</b> <code>@Transactional</code> says: <b>“Run this service operation inside a Spring-managed transaction with these rules.”</b></div>
 <pre class="mermaid">sequenceDiagram
 participant C as Caller
 participant P as Proxy
 participant T as TxManager
 participant S as Service
-C->>P: operation()
-P->>T: BEGIN / JOIN
-P->>S: operation()
-S-->>P: return
-P->>T: COMMIT
-P-->>C: return</pre>
-<div class="warning"><b>Trap:</b> direct self-invocation such as <code>this.otherTransactionalMethod()</code> can bypass proxy interception.</div></section><section class="section" id="c9"><h2>9. Persistence Context</h2>
-<p><b>Theory:</b> A persistence context is the set of entities currently managed by an EntityManager. Managed entity state is tracked and synchronized with persistence.</p>
+C-&gt;&gt;P: addEmployee()
+P-&gt;&gt;T: begin / join
+P-&gt;&gt;S: addEmployee()
+S--&gt;&gt;P: success / exception
+P-&gt;&gt;T: commit / rollback
+P--&gt;&gt;C: result</pre>
+<h3>Important attributes</h3><p>The interview-relevant ones in this guide are <code>propagation</code>, <code>readOnly</code>, <code>timeout</code>, <code>rollbackFor</code>, and <code>noRollbackFor</code>.</p>
+<pre><code class="language-java">@Transactional(
+    propagation = Propagation.REQUIRED,
+    readOnly = false,
+    timeout = 10,
+    rollbackFor = Exception.class
+)
+public void createEmployee() { }</code></pre>
+<h3>Interview focus</h3><p><b>Answer:</b> “<code>@Transactional</code> is a declarative way to define transaction semantics on a Spring-managed method or class. Spring's transaction interceptor uses the annotation metadata to begin, join, commit, or roll back a transaction through the configured transaction manager.”</p>
+<div class="warning"><b>Trap:</b> <code>@Transactional</code> is not magic inside the method itself. In proxy-based Spring configuration, the call normally has to pass through the Spring proxy for the interceptor to apply.</div></section><section class="section" id="c6"><h2>PlatformTransactionManager</h2>
+<div class="callout"><b>Simple idea:</b> <code>PlatformTransactionManager</code> is the <b>common Spring interface for transaction management</b>. Your service can depend on the abstraction instead of hard-coding one transaction technology.</div>
+<pre class="mermaid">flowchart TD
+P["PlatformTransactionManager
+Spring abstraction"] --&gt; J["JpaTransactionManager"]
+P --&gt; D["DataSourceTransactionManager"]
+P --&gt; G["JtaTransactionManager"]</pre>
+<h3>Why do we need an abstraction?</h3><p>Spring wants the transaction-facing application code to be independent of the exact resource technology. The concrete manager knows how to talk to JPA, JDBC, or JTA.</p>
+<h3>Interview focus</h3><p><b>Answer:</b> “<code>PlatformTransactionManager</code> is Spring's central transaction-management abstraction. Concrete implementations such as <code>JpaTransactionManager</code> provide the technology-specific transaction behavior.”</p>
+<div class="memory"><b>Memory:</b> <b>Platform = interface; implementation = technology-specific manager.</b></div></section><section class="section" id="c7"><h2>JpaTransactionManager</h2>
+<div class="callout"><b>Simple idea:</b> <code>JpaTransactionManager</code> is the Spring transaction manager used for a JPA persistence unit in a typical single-database application.</div>
+<pre class="mermaid">flowchart LR
+TM["JpaTransactionManager"] --&gt; EMF["EntityManagerFactory"]
+EMF --&gt; EM["EntityManager"]
+EM --&gt; PC["Persistence Context"]
+PC --&gt; DB[("Database")]
+TM -. "transaction boundary" .-&gt; DB</pre>
+<h3>What happens in our project?</h3><p><code>applicationContext.xml</code> creates the <code>JpaTransactionManager</code> and gives it the <code>EntityManagerFactory</code>. When a transactional service method runs, Spring uses this manager to coordinate the JPA transaction.</p>
+<h3>Interview focus</h3><p><b>Answer:</b> “<code>JpaTransactionManager</code> is Spring's <code>PlatformTransactionManager</code> implementation for JPA. It integrates Spring transaction management with the JPA <code>EntityManagerFactory</code> and persistence context.”</p>
+<div class="warning"><b>Trap:</b> JPA is the persistence specification/API; Hibernate is one JPA implementation. <code>JpaTransactionManager</code> is Spring's transaction manager, not Hibernate itself.</div></section><section class="section" id="c8"><h2>Transactional Proxy</h2>
+<div class="callout"><b>Simple idea:</b> The proxy is the <b>middleman around your service</b>. It can start/join the transaction before the method and commit/roll back after it.</div>
+<pre class="mermaid">sequenceDiagram
+participant C as Caller
+participant P as Spring Proxy
+participant T as TransactionManager
+participant S as Target Service
+C-&gt;&gt;P: service.operation()
+P-&gt;&gt;T: begin / join
+P-&gt;&gt;S: operation()
+S--&gt;&gt;P: return / exception
+P-&gt;&gt;T: commit / rollback
+P--&gt;&gt;C: result / exception</pre>
+<h3>Why should you care?</h3><p>This explains a common interview question: <code>@Transactional</code> is usually applied by Spring's interception/proxy mechanism, not by the annotation executing code itself.</p>
+<h3>Self-invocation trap</h3><p>If one method calls another transactional method through <code>this.otherMethod()</code>, the call can bypass the proxy. That means the second method's proxy-based transaction advice may not run as you expect.</p>
+<h3>Interview focus</h3><p><b>Answer:</b> “Spring can create a transaction-aware proxy around a bean. The proxy intercepts an external call, applies the transaction policy, invokes the target, and then commits or rolls back through the transaction manager.”</p>
+<div class="memory"><b>Memory:</b> <b>Caller → Proxy → Transaction → Target method.</b></div></section><section class="section" id="c9"><h2>Persistence Context</h2>
+<div class="callout"><b>Simple idea:</b> A persistence context is the <b>managed world of JPA entities associated with an EntityManager</b>. JPA tracks managed entity state so changes can be synchronized with the database.</div>
 <pre class="mermaid">stateDiagram-v2
-[*] --> Transient
-Transient --> Managed: persist()
-Managed --> Detached: clear / close
-Detached --> Managed: merge()
-Managed --> Removed: remove()
-Removed --> [*]</pre>
-<p><b>Memory:</b> Transient → Managed → Detached/Removed.</p></section><section class="section" id="c10"><h2>10. Local Transaction</h2>
-<p><b>Theory:</b> A local transaction is associated with one transactional resource, commonly one database.</p>
+[*] --&gt; Transient
+Transient --&gt; Managed: persist()
+Managed --&gt; Detached: clear / close
+Detached --&gt; Managed: merge()
+Managed --&gt; Removed: remove()
+Removed --&gt; [*]</pre>
+<h3>Why is this important?</h3><p>If an entity is managed, you often do not need to call an explicit update method. You change the managed object and JPA can detect the change and synchronize it during flush/transaction completion.</p>
+<pre><code class="language-java">EmployeeEntity e = entityManager.find(EmployeeEntity.class, id);
+e.setSalary(90000.0);
+// If e is managed, JPA can detect the change during flush.</code></pre>
+<h3>Interview focus</h3><p><b>Answer:</b> “The persistence context is JPA's first-level managed entity context. It keeps track of entity instances and their state, provides identity guarantees within the context, and participates in dirty checking and synchronization with the database.”</p>
+<div class="warning"><b>Trap:</b> Persistence context is not the same thing as the database. An entity can be managed in memory before its change is actually synchronized to the database.</div></section><section class="section" id="c10"><h2>Local Transaction</h2>
+<div class="callout"><b>Beginner idea:</b> <b>LOCAL = one transactional resource.</b> In a normal Spring + JPA application using one database, the transaction is usually local to that database.</div>
+<h3>Example</h3><p>Our employee application writes department and employee data to the same database. One database transaction can commit both operations together or roll them back together.</p>
 <pre class="mermaid">flowchart LR
-A["Application"] --> T["Local transaction manager"] --> DB[("One database")]</pre></section><section class="section" id="c11"><h2>11. Global Transaction</h2>
-<p><b>Theory:</b> A global/distributed transaction coordinates multiple transactional resources. JTA is the common enterprise transaction abstraction for this model.</p>
+S["Service"] --&gt; TM["JpaTransactionManager"]
+TM --&gt; DB[("One database")]
+DB --&gt; C["COMMIT / ROLLBACK"]</pre>
+<h3>Why is local usually preferred?</h3><p>It is simpler: fewer moving parts, easier configuration, and usually enough when all required changes belong to one database resource.</p>
+<h3>Interview focus</h3><p><b>Answer:</b> “A local transaction is managed for a specific transactional resource, such as one database. For a typical single-database JPA application, <code>JpaTransactionManager</code> can manage that local transaction.”</p>
+<div class="warning"><b>Trap:</b> Local does not mean “no transaction” or “one SQL statement”. A local transaction can contain many SQL statements against the same resource.</div>
+<div class="memory"><b>Memory:</b> <b>Local = one resource, one transaction boundary.</b></div></section><section class="section" id="c11"><h2>Global Transaction</h2>
+<div class="callout"><b>Beginner idea:</b> <b>GLOBAL = coordinate multiple transactional resources.</b> The classic example is a business operation that must coordinate more than one resource, such as a database and a messaging resource.</div>
 <pre class="mermaid">flowchart TD
-A["Application"] --> T["Global / JTA manager"]
-T --> DB["Database"]
-T --> MQ["Messaging resource"]
-T --> R["Other transactional resource"]</pre></section><section class="section" id="c12"><h2>12. Propagation — REQUIRED</h2>
-<p><b>Theory:</b> <code>REQUIRED</code> joins an existing transaction or creates a new one when none exists.</p>
+A["Application"] --&gt; T["JTA / global transaction coordinator"]
+T --&gt; DB["Database"]
+T --&gt; MQ["Messaging resource"]
+T --&gt; R["Other transactional resource"]
+T -. "coordinate outcome" .-&gt; DB
+T -. "coordinate outcome" .-&gt; MQ</pre>
+<h3>Why not just use two local transactions?</h3><p>Two independent local transactions can produce a partial result: resource A commits while resource B fails. A global transaction model exists to coordinate resources when the business requirement truly needs one distributed transaction outcome.</p>
+<h3>Interview focus</h3><p><b>Answer:</b> “A global transaction coordinates multiple transactional resources. In Spring, <code>JtaTransactionManager</code> integrates Spring with JTA for distributed transaction coordination. It is more complex than a local single-resource transaction and should be used when the architecture actually requires distributed transaction semantics.”</p>
+<div class="warning"><b>Trap:</b> Do not say “global transaction is always better.” It introduces distributed coordination and operational complexity. For one database, a local transaction is normally simpler.</div>
+<div class="memory"><b>Memory:</b> <b>Local = one resource. Global = multiple resources coordinated.</b></div></section><section class="section" id="c12"><h2>Propagation — REQUIRED</h2>
+<div class="callout"><b>Simple idea:</b> <code>REQUIRED</code> means <b>use the current transaction if there is one; otherwise create one</b>. It is the common/default propagation choice.</div>
 <pre class="mermaid">flowchart TD
-A["Enter method"] --> B{"Transaction exists?"}
-B -->|Yes| C["Join existing"]
-B -->|No| D["Create new"]</pre>
+A["Enter method"] --&gt; B{"Transaction exists?"}
+B --&gt;|Yes| C["Join existing transaction"]
+B --&gt;|No| D["Create new transaction"]</pre>
 <pre><code class="language-java">@Transactional(propagation = Propagation.REQUIRED)
-public void operation() {
-    // Join existing or create a new transaction.
-}</code></pre></section><section class="section" id="c13"><h2>13. Propagation — REQUIRES_NEW</h2>
-<p><b>Theory:</b> <code>REQUIRES_NEW</code> suspends the current transaction and starts an independent transaction for the invoked method.</p>
+public void createOrder() { }</code></pre>
+<h3>Interview scenario</h3><p>Service A is already transactional and calls Service B with REQUIRED. B normally participates in A's transaction. If B is called without an active transaction, Spring creates one for B.</p>
+<p><b>Interview answer:</b> “REQUIRED joins an existing transaction if available; otherwise it starts a new transaction.”</p>
+<div class="memory"><b>REQUIRED = join or create.</b></div></section><section class="section" id="c13"><h2>Propagation — REQUIRES_NEW</h2>
+<div class="callout"><b>Simple idea:</b> <code>REQUIRES_NEW</code> says <b>this method needs its own transaction</b>. An existing transaction is suspended while the new transaction runs.</div>
 <pre class="mermaid">sequenceDiagram
+participant O as Outer Tx
 participant S as Service
-participant A as Tx A
-participant B as Tx B
-S->>A: main work
-A-->>S: suspend
-S->>B: BEGIN
-B->>B: independent work
-B-->>S: COMMIT
-S->>A: resume</pre>
-<pre><code class="language-java">@Transactional(propagation = Propagation.REQUIRES_NEW)
-public void saveAudit() {
-    // Independent transaction.
-}</code></pre></section><section class="section" id="c14"><h2>14. Propagation — MANDATORY</h2>
-<p><b>Theory:</b> <code>MANDATORY</code> requires an existing transaction. It does not create one when the caller has none.</p>
+participant N as New Tx
+O-&gt;&gt;S: call REQUIRES_NEW
+S--&gt;&gt;O: suspend outer
+S-&gt;&gt;N: BEGIN new transaction
+N-&gt;&gt;N: independent work
+N--&gt;&gt;S: COMMIT / ROLLBACK
+S--&gt;&gt;O: resume outer</pre>
+<h3>Common interview example</h3><p>An audit record may need to commit independently from the main operation. If the audit operation is intentionally independent, <code>REQUIRES_NEW</code> can provide that separate transaction.</p>
+<p><b>Interview answer:</b> “REQUIRES_NEW suspends the existing transaction and starts an independent transaction for the method.”</p>
+<div class="warning"><b>Trap:</b> Independent transaction does not mean “no transaction”. It means a separate transaction.</div></section><section class="section" id="c14"><h2>Propagation — MANDATORY</h2>
+<div class="callout"><b>Simple idea:</b> <code>MANDATORY</code> means <b>“I refuse to run unless the caller already started a transaction.”</b></div>
 <pre class="mermaid">flowchart TD
-A["Enter"] --> B{"Existing Tx?"}
-B -->|Yes| C["Join"]
-B -->|No| D["Reject invocation"]</pre></section><section class="section" id="c15"><h2>15. Propagation — NEVER</h2>
-<p><b>Theory:</b> <code>NEVER</code> requires that no transaction be active. If one is active, Spring rejects the invocation.</p>
+A["Enter method"] --&gt; B{"Transaction exists?"}
+B --&gt;|Yes| C["Join existing"]
+B --&gt;|No| D["Throw exception"]</pre>
+<h3>Why use it?</h3><p>It is useful when a lower-level operation is only valid as part of a larger business transaction and should never accidentally run alone.</p>
+<p><b>Interview answer:</b> “MANDATORY requires an existing transaction and throws an exception if none exists.”</p>
+<div class="memory"><b>MANDATORY = transaction must already be there.</b></div></section><section class="section" id="c15"><h2>Propagation — NEVER</h2>
+<div class="callout"><b>Simple idea:</b> <code>NEVER</code> is the opposite kind of rule: <b>“I must not run inside a transaction.”</b></div>
 <pre class="mermaid">flowchart TD
-A["Enter"] --> B{"Transaction exists?"}
-B -->|No| C["Execute"]
-B -->|Yes| D["Reject"]</pre></section><section class="section" id="c16"><h2>16. Propagation — NOT_SUPPORTED</h2>
-<p><b>Theory:</b> <code>NOT_SUPPORTED</code> executes without a transaction. An existing transaction is suspended for this method.</p>
+A["Enter method"] --&gt; B{"Transaction exists?"}
+B --&gt;|No| C["Execute without transaction"]
+B --&gt;|Yes| D["Reject invocation"]</pre>
+<p><b>Interview answer:</b> “NEVER requires that no transaction be active; if one exists, Spring throws an exception.”</p>
+<div class="warning"><b>Trap:</b> NEVER is not the same as NOT_SUPPORTED. NEVER rejects an active transaction; NOT_SUPPORTED suspends it and then runs.</div></section><section class="section" id="c16"><h2>Propagation — NOT_SUPPORTED</h2>
+<div class="callout"><b>Simple idea:</b> <code>NOT_SUPPORTED</code> means <b>run without a transaction</b>. If a transaction already exists, Spring suspends it for this method.</div>
 <pre class="mermaid">sequenceDiagram
-participant T as Outer transaction
-participant S as Service
-T->>S: invoke
-S-->>T: suspend
-S->>S: non-transactional work
-S-->>T: resume</pre></section><section class="section" id="c17"><h2>17. Propagation — SUPPORTS</h2>
-<p><b>Theory:</b> <code>SUPPORTS</code> participates in the current transaction if one exists; otherwise it can execute without one.</p>
+participant O as Outer Tx
+participant S as NOT_SUPPORTED method
+O-&gt;&gt;S: invoke
+S--&gt;&gt;O: suspend outer transaction
+S-&gt;&gt;S: execute without transaction
+S--&gt;&gt;O: resume outer transaction</pre>
+<p><b>Interview answer:</b> “NOT_SUPPORTED executes non-transactionally and suspends an existing transaction for the duration of the method.”</p>
+<div class="warning"><b>Compare:</b> <code>NEVER</code> = reject if a transaction exists. <code>NOT_SUPPORTED</code> = suspend it and continue.</div></section><section class="section" id="c17"><h2>Propagation — SUPPORTS</h2>
+<div class="callout"><b>Simple idea:</b> <code>SUPPORTS</code> means <b>“use a transaction if the caller already has one; otherwise I can run without one.”</b></div>
 <pre class="mermaid">flowchart TD
-A["Enter"] --> B{"Transaction exists?"}
-B -->|Yes| C["Participate"]
-B -->|No| D["Execute without transaction"]</pre></section><section class="section" id="c18"><h2>18. Propagation — NESTED</h2>
-<p><b>Theory:</b> <code>NESTED</code> represents nested/savepoint behavior where supported. It should not be described simply as an independent transaction.</p>
+A["Enter method"] --&gt; B{"Transaction exists?"}
+B --&gt;|Yes| C["Participate in it"]
+B --&gt;|No| D["Run without transaction"]</pre>
+<p><b>Interview answer:</b> “SUPPORTS participates in the current transaction if one exists; otherwise it executes without a transaction.”</p>
+<div class="memory"><b>SUPPORTS = optional transaction.</b></div></section><section class="section" id="c18"><h2>Propagation — NESTED</h2>
+<div class="callout"><b>Simple idea:</b> <code>NESTED</code> means nested work can use <b>savepoint-style rollback</b> when the transaction manager/resource supports it.</div>
 <pre class="mermaid">flowchart TD
-A["Outer Tx"] --> B["Savepoint"]
-B --> C["Nested work"]
-C --> D{"Failure?"}
-D -->|No| E["Continue outer"]
-D -->|Yes| F["Rollback to savepoint"]</pre></section><section class="section" id="c19"><h2>19. Rollback</h2>
-<p><b>Theory:</b> Rollback discards transactional database changes that have not been committed, according to the resource/transaction semantics.</p>
-<pre class="mermaid">flowchart LR
-A["BEGIN"] --> B["INSERT / UPDATE"]
-B --> C["Failure"]
-C --> D["ROLLBACK"]</pre></section><section class="section" id="c20"><h2>20. Rollback — RuntimeException</h2>
-<p><b>Theory:</b> Spring's default declarative rollback rules normally roll back for unchecked exceptions such as <code>RuntimeException</code>.</p>
+A["Outer transaction"] --&gt; B["Create savepoint"]
+B --&gt; C["Nested work"]
+C --&gt; D{"Nested failure?"}
+D --&gt;|No| E["Continue outer transaction"]
+D --&gt;|Yes| F["Rollback to savepoint"]
+F --&gt; E</pre>
+<h3>Interview focus</h3><p>The key distinction is that NESTED is about nested/savepoint semantics inside an existing transaction, not simply starting a totally independent transaction.</p>
+<p><b>Interview answer:</b> “NESTED uses a nested transaction/savepoint model when supported, allowing inner work to roll back to a savepoint while the outer transaction can continue.”</p>
+<div class="warning"><b>Trap:</b> Do not claim every transaction manager/resource supports identical NESTED behavior. Support depends on the underlying transaction infrastructure.</div></section><section class="section" id="c19"><h2>Rollback</h2>
+<div class="callout"><b>Simple idea:</b> Rollback means <b>do not make the transaction's uncommitted database changes permanent</b>.</div>
+<pre class="mermaid">flowchart TD
+A["BEGIN"] --&gt; B["Operation 1"]
+B --&gt; C["Operation 2"]
+C --&gt; D["Failure / rollback decision"]
+D --&gt; E["ROLLBACK"]
+E --&gt; F["Transaction ends without commit"]</pre>
+<h3>When does Spring decide?</h3><p>For declarative transactions, Spring evaluates the exception against its rollback rules. By default, unchecked exceptions trigger rollback; checked exceptions do not automatically trigger rollback.</p>
+<p><b>Interview answer:</b> “Rollback ends the transaction without committing its transactional changes. In Spring, whether an exception causes rollback depends on the configured rollback rules.”</p>
+<div class="memory"><b>Rollback = do not commit this transaction.</b></div></section><section class="section" id="c20"><h2>Rollback — RuntimeException</h2>
+<div class="callout"><b>Simple idea:</b> By default, Spring's declarative transaction rules normally roll back for unchecked exceptions such as <code>RuntimeException</code>.</div>
+<pre class="mermaid">flowchart TD
+A["@Transactional"] --&gt; B["DB changes"] --&gt; C["RuntimeException"] --&gt; D["Rollback"]</pre>
 <pre><code class="language-java">@Transactional
 public void save() {
     dao.insert();
     throw new RuntimeException("failure");
-    // Default rule: rollback.
-}</code></pre></section><section class="section" id="c21"><h2>21. Rollback — CheckedException</h2>
-<p><b>Theory:</b> A checked exception does not automatically mean rollback under Spring's default rules. Configure rollback explicitly when the business rule requires it.</p>
+}</code></pre>
+<p><b>Interview answer:</b> “Spring's default rollback rules include RuntimeException and Error, so an unchecked exception normally causes rollback for a declarative transaction.”</p>
+<div class="warning"><b>Trap:</b> Saying “any exception causes rollback by default” is too broad.</div></section><section class="section" id="c21"><h2>Rollback — CheckedException</h2>
+<div class="callout"><b>Simple idea:</b> A checked exception such as <code>Exception</code> does <b>not automatically mean rollback</b> under Spring's default rollback rules.</div>
+<pre class="mermaid">flowchart TD
+A["@Transactional"] --&gt; B["DB changes"] --&gt; C["Checked exception"] --&gt; D{"Rollback rule configured?"}
+D --&gt;|No| E["No default rollback"]
+D --&gt;|Yes| F["Rollback"]</pre>
 <pre><code class="language-java">@Transactional
 public void process() throws Exception {
     dao.insert();
     throw new Exception("checked failure");
-    // Do not assume rollback by default.
-}</code></pre></section><section class="section" id="c22"><h2>22. rollbackFor</h2>
-<p><b>Theory:</b> <code>rollbackFor</code> adds specified exception types to the rollback rule.</p>
+}</code></pre>
+<p><b>Interview answer:</b> “Checked exceptions do not trigger rollback by default in Spring's standard declarative rules; use an explicit rollback rule when required.”</p>
+<div class="memory"><b>RuntimeException → default rollback. Checked Exception → configure if needed.</b></div></section><section class="section" id="c22"><h2>rollbackFor</h2>
+<div class="callout"><b>Simple idea:</b> <code>rollbackFor</code> says <b>“also roll back when this exception type occurs.”</b></div>
+<pre class="mermaid">flowchart LR
+A["Checked exception"] --&gt; B["rollbackFor"] --&gt; C["Rollback rule"] --&gt; D["ROLLBACK"]</pre>
 <pre><code class="language-java">@Transactional(rollbackFor = Exception.class)
 public void process() throws Exception {
     dao.insert();
-    throw new Exception("checked failure");
-}</code></pre></section><section class="section" id="c23"><h2>23. noRollbackFor</h2>
-<p><b>Theory:</b> <code>noRollbackFor</code> excludes specified exception types from rollback rules.</p>
+    throw new Exception("failure");
+}</code></pre>
+<p><b>Interview answer:</b> “rollbackFor lets us explicitly include exception types in the rollback rules, which is commonly used when a checked exception must cause rollback.”</p>
+<div class="warning"><b>Trap:</b> rollbackFor is a rule definition; it does not itself perform a rollback immediately.</div></section><section class="section" id="c23"><h2>noRollbackFor</h2>
+<div class="callout"><b>Simple idea:</b> <code>noRollbackFor</code> says <b>“this exception should not trigger rollback under the configured rule.”</b></div>
+<pre class="mermaid">flowchart LR
+A["Configured exception"] --&gt; B["noRollbackFor"] --&gt; C["No rollback rule for it"] --&gt; D["Transaction may commit"]</pre>
 <pre><code class="language-java">@Transactional(noRollbackFor = WarningException.class)
 public void process() {
     dao.insert();
-    throw new WarningException("business warning");
-}</code></pre></section><section class="section" id="c24"><h2>24. readOnly</h2>
-<p><b>Theory:</b> <code>readOnly=true</code> expresses that the transaction is intended for reading and can permit infrastructure/provider optimizations. It is not a universal physical prohibition against every write.</p>
+    throw new WarningException();
+}</code></pre>
+<p><b>Interview answer:</b> “noRollbackFor lets us exclude selected exception types from the transaction's rollback rules.”</p>
+<div class="warning"><b>Trap:</b> The method still throws the exception. noRollbackFor controls rollback behavior; it does not swallow the exception.</div></section><section class="section" id="c24"><h2>readOnly</h2>
+<div class="callout"><b>Simple idea:</b> <code>readOnly=true</code> tells Spring and the underlying transaction/persistence infrastructure that the transaction is intended for reading.</div>
 <pre class="mermaid">flowchart LR
-S["Read service"] --> A["@Transactional(readOnly=true)"]
-A --> T["JPA transaction"]
-T --> Q["Read operations"]</pre></section><section class="section" id="c25"><h2>25. timeout</h2>
-<p><b>Theory:</b> A transaction timeout limits how long the transaction may run before the transaction infrastructure can time it out according to the environment.</p>
+S["Read service"] --&gt; A["@Transactional(readOnly=true)"]
+A --&gt; T["Transaction infrastructure"]
+T --&gt; Q["Read operations"]</pre>
+<h3>Why use it?</h3><p>It documents intent and can allow optimizations depending on the transaction manager and persistence provider.</p>
+<pre><code class="language-java">@Transactional(readOnly = true)
+public List&lt;EmployeeDTO&gt; findEmployees() {
+    return repository.findAll();
+}</code></pre>
+<p><b>Interview answer:</b> “readOnly expresses that a transaction is intended for read operations and may allow persistence-provider or infrastructure optimizations. It should not be treated as a universal write-blocking guarantee.”</p>
+<div class="warning"><b>Trap:</b> Do not say <code>readOnly=true</code> is a security mechanism that guarantees no write can ever happen.</div></section><section class="section" id="c25"><h2>timeout</h2>
+<div class="callout"><b>Simple idea:</b> A transaction timeout puts a <b>time limit on transaction execution</b>. If the limit is exceeded, the transaction infrastructure can mark the transaction for timeout/rollback according to the environment.</div>
+<pre class="mermaid">flowchart TD
+A["Transaction begins"] --&gt; B["Work"] --&gt; C{"Timeout exceeded?"}
+C --&gt;|No| D["Commit"]
+C --&gt;|Yes| E["Timeout outcome / rollback"]</pre>
+<pre><code class="language-java">@Transactional(timeout = 10)
+public void processOrder() {
+    // Transaction should not run indefinitely.
+}</code></pre>
+<p><b>Interview answer:</b> “timeout defines how long a transaction is allowed to run before the transaction infrastructure treats it as timed out.”</p>
+<div class="warning"><b>Trap:</b> A transaction timeout is not the same as a socket/request timeout. They belong to different layers.</div></section><section class="section" id="c26"><h2>Spring Data JPA — CrudRepository</h2>
+<div class="callout"><b>Simple idea:</b> <code>CrudRepository</code> gives you common CRUD operations without writing the basic repository implementation yourself.</div>
 <pre class="mermaid">flowchart LR
-A["BEGIN"] --> B["Work"]
-B --> C{"Timeout?"}
-C -->|No| D["COMMIT"]
-C -->|Yes| E["Timeout / rollback outcome"]</pre></section><section class="section" id="c26"><h2>26. Spring Data JPA — CrudRepository</h2>
-<p><b>Theory:</b> <code>CrudRepository</code> supplies common CRUD operations so you do not implement basic repository boilerplate.</p>
+S["Service"] --&gt; R["CrudRepository"]
+R --&gt; G["Spring Data generated implementation"]
+G --&gt; J["JPA"]
+J --&gt; DB[("Database")]
+</pre>
+<h3>What do you get?</h3><p>Typical CRUD operations include save, find, findAll, exists, count and delete operations. Spring Data creates the repository implementation at runtime.</p>
+<pre><code class="language-java">public interface EmployeeRepository
+        extends CrudRepository&lt;EmployeeEntity, Integer&gt; {
+}
+
+// Then the service can use repository.save(...),
+// findById(...), findAll(), deleteById(...), etc.</code></pre>
+<p><b>Interview answer:</b> “CrudRepository is a Spring Data repository abstraction that provides standard CRUD operations and removes the need to implement those basic data-access methods manually.”</p>
+<div class="memory"><b>CrudRepository = ready-made CRUD contract.</b></div></section><section class="section" id="c27"><h2>Spring Data JPA — RepositoryDefinition</h2>
+<div class="callout"><b>Simple idea:</b> <code>@RepositoryDefinition</code> lets you define a repository interface by declaring its domain and ID types <b>without extending</b> a Spring Data repository interface.</div>
 <pre class="mermaid">flowchart LR
-S["Service"] --> R["CrudRepository"]
-R --> I["Generated implementation"]
-I --> J["JPA"]
-J --> DB[("Database")]</pre></section><section class="section" id="c27"><h2>27. Spring Data JPA — RepositoryDefinition</h2>
-<p><b>Theory:</b> <code>@RepositoryDefinition</code> lets a repository declare its domain and ID types without extending a Spring Data repository interface. You expose the methods you declare.</p>
+I["Repository interface"] --&gt; A["@RepositoryDefinition"]
+A --&gt; S["Spring Data repository infrastructure"]
+S --&gt; J["JPA"]
+</pre>
 <pre><code class="language-java">@RepositoryDefinition(
     domainClass = EmployeeEntity.class,
     idClass = Integer.class)
 public interface EmployeeReadRepository {
+
     EmployeeEntity findById(Integer id);
-}</code></pre></section><section class="section" id="c28"><h2>28. Spring Data JPA — Query Method</h2>
-<p><b>Theory:</b> Spring Data derives a query from a repository method name using supported property and operator keywords.</p>
+}</code></pre>
+<h3>Interview focus</h3><p>The useful distinction is: extending <code>CrudRepository</code> gives you inherited CRUD methods; <code>@RepositoryDefinition</code> lets you expose only the methods you declare while still participating in Spring Data repository infrastructure.</p>
+<p><b>Interview answer:</b> “<code>@RepositoryDefinition</code> defines a Spring Data repository without extending one of the repository interfaces, allowing the developer to declare the repository methods explicitly.”</p></section><section class="section" id="c28"><h2>Spring Data JPA — Query Method</h2>
+<div class="callout"><b>Simple idea:</b> A query method lets Spring Data <b>derive the query from the method name</b>.</div>
 <pre class="mermaid">flowchart LR
-M["findBySalaryGreaterThanEqualAndRole"] --> P["Parse method name"]
-P --> Q["Derived query"]
-Q --> J["JPA"]
-J --> DB[("Database")]</pre>
+M["findBySalaryGreaterThanEqualAndRole"] --&gt; P["Spring Data parses method name"]
+P --&gt; Q["Derived query"]
+Q --&gt; J["JPA"]
+J --&gt; DB[("Database")]
+</pre>
 <pre><code class="language-java">List&lt;EmployeeEntity&gt;
 findBySalaryGreaterThanEqualAndRole(
     Double salary,
-    String role);</code></pre></section><section class="section" id="c29"><h2>29. Spring Data JPA — @Query</h2>
-<p><b>Theory:</b> <code>@Query</code> lets you provide the JPQL explicitly instead of deriving it from the method name.</p>
-<pre><code class="language-java">@Query("SELECT e FROM EmployeeEntity e WHERE e.salary >= :salary")
-List&lt;EmployeeEntity&gt; findEmployees(
-    @Param("salary") Double salary);</code></pre></section><section class="section" id="c30"><h2>30. Positional Parameters</h2>
-<p><b>Theory:</b> Positional parameters identify query arguments by their position, for example <code>?1</code> means the first method parameter.</p>
-<pre><code class="language-java">@Query("SELECT e FROM EmployeeEntity e WHERE e.salary >= ?1")
-List&lt;EmployeeEntity&gt; findBySalary(Double salary);</code></pre>
+    String role);</code></pre>
+<h3>How to read the name</h3><p><code>findBy</code> starts the query. <code>SalaryGreaterThanEqual</code> becomes a salary comparison. <code>AndRole</code> adds another condition.</p>
+<p><b>Interview answer:</b> “Spring Data parses supported repository method-name keywords and derives the query from them. It is convenient for simple-to-moderate queries.”</p>
+<div class="warning"><b>Trap:</b> If the method name becomes extremely long or the query is complex, <code>@Query</code> or another query mechanism may be clearer.</div></section><section class="section" id="c29"><h2>Spring Data JPA — @Query</h2>
+<div class="callout"><b>Simple idea:</b> <code>@Query</code> means <b>you write the query explicitly</b> instead of asking Spring Data to derive it from the method name.</div>
 <pre class="mermaid">flowchart LR
-P["?1"] --> A["First method argument"] --> Q["JPQL binding"]</pre></section><section class="section" id="c31"><h2>31. Named Parameters</h2>
-<p><b>Theory:</b> Named parameters use a readable placeholder such as <code>:salary</code> and bind it using <code>@Param("salary")</code>.</p>
-<pre><code class="language-java">@Query("SELECT e FROM EmployeeEntity e WHERE e.salary >= :salary")
+A["Repository method"] --&gt; Q["@Query JPQL"]
+Q --&gt; J["JPA provider"]
+J --&gt; DB[("Database")]
+</pre>
+<pre><code class="language-java">@Query("""
+    SELECT e
+    FROM EmployeeEntity e
+    WHERE e.salary &gt;= :salary
+    """)
+List&lt;EmployeeEntity&gt; findEmployees(
+    @Param("salary") Double salary);</code></pre>
+<h3>JPQL interview point</h3><p>JPQL normally refers to <b>entity classes and entity fields</b>, not directly to database table/column names.</p>
+<p><b>Interview answer:</b> “<code>@Query</code> lets us define a JPQL query explicitly on a repository method when method-name derivation is not appropriate or readable enough.”</p>
+<div class="memory"><b>Query Method = Spring derives. @Query = I specify.</b></div></section><section class="section" id="c30"><h2>Positional Parameters</h2>
+<div class="callout"><b>Simple idea:</b> A positional parameter identifies the query value by its <b>argument position</b>. <code>?1</code> means the first method argument.</div>
+<pre class="mermaid">flowchart LR
+P["?1"] --&gt; A["First method parameter"] --&gt; Q["JPQL binding"]
+</pre>
+<pre><code class="language-java">@Query("SELECT e FROM EmployeeEntity e WHERE e.salary &gt;= ?1")
+List&lt;EmployeeEntity&gt; findBySalary(Double salary);</code></pre>
+<p><b>Interview answer:</b> “Positional parameters use numbered placeholders such as <code>?1</code>, <code>?2</code> and bind arguments according to their method position.”</p>
+<div class="warning"><b>Trade-off:</b> They are short, but changing parameter order can make the query harder to maintain. Named parameters are often clearer for complex queries.</div></section><section class="section" id="c31"><h2>Named Parameters</h2>
+<div class="callout"><b>Simple idea:</b> A named parameter identifies a value by a <b>readable name</b>, such as <code>:salary</code>.</div>
+<pre class="mermaid">flowchart LR
+N[":salary"] --&gt; P["@Param('salary')"] --&gt; Q["JPQL binding"]
+</pre>
+<pre><code class="language-java">@Query("SELECT e FROM EmployeeEntity e WHERE e.salary &gt;= :salary")
 List&lt;EmployeeEntity&gt; findBySalary(
     @Param("salary") Double salary);</code></pre>
+<p><b>Interview answer:</b> “Named parameters use a readable JPQL name such as <code>:salary</code> and bind it to a repository method argument, commonly with <code>@Param</code>.”</p>
+<div class="memory"><b>?1 = position. :salary = meaning.</b></div></section><section class="section" id="c32"><h2>@Modifying</h2>
+<div class="callout"><b>Simple idea:</b> <code>@Modifying</code> tells Spring Data JPA that an <code>@Query</code> method performs a modifying statement such as <b>UPDATE or DELETE</b>, rather than a SELECT.</div>
 <pre class="mermaid">flowchart LR
-N[":salary"] --> P["@Param('salary')"] --> Q["JPQL binding"]</pre></section><section class="section" id="c32"><h2>32. @Modifying</h2>
-<p><b>Theory:</b> <code>@Modifying</code> is used with Spring Data JPA <code>@Query</code> methods that perform DML such as UPDATE or DELETE.</p>
+S["Transactional service"] --&gt; R["Repository"]
+R --&gt; M["@Modifying + @Query"]
+M --&gt; DB[("UPDATE / DELETE")]
+</pre>
 <pre><code class="language-java">@Modifying
-@Query("UPDATE EmployeeEntity e SET e.salary = :salary WHERE e.role = :role")
-int updateSalary(
+@Query("""
+    UPDATE EmployeeEntity e
+    SET e.salary = :salary
+    WHERE e.role = :role
+    """)
+int updateSalaryByRole(
     @Param("role") String role,
     @Param("salary") Double salary);</code></pre>
+<h3>Interview focus</h3><p>Bulk update/delete queries are different from normal entity-select queries. They should be executed within an appropriate transaction.</p>
+<p><b>Interview answer:</b> “<code>@Modifying</code> is used with Spring Data JPA query methods that modify data, such as UPDATE and DELETE. Such operations normally need a transaction.”</p>
+<div class="warning"><b>Trap:</b> <code>@Modifying</code> does not itself mean “start a transaction.” Transaction management is a separate concern, commonly supplied by <code>@Transactional</code>.</div></section><section class="section" id="c33"><h2>orm.xml</h2>
+<div class="callout"><b>Simple idea:</b> <code>orm.xml</code> is a JPA mapping/metadata file that can externalize ORM metadata. In this guide, it is used to demonstrate an <b>external named query</b>.</div>
 <pre class="mermaid">flowchart LR
-S["Transactional service"] --> R["Repository"]
-R --> M["@Modifying @Query"]
-M --> DB[("UPDATE / DELETE")]</pre></section><section class="section" id="c33"><h2>33. orm.xml</h2>
-<p><b>Theory:</b> <code>META-INF/orm.xml</code> can contain JPA ORM metadata, including named-query definitions. It provides an external location for that metadata.</p>
-<pre><code class="language-xml">&lt;entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm" version="3.1"&gt;
-  &lt;named-query name="Employee.findSeniorEmployees"&gt;
+X["META-INF/orm.xml"] --&gt; N["Named query / ORM metadata"]
+N --&gt; J["JPA provider"]
+J --&gt; DB[("Database")]
+</pre>
+<pre><code class="language-xml">&lt;named-query name="Employee.findSeniorEmployees"&gt;
     &lt;query&gt;
-      SELECT e FROM EmployeeEntity e
-      WHERE e.role = 'Senior Developer'
+        SELECT e FROM EmployeeEntity e
+        WHERE e.role = 'Senior Developer'
     &lt;/query&gt;
-  &lt;/named-query&gt;
-&lt;/entity-mappings&gt;</code></pre>
-<pre class="mermaid">flowchart LR
-X["orm.xml"] --> N["Named query"] --> J["JPA provider"] --> DB[("Database")]</pre></section>
+&lt;/named-query&gt;</code></pre>
+<h3>Why learn it?</h3><p>Modern Spring Data projects often keep query logic in repository annotations or methods, but <code>orm.xml</code> is still useful to understand because JPA supports external ORM metadata and named queries.</p>
+<p><b>Interview answer:</b> “<code>orm.xml</code> is a JPA ORM metadata file. It can define mapping metadata and named queries outside the entity source code.”</p>
+<div class="warning"><b>Trap:</b> Do not describe <code>orm.xml</code> as a Spring Data-specific file. It belongs to JPA ORM metadata.</div></section>
 <section class="section" id="code">
 <h2>Complete Project Code — All Files</h2>
 <div class="callout"><b>This is the connected project.</b> Read the files in this order: persistence.xml → applicationContext.xml → entities/DTOs → DAO → repository → service → Application.java.</div>
@@ -308,10 +466,10 @@ X["orm.xml"] --> N["Named query"] --> J["JPA provider"] --> DB[("Database")]</pr
         └── META-INF/
             ├── persistence.xml
             └── orm.xml</pre>
-<article class="codefile"><h3>1. <code>pom.xml</code></h3><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+<article class="codefile"><h3>1. <code>pom.xml</code></h3><pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
     &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
     &lt;groupId&gt;com.example&lt;/groupId&gt;
     &lt;artifactId&gt;employee-management&lt;/artifactId&gt;
@@ -372,12 +530,12 @@ X["orm.xml"] --> N["Named query"] --> J["JPA provider"] --> DB[("Database")]</pr
             &lt;scope&gt;runtime&lt;/scope&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
-&lt;/project&gt;</code></pre></article><article class="codefile"><h3>2. <code>src/main/resources/META-INF/persistence.xml</code></h3><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;persistence xmlns=&quot;https://jakarta.ee/xml/ns/persistence&quot; version=&quot;3.1&quot;&gt;
+&lt;/project&gt;</code></pre></article><article class="codefile"><h3>2. <code>src/main/resources/META-INF/persistence.xml</code></h3><pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1"&gt;
 
     &lt;!-- JPA persistence unit. --&gt;
-    &lt;persistence-unit name=&quot;employeePU&quot;
-                      transaction-type=&quot;RESOURCE_LOCAL&quot;&gt;
+    &lt;persistence-unit name="employeePU"
+                      transaction-type="RESOURCE_LOCAL"&gt;
 
         &lt;!-- Hibernate implements the JPA specification. --&gt;
         &lt;provider&gt;org.hibernate.jpa.HibernatePersistenceProvider&lt;/provider&gt;
@@ -386,32 +544,32 @@ X["orm.xml"] --> N["Named query"] --> J["JPA provider"] --> DB[("Database")]</pr
         &lt;class&gt;com.example.employee.entity.EmployeeEntity&lt;/class&gt;
 
         &lt;properties&gt;
-            &lt;property name=&quot;jakarta.persistence.jdbc.driver&quot;
-                      value=&quot;org.h2.Driver&quot;/&gt;
-            &lt;property name=&quot;jakarta.persistence.jdbc.url&quot;
-                      value=&quot;jdbc:h2:mem:employee_db;DB_CLOSE_DELAY=-1&quot;/&gt;
-            &lt;property name=&quot;jakarta.persistence.jdbc.user&quot; value=&quot;sa&quot;/&gt;
-            &lt;property name=&quot;jakarta.persistence.jdbc.password&quot; value=&quot;&quot;/&gt;
+            &lt;property name="jakarta.persistence.jdbc.driver"
+                      value="org.h2.Driver"/&gt;
+            &lt;property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:h2:mem:employee_db;DB_CLOSE_DELAY=-1"/&gt;
+            &lt;property name="jakarta.persistence.jdbc.user" value="sa"/&gt;
+            &lt;property name="jakarta.persistence.jdbc.password" value=""/&gt;
 
-            &lt;property name=&quot;hibernate.dialect&quot;
-                      value=&quot;org.hibernate.dialect.H2Dialect&quot;/&gt;
+            &lt;property name="hibernate.dialect"
+                      value="org.hibernate.dialect.H2Dialect"/&gt;
 
             &lt;!-- Learning/demo setting: recreate schema each run. --&gt;
-            &lt;property name=&quot;hibernate.hbm2ddl.auto&quot;
-                      value=&quot;create-drop&quot;/&gt;
+            &lt;property name="hibernate.hbm2ddl.auto"
+                      value="create-drop"/&gt;
 
             &lt;!-- Show SQL so you can connect Java calls to SQL. --&gt;
-            &lt;property name=&quot;hibernate.show_sql&quot; value=&quot;true&quot;/&gt;
-            &lt;property name=&quot;hibernate.format_sql&quot; value=&quot;true&quot;/&gt;
+            &lt;property name="hibernate.show_sql" value="true"/&gt;
+            &lt;property name="hibernate.format_sql" value="true"/&gt;
         &lt;/properties&gt;
     &lt;/persistence-unit&gt;
-&lt;/persistence&gt;</code></pre></article><article class="codefile"><h3>3. <code>src/main/resources/applicationContext.xml</code></h3><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
-       xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
-       xmlns:jpa=&quot;http://www.springframework.org/schema/data/jpa&quot;
-       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-       xsi:schemaLocation=&quot;
+&lt;/persistence&gt;</code></pre></article><article class="codefile"><h3>3. <code>src/main/resources/applicationContext.xml</code></h3><pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        https://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -419,47 +577,47 @@ X["orm.xml"] --> N["Named query"] --> J["JPA provider"] --> DB[("Database")]</pr
        http://www.springframework.org/schema/tx
        https://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa
-       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd&quot;&gt;
+       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
 
     &lt;!-- Discover @Service, @Repository and @Component. --&gt;
-    &lt;context:component-scan base-package=&quot;com.example.employee&quot;/&gt;
+    &lt;context:component-scan base-package="com.example.employee"/&gt;
 
     &lt;!-- Enables transaction interception for @Transactional. --&gt;
-    &lt;tx:annotation-driven transaction-manager=&quot;transactionManager&quot;/&gt;
+    &lt;tx:annotation-driven transaction-manager="transactionManager"/&gt;
 
     &lt;!-- Creates EntityManagerFactory from persistence.xml. --&gt;
-    &lt;bean id=&quot;entityManagerFactory&quot;
-          class=&quot;org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean&quot;&gt;
-        &lt;property name=&quot;persistenceUnitName&quot; value=&quot;employeePU&quot;/&gt;
+    &lt;bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"&gt;
+        &lt;property name="persistenceUnitName" value="employeePU"/&gt;
     &lt;/bean&gt;
 
-    &lt;!-- Spring&#x27;s JPA transaction manager. --&gt;
-    &lt;bean id=&quot;transactionManager&quot;
-          class=&quot;org.springframework.orm.jpa.JpaTransactionManager&quot;&gt;
-        &lt;property name=&quot;entityManagerFactory&quot;
-                  ref=&quot;entityManagerFactory&quot;/&gt;
+    &lt;!-- Spring's JPA transaction manager. --&gt;
+    &lt;bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager"&gt;
+        &lt;property name="entityManagerFactory"
+                  ref="entityManagerFactory"/&gt;
     &lt;/bean&gt;
 
     &lt;!-- Spring Data creates repository implementations. --&gt;
     &lt;jpa:repositories
-        base-package=&quot;com.example.employee.repository&quot;
-        entity-manager-factory-ref=&quot;entityManagerFactory&quot;
-        transaction-manager-ref=&quot;transactionManager&quot;/&gt;
+        base-package="com.example.employee.repository"
+        entity-manager-factory-ref="entityManagerFactory"
+        transaction-manager-ref="transactionManager"/&gt;
 &lt;/beans&gt;</code></pre></article><article class="codefile"><h3>4. <code>src/main/resources/db.properties</code></h3><pre><code class="language-properties"># The demo uses H2 values directly in persistence.xml.
 # These values show how a MySQL configuration can later be externalized.
 db.url=jdbc:mysql://localhost:3306/employee_db
 db.username=root
-db.password=root</code></pre></article><article class="codefile"><h3>5. <code>src/main/resources/META-INF/orm.xml</code></h3><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+db.password=root</code></pre></article><article class="codefile"><h3>5. <code>src/main/resources/META-INF/orm.xml</code></h3><pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;entity-mappings
-    xmlns=&quot;https://jakarta.ee/xml/ns/persistence/orm&quot;
-    version=&quot;3.1&quot;&gt;
+    xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+    version="3.1"&gt;
 
     &lt;!-- External named query definition. --&gt;
-    &lt;named-query name=&quot;Employee.findSeniorEmployees&quot;&gt;
+    &lt;named-query name="Employee.findSeniorEmployees"&gt;
         &lt;query&gt;
             SELECT e
             FROM EmployeeEntity e
-            WHERE e.role = &#x27;Senior Developer&#x27;
+            WHERE e.role = 'Senior Developer'
             ORDER BY e.salary DESC
         &lt;/query&gt;
     &lt;/named-query&gt;
@@ -468,7 +626,7 @@ db.password=root</code></pre></article><article class="codefile"><h3>5. <code>sr
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = &quot;department&quot;)
+@Table(name = "department")
 public class DepartmentEntity {
 
     @Id
@@ -489,7 +647,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = &quot;employee&quot;)
+@Table(name = "employee")
 public class EmployeeEntity {
 
     @Id
@@ -504,7 +662,7 @@ public class EmployeeEntity {
     private LocalDate joiningDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = &quot;department_id&quot;)
+    @JoinColumn(name = "department_id")
     private DepartmentEntity department;
 
     public Integer getEmployeeId() { return employeeId; }
@@ -617,17 +775,17 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     public List&lt;EmployeeEntity&gt; findByJoiningDate(
             LocalDate start, LocalDate end) {
 
-        String jpql = &quot;&quot;&quot;
+        String jpql = """
             SELECT e
             FROM EmployeeEntity e
             WHERE e.joiningDate BETWEEN :start AND :end
             ORDER BY e.name
-            &quot;&quot;&quot;;
+            """;
 
         return entityManager
             .createQuery(jpql, EmployeeEntity.class)
-            .setParameter(&quot;start&quot;, start)
-            .setParameter(&quot;end&quot;, end)
+            .setParameter("start", start)
+            .setParameter("end", end)
             .getResultList();
     }
 
@@ -635,24 +793,24 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     public int updateSalaryByRole(
             String role, Double salary) {
 
-        return entityManager.createQuery(&quot;&quot;&quot;
+        return entityManager.createQuery("""
             UPDATE EmployeeEntity e
             SET e.salary = :salary
             WHERE e.role = :role
-            &quot;&quot;&quot;)
-            .setParameter(&quot;salary&quot;, salary)
-            .setParameter(&quot;role&quot;, role)
+            """)
+            .setParameter("salary", salary)
+            .setParameter("role", role)
             .executeUpdate();
     }
 
     @Override
     public int deleteByName(String name) {
 
-        return entityManager.createQuery(&quot;&quot;&quot;
+        return entityManager.createQuery("""
             DELETE FROM EmployeeEntity e
             WHERE e.name = :name
-            &quot;&quot;&quot;)
-            .setParameter(&quot;name&quot;, name)
+            """)
+            .setParameter("name", name)
             .executeUpdate();
     }
 }</code></pre></article><article class="codefile"><h3>12. <code>src/main/java/com/example/employee/dao/DepartmentDAO.java</code></h3><pre><code class="language-java">package com.example.employee.dao;
@@ -758,44 +916,44 @@ public interface EmployeeRepository
         Double salary, String role);
 
     // Positional parameter: ?1 = first argument.
-    @Query(&quot;&quot;&quot;
+    @Query("""
         SELECT e
         FROM EmployeeEntity e
         WHERE e.salary &gt;= ?1
-        &quot;&quot;&quot;)
+        """)
     List&lt;EmployeeEntity&gt; findByMinimumSalary(
         Double salary);
 
-    // Named parameter: :salary -&gt; @Param(&quot;salary&quot;).
-    @Query(&quot;&quot;&quot;
+    // Named parameter: :salary -&gt; @Param("salary").
+    @Query("""
         SELECT e
         FROM EmployeeEntity e
         WHERE e.salary &gt;= :salary
-        &quot;&quot;&quot;)
+        """)
     List&lt;EmployeeEntity&gt; findByMinimumSalaryNamed(
-        @Param(&quot;salary&quot;) Double salary);
+        @Param("salary") Double salary);
 
     // UPDATE requires @Modifying.
     @Modifying
-    @Query(&quot;&quot;&quot;
+    @Query("""
         UPDATE EmployeeEntity e
         SET e.salary = :salary
         WHERE e.role = :role
-        &quot;&quot;&quot;)
+        """)
     int updateSalaryByRole(
-        @Param(&quot;role&quot;) String role,
-        @Param(&quot;salary&quot;) Double salary);
+        @Param("role") String role,
+        @Param("salary") Double salary);
 
     // DELETE also requires @Modifying.
     @Modifying
-    @Query(&quot;&quot;&quot;
+    @Query("""
         DELETE FROM EmployeeEntity e
         WHERE e.name = :name
-        &quot;&quot;&quot;)
-    int deleteByName(@Param(&quot;name&quot;) String name);
+        """)
+    int deleteByName(@Param("name") String name);
 
     // Named query stored in META-INF/orm.xml.
-    @Query(name = &quot;Employee.findSeniorEmployees&quot;)
+    @Query(name = "Employee.findSeniorEmployees")
     List&lt;EmployeeEntity&gt; findSeniorEmployees();
 }</code></pre></article><article class="codefile"><h3>16. <code>src/main/java/com/example/employee/service/EmployeeService.java</code></h3><pre><code class="language-java">package com.example.employee.service;
 
@@ -847,7 +1005,7 @@ public class EmployeeServiceImpl
 
     /*
      * Programmatic transaction support.
-     * We depend on Spring&#x27;s common transaction abstraction.
+     * We depend on Spring's common transaction abstraction.
      */
     private final TransactionTemplate transactionTemplate;
 
@@ -919,7 +1077,7 @@ public class EmployeeServiceImpl
         /*
          * Uncomment to demonstrate rollback of BOTH operations:
          *
-         * throw new RuntimeException(&quot;Demo failure&quot;);
+         * throw new RuntimeException("Demo failure");
          */
     }
 
@@ -989,13 +1147,13 @@ public class EmployeeServiceImpl
         employeeDAO.addEmployee(new EmployeeDTO());
 
         // Explicit rollback rule for checked exception.
-        throw new Exception(&quot;Checked failure&quot;);
+        throw new Exception("Checked failure");
     }
 
     @Transactional(noRollbackFor = WarningException.class)
     public void warningExample() {
 
-        employeeDAO.deleteByName(&quot;demo&quot;);
+        employeeDAO.deleteByName("demo");
 
         // Configured not to trigger rollback by this rule.
         throw new WarningException();
@@ -1008,7 +1166,7 @@ public class EmployeeServiceImpl
             dto.getName().isBlank()) {
 
             throw new IllegalArgumentException(
-                &quot;Employee name is required&quot;);
+                "Employee name is required");
         }
     }
 
@@ -1035,7 +1193,7 @@ public class Application {
          */
         try (ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext(
-                    &quot;applicationContext.xml&quot;)) {
+                    "applicationContext.xml")) {
 
             EmployeeService service =
                 context.getBean(EmployeeService.class);
@@ -1043,8 +1201,8 @@ public class Application {
             EmployeeDTO employee =
                 new EmployeeDTO();
 
-            employee.setName(&quot;Rahul&quot;);
-            employee.setRole(&quot;Backend Developer&quot;);
+            employee.setName("Rahul");
+            employee.setRole("Backend Developer");
             employee.setSalary(75000.0);
             employee.setJoiningDate(LocalDate.now());
 
@@ -1052,7 +1210,7 @@ public class Application {
             Integer id = service.addEmployee(employee);
 
             System.out.println(
-                &quot;Created employee ID = &quot; + id);
+                "Created employee ID = " + id);
 
             /*
              * One business transaction containing:
@@ -1065,13 +1223,13 @@ public class Application {
             EmployeeDTO second =
                 new EmployeeDTO();
 
-            second.setName(&quot;Transaction Demo&quot;);
-            second.setRole(&quot;Developer&quot;);
+            second.setName("Transaction Demo");
+            second.setRole("Developer");
             second.setSalary(60000.0);
             second.setJoiningDate(LocalDate.now());
 
             service.createDepartmentWithEmployee(
-                &quot;Engineering&quot;, second);
+                "Engineering", second);
 
             /*
              * readOnly transaction.
@@ -1083,8 +1241,8 @@ public class Application {
 
             employees.forEach(e -&gt;
                 System.out.println(
-                    e.getName() + &quot; | &quot; +
-                    e.getRole() + &quot; | &quot; +
+                    e.getName() + " | " +
+                    e.getRole() + " | " +
                     e.getSalary()));
 
             /*
@@ -1093,8 +1251,8 @@ public class Application {
             EmployeeDTO third =
                 new EmployeeDTO();
 
-            third.setName(&quot;Programmatic Demo&quot;);
-            third.setRole(&quot;Developer&quot;);
+            third.setName("Programmatic Demo");
+            third.setRole("Developer");
             third.setSalary(65000.0);
             third.setJoiningDate(LocalDate.now());
 
@@ -1107,17 +1265,17 @@ public class Application {
 <section class="section">
 <h2>Final Architecture</h2>
 <pre class="mermaid">flowchart TD
-A["Application"] --> P["Spring Proxy"]
-P --> T["Transaction Manager"]
-T --> S["Service"]
-S --> W["DAO Wrapper"]
-W --> D["DAO"]
-S --> R["Spring Data Repository"]
-D --> EM["EntityManager"]
-R --> EM
-EM --> PC["Persistence Context"]
-PC --> DB[("Database")]
-T -. "COMMIT / ROLLBACK" .-> DB</pre>
+A["Application"] --&gt; P["Spring Proxy"]
+P --&gt; T["Transaction Manager"]
+T --&gt; S["Service"]
+S --&gt; W["DAO Wrapper"]
+W --&gt; D["DAO"]
+S --&gt; R["Spring Data Repository"]
+D --&gt; EM["EntityManager"]
+R --&gt; EM
+EM --&gt; PC["Persistence Context"]
+PC --&gt; DB[("Database")]
+T -. "COMMIT / ROLLBACK" .-&gt; DB</pre>
 <pre>REQUIRED      = join existing / create if absent
 REQUIRES_NEW  = suspend existing / start independent
 MANDATORY     = transaction must already exist
