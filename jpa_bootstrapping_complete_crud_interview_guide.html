@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPA CRUD — Complete Visual Guide</title>
+
+  <!-- Mermaid is used only to turn the diagram code into SVG diagrams. -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #18202a;
+      --muted: #667085;
+      --border: #dfe5ec;
+      --accent: #6d28d9;
+      --accent2: #2563eb;
+      --code: #111827;
+      --shadow: 0 12px 35px rgba(15, 23, 42, .08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #312e81 55%, #6d28d9);
+      color: white;
+      padding: 42px 24px 34px;
+    }
+
+    header .wrap, main { max-width: 1250px; margin: auto; }
+
+    h1 { margin: 0 0 8px; font-size: clamp(30px, 5vw, 52px); }
+    h2 { margin-top: 0; font-size: 27px; }
+    h3 { margin-bottom: 8px; }
+    p { margin-top: 7px; }
+
+    .subtitle { color: #e5e7eb; max-width: 900px; font-size: 17px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .chip {
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.10);
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    main { padding: 28px 20px 80px; }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px;
+      background: #fbfcfe;
+    }
+
+    .card strong { color: #312e81; }
+
+    .diagram {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      padding: 20px;
+      margin-top: 14px;
+    }
+
+    .diagram svg { max-width: 100%; height: auto; }
+
+    pre {
+      background: var(--code);
+      color: #e5e7eb;
+      padding: 18px;
+      border-radius: 14px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.55;
+      border: 1px solid #273244;
+    }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    }
+
+    .inline-code {
+      background: #f0ebff;
+      color: #5b21b6;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    .flow > div {
+      border: 1px solid #cfd8e3;
+      padding: 13px;
+      border-radius: 12px;
+      text-align: center;
+      background: #f8fafc;
+      font-weight: 650;
+    }
+
+    .arrow { text-align: center; font-size: 24px; color: var(--accent); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #f4f1ff; }
+
+    .warning {
+      border-left: 5px solid #f59e0b;
+      background: #fffbeb;
+      padding: 13px 16px;
+      border-radius: 10px;
+      margin: 12px 0;
+    }
+
+    .good {
+      border-left: 5px solid #10b981;
+      background: #ecfdf5;
+      padding: 13px 16px;
+      border-radius: 10px;
+      margin: 12px 0;
+    }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(245,247,251,.92);
+      backdrop-filter: blur(12px);
+      padding: 10px 0;
+    }
+
+    .toc-inner {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 0 20px;
+    }
+
+    .toc a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: #374151;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 13px;
+    }
+
+    .toc a:hover { color: var(--accent); border-color: #b9a3ed; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin: 10px 0;
+      background: #fff;
+    }
+
+    summary { cursor: pointer; font-weight: 700; }
+
+    footer {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 0 20px 50px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .section { padding: 18px; }
+      pre { font-size: 12px; }
+    }
+  </style>
+
+<style id="mobile-fix">
+html, body { max-width:100%; overflow-x:hidden !important; }
+*, *::before, *::after { box-sizing:border-box; }
+main, header, nav, footer, .wrap, .section { min-width:0; max-width:100%; }
+pre { max-width:100%; overflow-x:auto !important; white-space:pre-wrap !important; overflow-wrap:anywhere; word-break:break-word; }
+code { overflow-wrap:anywhere; word-break:break-word; }
+.diagram { max-width:100%; overflow-x:auto; overflow-y:hidden; }
+.diagram svg, .mermaid svg { max-width:100% !important; height:auto !important; }
+img, iframe, svg { max-width:100%; }
+@media (max-width:700px) {
+  .section { width:100%; padding:18px; }
+  .toc-inner { max-width:100%; }
+  h1, h2, h3, p, li, summary { overflow-wrap:anywhere; word-break:break-word; }
+  pre { font-size:12px; }
+}
+.home-button { display:inline-flex; align-items:center; gap:7px; text-decoration:none; margin-bottom:16px; padding:9px 14px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.12); color:inherit; font-weight:700; }
+</style>
+</head>
+
+<body>
+
+<header id="top">
+  <div class="wrap">
+    <a class="home-button" href="#top">← Home</a>
+    <h1>JPA CRUD — One Complete Project</h1>
+    <div class="subtitle">
+      Employee Management System covering ORM, JPA, persistence.xml,
+      EntityManagerFactory, EntityManager, Entity lifecycle, DTO, DAO,
+      Service, Factory/Utility, transactions and complete CRUD using
+      persist(), find(), JPQL, merge(), dirty checking and remove().
+    </div>
+    <div class="chips">
+      <span class="chip">JPA 2.2</span>
+      <span class="chip">Hibernate</span>
+      <span class="chip">MySQL</span>
+      <span class="chip">Layered Architecture</span>
+      <span class="chip">Complete CRUD</span>
+      <span class="chip">Mermaid SVG Diagrams</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#architecture">Architecture</a>
+    <a href="#bootstrap">Bootstrapping</a>
+    <a href="#entity">Entity</a>
+    <a href="#crud">CRUD</a>
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#dto">DTO</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#code">Complete Code</a>
+    <a href="#traps">Interview Traps</a>
+  </div>
+</nav>
+
+<main>
+
+<section class="section" id="architecture">
+  <span class="badge">01 — BIG PICTURE</span>
+  <h2>Complete Layered Architecture</h2>
+  <p>
+    This is the same style of architecture as the reference image, but generated
+    entirely from Mermaid code and rendered as an SVG diagram in the browser.
+  </p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    UI["1. UI / Presentation Layer<br/>UITester.java"]
+    SERVICE["2. Service Layer<br/>EmployeeService.java<br/>EmployeeServiceImpl.java"]
+    FACTORY["3. Utility Layer<br/>Factory.java"]
+    DAO["4. DAO Layer<br/>EmployeeDAO.java<br/>EmployeeDAOImpl.java"]
+    JPA["5. JPA / ORM Layer"]
+    EMF["EntityManagerFactory"]
+    EM["EntityManager"]
+    ENTITY["EmployeeEntity.java<br/>@Entity"]
+    DB[("6. MySQL Database")]
+
+    UI -->|"1. calls"| SERVICE
+    SERVICE -->|"2. obtains/uses DAO"| FACTORY
+    FACTORY -->|"3. creates"| DAO
+    DAO -->|"4. obtains EMF"| FACTORY
+    FACTORY -->|"5. provides"| EMF
+    EMF -->|"6. creates"| EM
+    EM -->|"7. manages"| ENTITY
+    EM -->|"8. executes SQL"| DB
+
+    UI -. "Carries EmployeeDTO data" .-> SERVICE
+    SERVICE -. "Business rules" .-> DAO
+    DAO -. "CRUD" .-> EM
+    </div>
+  </div>
+
+  <div class="good">
+    <strong>Memory:</strong>
+    UI → Service → DAO → EntityManager → Hibernate → Database.
+    EntityManagerFactory is the factory that creates EntityManagers.
+  </div>
+</section>
+
+<section class="section">
+  <span class="badge">02 — BOOTSTRAPPING</span>
+  <h2>How a JPA Program Starts</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    XML["META-INF/persistence.xml"]
+    P["Persistence"]
+    PU["Persistence Unit<br/>employeePU"]
+    EMF["EntityManagerFactory"]
+    EM1["EntityManager"]
+    EM2["EntityManager"]
+    XML --> P
+    P --> PU
+    PU --> EMF
+    EMF --> EM1
+    EMF --> EM2
+    </div>
+  </div>
+
+  <pre><code>EntityManagerFactory emf =
+    Persistence.createEntityManagerFactory("employeePU");
+
+EntityManager em =
+    emf.createEntityManager();</code></pre>
+
+  <div class="grid">
+    <div class="card">
+      <h3>EntityManagerFactory</h3>
+      <p>A heavyweight factory associated with a persistence unit. It creates EntityManager instances.</p>
+    </div>
+    <div class="card">
+      <h3>EntityManager</h3>
+      <p>Works with the persistence context and provides persist, find, merge, remove and query operations.</p>
+    </div>
+    <div class="card">
+      <h3>persistence.xml</h3>
+      <p>Contains persistence-unit configuration such as provider, database properties and managed entity classes.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="entity">
+  <span class="badge">03 — ENTITY</span>
+  <h2>Java Entity → Database Table</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    JAVA["Employee.java<br/>@Entity"]
+    MAPPING["JPA Mapping<br/>@Table @Id @Column"]
+    HIB["Hibernate"]
+    TABLE[("employee table<br/>employee_id<br/>employee_name<br/>role<br/>salary<br/>joining_date")]
+    JAVA --> MAPPING --> HIB --> TABLE
+    </div>
+  </div>
+
+  <pre><code>@Entity
+@Table(name = "employee")
+public class Employee {
+
+    @Id
+    @Column(name = "employee_id")
+    private int employeeId;
+
+    @Column(name = "employee_name")
+    private String employeeName;
+
+    @Column(name = "role")
+    private String role;
+
+    private double salary;
+
+    @Temporal(TemporalType.DATE)
+    private Date joiningDate;
+}</code></pre>
+</section>
+
+<section class="section" id="crud">
+  <span class="badge">04 — CRUD</span>
+  <h2>Complete CRUD Flow</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    C["CREATE"] --> P["persist(entity)"]
+    P --> I["INSERT"]
+    I --> DB[("Database")]
+
+    R["READ"] --> F["find(Entity.class, id)"]
+    F --> S["SELECT by Primary Key"]
+    S --> DB
+
+    RA["READ ALL"] --> Q["JPQL createQuery()"]
+    Q --> S2["SELECT entities"]
+    S2 --> DB
+
+    U["UPDATE"] --> D["Managed entity + Dirty Checking"]
+    U --> M["Detached entity + merge()"]
+    D --> UP["UPDATE"]
+    M --> UP
+    UP --> DB
+
+    DE["DELETE"] --> RF["find()"]
+    RF --> RM["remove(managedEntity)"]
+    RM --> DEL["DELETE"]
+    DEL --> DB
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Operation</th><th>JPA API</th><th>What it means</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Create</td><td><code>persist()</code></td><td>Makes a new entity managed and schedules insertion.</td></tr>
+      <tr><td>Read one</td><td><code>find()</code></td><td>Finds an entity using its primary-key value.</td></tr>
+      <tr><td>Read all</td><td><code>createQuery()</code></td><td>Runs JPQL and returns entities.</td></tr>
+      <tr><td>Update managed</td><td>Dirty checking</td><td>Change a managed entity; JPA detects the change at flush/commit.</td></tr>
+      <tr><td>Update detached</td><td><code>merge()</code></td><td>Copies detached state into a managed instance.</td></tr>
+      <tr><td>Delete</td><td><code>remove()</code></td><td>Marks a managed entity for deletion.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <span class="badge">05 — CREATE</span>
+  <h2>Persist Operation</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    participant UI as UITester
+    participant S as EmployeeService
+    participant D as EmployeeDAO
+    participant EM as EntityManager
+    participant H as Hibernate
+    participant DB as MySQL
+
+    UI->>S: createEmployee(employee)
+    S->>D: save(employee)
+    D->>EM: begin()
+    D->>EM: persist(employee)
+    EM->>H: synchronize persistence context
+    D->>EM: commit()
+    H->>DB: INSERT employee
+    DB-->>H: success
+    H-->>EM: success
+    EM-->>D: success
+    D-->>S: success
+    S-->>UI: created
+    </div>
+  </div>
+
+  <pre><code>em.getTransaction().begin();
+
+em.persist(employee);
+
+em.getTransaction().commit();</code></pre>
+
+  <p>
+    <code class="inline-code">persist()</code> does not mean "directly execute INSERT right now".
+    It makes the entity managed; Hibernate synchronizes changes with the database when the persistence
+    context is flushed, commonly at transaction commit.
+  </p>
+</section>
+
+<section class="section">
+  <span class="badge">06 — READ</span>
+  <h2>Find Operation</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    participant UI as UITester
+    participant S as Service
+    participant D as DAO
+    participant EM as EntityManager
+    participant DB as MySQL
+
+    UI->>S: getEmployee(1)
+    S->>D: findById(1)
+    D->>EM: find(Employee.class, 1)
+    EM->>DB: SELECT by employee_id = 1
+    DB-->>EM: row
+    EM-->>D: Employee
+    D-->>S: Employee
+    S-->>UI: Employee
+    </div>
+  </div>
+
+  <pre><code>Employee employee =
+    em.find(Employee.class, 1);</code></pre>
+
+  <div class="warning">
+    <strong>Important:</strong> The second argument is the value of the entity's
+    <code>@Id</code>, not an arbitrary column value.
+  </div>
+</section>
+
+<section class="section">
+  <span class="badge">07 — READ ALL</span>
+  <h2>JPQL Query</h2>
+
+  <pre><code>List&lt;Employee&gt; employees =
+    em.createQuery(
+        "SELECT e FROM Employee e",
+        Employee.class
+    ).getResultList();</code></pre>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    JPQL["JPQL<br/>SELECT e FROM Employee e"]
+    H["Hibernate"]
+    SQL["SQL<br/>SELECT ... FROM employee"]
+    DB[("MySQL")]
+    RESULT["List&lt;Employee&gt;"]
+    JPQL --> H --> SQL --> DB --> H --> RESULT
+    </div>
+  </div>
+
+  <p><strong>JPQL talks about entities and their fields, not database tables directly.</strong></p>
+</section>
+
+<section class="section">
+  <span class="badge">08 — UPDATE</span>
+  <h2>Dirty Checking vs merge()</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Managed entity</h3>
+      <pre><code>em.getTransaction().begin();
+
+Employee e =
+    em.find(Employee.class, 1);
+
+e.setSalary(75000);
+
+em.getTransaction().commit();</code></pre>
+      <p>No <code>update()</code> call is required. Hibernate detects the changed state during dirty checking.</p>
+    </div>
+
+    <div class="card">
+      <h3>Detached entity</h3>
+      <pre><code>em.getTransaction().begin();
+
+em.merge(employee);
+
+em.getTransaction().commit();</code></pre>
+      <p><code>merge()</code> copies the state into a managed instance.</p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    F["find()"] --> MAN["MANAGED"]
+    MAN --> CHANGE["setSalary(75000)"]
+    CHANGE --> DIRTY["Dirty Checking"]
+    DIRTY --> UPDATE["UPDATE SQL"]
+
+    DET["DETACHED"] --> MERGE["merge()"]
+    MERGE --> MAN2["MANAGED COPY"]
+    MAN2 --> UPDATE2["UPDATE SQL"]
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="badge">09 — DELETE</span>
+  <h2>Remove Operation</h2>
+
+  <pre><code>em.getTransaction().begin();
+
+Employee employee =
+    em.find(Employee.class, id);
+
+if (employee != null) {
+    em.remove(employee);
+}
+
+em.getTransaction().commit();</code></pre>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    ID["Primary Key"] --> FIND["find()"]
+    FIND --> MANAGED["Managed Employee"]
+    MANAGED --> REMOVE["remove()"]
+    REMOVE --> COMMIT["commit()"]
+    COMMIT --> SQL["DELETE SQL"]
+    SQL --> DB[("MySQL")]
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>Trap:</strong> <code>remove()</code> should be applied to a managed entity.
+    A common safe pattern is find → remove → commit.
+  </div>
+</section>
+
+<section class="section" id="lifecycle">
+  <span class="badge">10 — ENTITY LIFECYCLE</span>
+  <h2>Entity Life Cycle</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+stateDiagram-v2
+    [*] --> Transient: new Employee()
+    Transient --> Managed: persist()
+    Managed --> Detached: detach() / clear() / close()
+    Detached --> Managed: merge()
+    Managed --> Removed: remove()
+    Removed --> [*]: commit / flush
+
+    note right of Transient
+      Not tracked by persistence context
+    end note
+
+    note right of Managed
+      Tracked by persistence context
+      Dirty checking applies
+    end note
+
+    note right of Detached
+      Object exists but is not
+      currently tracked
+    end note
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>State</th><th>Meaning</th><th>Typical transition</th></tr></thead>
+    <tbody>
+      <tr><td>Transient</td><td>New Java object, not managed.</td><td><code>persist()</code> → Managed</td></tr>
+      <tr><td>Managed</td><td>Tracked by the persistence context.</td><td>Dirty checking / remove / detach</td></tr>
+      <tr><td>Detached</td><td>Previously managed but no longer tracked.</td><td><code>merge()</code> → Managed</td></tr>
+      <tr><td>Removed</td><td>Managed entity marked for deletion.</td><td>commit/flush → database DELETE</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section" id="dto">
+  <span class="badge">11 — DTO</span>
+  <h2>DTO and Entity Flow</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    CLIENT["UI / Client"]
+    REQ["EmployeeDTO<br/>Request"]
+    SERVICE["Service"]
+    ENTITY["Employee Entity"]
+    DAO["DAO"]
+    EM["EntityManager"]
+    DB[("Database")]
+    RESP["EmployeeDTO<br/>Response"]
+
+    CLIENT --> REQ --> SERVICE
+    SERVICE --> ENTITY --> DAO --> EM --> DB
+    DB --> EM --> DAO --> ENTITY --> SERVICE --> RESP --> CLIENT
+    </div>
+  </div>
+
+  <div class="good">
+    DTO is a data-transfer model. Entity is the persistence model. In a larger application,
+    keeping them separate prevents database-specific details from leaking into the API layer.
+  </div>
+</section>
+
+<section class="section" id="transactions">
+  <span class="badge">12 — TRANSACTIONS</span>
+  <h2>Transaction Flow</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    BEGIN["begin()"]
+    OP["JPA operation<br/>persist / merge / remove"]
+    FLUSH["Persistence context flush"]
+    SQL["Hibernate generates SQL"]
+    COMMIT["commit()"]
+    ROLLBACK["rollback()"]
+    DB[("Database")]
+
+    BEGIN --> OP --> FLUSH --> SQL --> DB
+    DB --> COMMIT
+    OP -. "Exception" .-> ROLLBACK
+    ROLLBACK -. "undo transaction" .-> DB
+    </div>
+  </div>
+
+  <pre><code>try {
+
+    em.getTransaction().begin();
+
+    em.persist(employee);
+
+    em.getTransaction().commit();
+
+} catch (Exception e) {
+
+    if (em.getTransaction().isActive()) {
+        em.getTransaction().rollback();
+    }
+
+    throw e;
+
+} finally {
+
+    em.close();
+}</code></pre>
+</section>
+
+<section class="section">
+  <span class="badge">13 — COMPONENT RESPONSIBILITIES</span>
+  <h2>Who Does What?</h2>
+
+  <table>
+    <thead>
+      <tr><th>Component</th><th>Responsibility</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>UI / Tester</td><td>Starts the operation and displays the result.</td></tr>
+      <tr><td>DTO</td><td>Carries data between application layers.</td></tr>
+      <tr><td>Service</td><td>Contains business rules and orchestrates operations.</td></tr>
+      <tr><td>DAO</td><td>Contains persistence/database access logic.</td></tr>
+      <tr><td>Factory / Utility</td><td>Centralizes object creation/configuration.</td></tr>
+      <tr><td>EntityManagerFactory</td><td>Creates EntityManagers for a persistence unit.</td></tr>
+      <tr><td>EntityManager</td><td>Manages persistence context and JPA operations.</td></tr>
+      <tr><td>Entity</td><td>Java representation of persistent data.</td></tr>
+      <tr><td>Hibernate</td><td>JPA provider/ORM implementation that generates database interaction.</td></tr>
+      <tr><td>MySQL</td><td>Stores the persistent rows.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <span class="badge">14 — PROJECT CALL FLOW</span>
+  <h2>What Actually Happens During a Create?</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant UI as UITester.java
+    participant S as EmployeeServiceImpl.java
+    participant D as EmployeeDAOImpl.java
+    participant U as JPAUtility.java
+    participant F as EntityManagerFactory
+    participant EM as EntityManager
+    participant E as Employee Entity
+    participant H as Hibernate
+    participant DB as MySQL
+
+    UI->>S: createEmployee(EmployeeDTO)
+    S->>S: validate business rules
+    S->>D: save(Employee)
+    D->>U: getEntityManager()
+    U->>F: createEntityManager()
+    F-->>U: EntityManager
+    U-->>D: EntityManager
+    D->>EM: begin()
+    D->>EM: persist(Employee)
+    EM->>E: add to persistence context
+    D->>EM: commit()
+    EM->>H: flush changes
+    H->>DB: INSERT
+    DB-->>H: success
+    H-->>EM: success
+    EM-->>D: success
+    D-->>S: success
+    S-->>UI: success response
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <span class="badge">15 — COMPLETE CODE MAP</span>
+  <h2>How the Files Connect</h2>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    MAIN["Main.java / UITester.java"]
+    DTO["EmployeeDTO.java"]
+    SI["EmployeeService.java"]
+    S["EmployeeServiceImpl.java"]
+    DI["EmployeeDAO.java"]
+    D["EmployeeDAOImpl.java"]
+    F["Factory.java"]
+    U["JPAUtility.java"]
+    E["Employee.java / EmployeeEntity.java"]
+    XML["persistence.xml"]
+    EMF["EntityManagerFactory"]
+    EM["EntityManager"]
+    DB[("MySQL")]
+
+    MAIN --> DTO
+    MAIN --> S
+    S -. implements .-> SI
+    S --> D
+    D -. implements .-> DI
+    D --> F
+    F --> U
+    U --> XML
+    U --> EMF
+    EMF --> EM
+    EM --> E
+    EM --> DB
+    DTO -. "data mapping" .-> E
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="complete-code">
+  <span class="badge">16A — COMPLETE PROJECT CODE</span>
+  <h2>Every File — persistence.xml → UI Tester</h2>
+
+  <p>
+    This is the complete runnable version of the same Employee CRUD project.
+    The code is intentionally kept in the same order in which the application
+    is understood: Maven → persistence.xml → Entity → DTO → Utility → DAO →
+    Service → UI Tester.
+  </p>
+
+  <div class="warning">
+    <strong>Before running:</strong> create the MySQL database
+    <code>employee_db</code>, change the username/password in
+    <code>persistence.xml</code>, then run <code>UITester.java</code>.
+  </div>
+
+  <h3>1. Project Structure</h3>
+
+  <pre><code>EmployeeManagement/
+│
+├── pom.xml
+│
+└── src/
+    └── main/
+        ├── java/
+        │   └── com/example/
+        │       ├── entity/
+        │       │   └── EmployeeEntity.java
+        │       │
+        │       ├── dto/
+        │       │   └── EmployeeDTO.java
+        │       │
+        │       ├── dao/
+        │       │   ├── EmployeeDAO.java
+        │       │   └── EmployeeDAOImpl.java
+        │       │
+        │       ├── service/
+        │       │   ├── EmployeeService.java
+        │       │   └── EmployeeServiceImpl.java
+        │       │
+        │       └── utility/
+        │           ├── JPAUtility.java
+        │           └── Factory.java
+        │
+        │       └── UITester.java
+        │
+        └── resources/
+            └── META-INF/
+                └── persistence.xml</code></pre>
+
+  <h3>2. Database SQL</h3>
+
+  <pre><code>CREATE DATABASE employee_db;
+
+USE employee_db;
+
+CREATE TABLE employee (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(100) NOT NULL,
+    role VARCHAR(100),
+    salary DOUBLE,
+    joining_date DATE
+);</code></pre>
+
+  <h3>3. pom.xml</h3>
+
+  <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;EmployeeManagement&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;8&lt;/maven.compiler.target&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+
+        &lt;!-- JPA API --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+            &lt;artifactId&gt;javax.persistence-api&lt;/artifactId&gt;
+            &lt;version&gt;2.2&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Hibernate JPA implementation --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+            &lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+            &lt;version&gt;5.6.15.Final&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- MySQL JDBC Driver --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.33&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    &lt;/dependencies&gt;
+
+&lt;/project&gt;</code></pre>
+
+  <h3>4. persistence.xml</h3>
+
+  <p>
+    Location:
+    <code class="inline-code">src/main/resources/META-INF/persistence.xml</code>
+  </p>
+
+  <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;persistence
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://xmlns.jcp.org/xml/ns/persistence
+        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+    version="2.2"&gt;
+
+    &lt;persistence-unit name="employeePU"&gt;
+
+        &lt;provider&gt;
+            org.hibernate.jpa.HibernatePersistenceProvider
+        &lt;/provider&gt;
+
+        &lt;class&gt;com.example.entity.EmployeeEntity&lt;/class&gt;
+
+        &lt;properties&gt;
+
+            &lt;property
+                name="javax.persistence.jdbc.driver"
+                value="com.mysql.cj.jdbc.Driver"/&gt;
+
+            &lt;property
+                name="javax.persistence.jdbc.url"
+                value="jdbc:mysql://localhost:3306/employee_db"/&gt;
+
+            &lt;property
+                name="javax.persistence.jdbc.user"
+                value="root"/&gt;
+
+            &lt;property
+                name="javax.persistence.jdbc.password"
+                value="root"/&gt;
+
+            &lt;property
+                name="hibernate.dialect"
+                value="org.hibernate.dialect.MySQL8Dialect"/&gt;
+
+            &lt;property
+                name="hibernate.show_sql"
+                value="true"/&gt;
+
+            &lt;property
+                name="hibernate.format_sql"
+                value="true"/&gt;
+
+        &lt;/properties&gt;
+
+    &lt;/persistence-unit&gt;
+
+&lt;/persistence&gt;</code></pre>
+
+  <div class="good">
+    <strong>Connection:</strong>
+    <code>employeePU</code> here must exactly match
+    <code>Persistence.createEntityManagerFactory("employeePU")</code>.
+  </div>
+
+  <h3>5. EmployeeEntity.java</h3>
+
+  <pre><code>package com.example.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import java.util.Date;
+
+@Entity
+@Table(name = "employee")
+public class EmployeeEntity {
+
+    @Id
+    @Column(name = "employee_id")
+    private int employeeId;
+
+    @Column(name = "employee_name")
+    private String employeeName;
+
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "salary")
+    private double salary;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "joining_date")
+    private Date joiningDate;
+
+    public EmployeeEntity() {
+    }
+
+    public EmployeeEntity(
+            int employeeId,
+            String employeeName,
+            String role,
+            double salary,
+            Date joiningDate) {
+
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.role = role;
+        this.salary = salary;
+        this.joiningDate = joiningDate;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public Date getJoiningDate() {
+        return joiningDate;
+    }
+
+    public void setJoiningDate(Date joiningDate) {
+        this.joiningDate = joiningDate;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeEntity{" +
+                "employeeId=" + employeeId +
+                ", employeeName='" + employeeName + '\'' +
+                ", role='" + role + '\'' +
+                ", salary=" + salary +
+                ", joiningDate=" + joiningDate +
+                '}';
+    }
+}</code></pre>
+
+  <h3>6. EmployeeDTO.java</h3>
+
+  <pre><code>package com.example.dto;
+
+import java.util.Date;
+
+public class EmployeeDTO {
+
+    private int employeeId;
+    private String employeeName;
+    private String role;
+    private double salary;
+    private Date joiningDate;
+
+    public EmployeeDTO() {
+    }
+
+    public EmployeeDTO(
+            int employeeId,
+            String employeeName,
+            String role,
+            double salary,
+            Date joiningDate) {
+
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.role = role;
+        this.salary = salary;
+        this.joiningDate = joiningDate;
+    }
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public Date getJoiningDate() {
+        return joiningDate;
+    }
+
+    public void setJoiningDate(Date joiningDate) {
+        this.joiningDate = joiningDate;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeDTO{" +
+                "employeeId=" + employeeId +
+                ", employeeName='" + employeeName + '\'' +
+                ", role='" + role + '\'' +
+                ", salary=" + salary +
+                ", joiningDate=" + joiningDate +
+                '}';
+    }
+}</code></pre>
+
+  <h3>7. JPAUtility.java</h3>
+
+  <p>
+    This class centralizes the EntityManagerFactory and EntityManager creation.
+  </p>
+
+  <pre><code>package com.example.utility;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public final class JPAUtility {
+
+    private static final EntityManagerFactory EMF =
+            Persistence.createEntityManagerFactory("employeePU");
+
+    private JPAUtility() {
+        // Utility class - do not create objects.
+    }
+
+    public static EntityManager getEntityManager() {
+        return EMF.createEntityManager();
+    }
+
+    public static EntityManagerFactory getEntityManagerFactory() {
+        return EMF;
+    }
+
+    public static void close() {
+        if (EMF.isOpen()) {
+            EMF.close();
+        }
+    }
+}</code></pre>
+
+  <h3>8. Factory.java</h3>
+
+  <p>
+    The Factory hides DAO implementation creation from the Service layer.
+  </p>
+
+  <pre><code>package com.example.utility;
+
+import com.example.dao.EmployeeDAO;
+import com.example.dao.EmployeeDAOImpl;
+
+public final class Factory {
+
+    private Factory() {
+        // Utility class - do not create objects.
+    }
+
+    public static EmployeeDAO getEmployeeDAO() {
+        return new EmployeeDAOImpl();
+    }
+}</code></pre>
+
+  <h3>9. EmployeeDAO.java</h3>
+
+  <pre><code>package com.example.dao;
+
+import com.example.entity.EmployeeEntity;
+
+import java.util.List;
+
+public interface EmployeeDAO {
+
+    void save(EmployeeEntity employee);
+
+    EmployeeEntity findById(int id);
+
+    List&lt;EmployeeEntity&gt; findAll();
+
+    void update(EmployeeEntity employee);
+
+    void delete(int id);
+}</code></pre>
+
+  <h3>10. EmployeeDAOImpl.java — Complete CRUD</h3>
+
+  <pre><code>package com.example.dao;
+
+import com.example.entity.EmployeeEntity;
+import com.example.utility.JPAUtility;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+public class EmployeeDAOImpl implements EmployeeDAO {
+
+    @Override
+    public void save(EmployeeEntity employee) {
+
+        EntityManager em =
+                JPAUtility.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            em.persist(employee);
+
+            em.getTransaction().commit();
+
+        } catch (RuntimeException e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public EmployeeEntity findById(int id) {
+
+        EntityManager em =
+                JPAUtility.getEntityManager();
+
+        try {
+            return em.find(EmployeeEntity.class, id);
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List&lt;EmployeeEntity&gt; findAll() {
+
+        EntityManager em =
+                JPAUtility.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT e FROM EmployeeEntity e",
+                    EmployeeEntity.class
+            ).getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void update(EmployeeEntity employee) {
+
+        EntityManager em =
+                JPAUtility.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            em.merge(employee);
+
+            em.getTransaction().commit();
+
+        } catch (RuntimeException e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+
+        EntityManager em =
+                JPAUtility.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            EmployeeEntity employee =
+                    em.find(EmployeeEntity.class, id);
+
+            if (employee != null) {
+                em.remove(employee);
+            }
+
+            em.getTransaction().commit();
+
+        } catch (RuntimeException e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+}</code></pre>
+
+  <h3>11. EmployeeService.java</h3>
+
+  <pre><code>package com.example.service;
+
+import com.example.dto.EmployeeDTO;
+
+import java.util.List;
+
+public interface EmployeeService {
+
+    void createEmployee(EmployeeDTO dto);
+
+    EmployeeDTO getEmployee(int id);
+
+    List&lt;EmployeeDTO&gt; getAllEmployees();
+
+    void updateEmployee(EmployeeDTO dto);
+
+    void deleteEmployee(int id);
+}</code></pre>
+
+  <h3>12. EmployeeServiceImpl.java</h3>
+
+  <pre><code>package com.example.service;
+
+import com.example.dao.EmployeeDAO;
+import com.example.dto.EmployeeDTO;
+import com.example.entity.EmployeeEntity;
+import com.example.utility.Factory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeServiceImpl
+        implements EmployeeService {
+
+    private final EmployeeDAO employeeDAO;
+
+    public EmployeeServiceImpl() {
+
+        employeeDAO =
+                Factory.getEmployeeDAO();
+    }
+
+    @Override
+    public void createEmployee(EmployeeDTO dto) {
+
+        validate(dto);
+
+        EmployeeEntity employee =
+                toEntity(dto);
+
+        employeeDAO.save(employee);
+    }
+
+    @Override
+    public EmployeeDTO getEmployee(int id) {
+
+        EmployeeEntity employee =
+                employeeDAO.findById(id);
+
+        if (employee == null) {
+            return null;
+        }
+
+        return toDTO(employee);
+    }
+
+    @Override
+    public List&lt;EmployeeDTO&gt; getAllEmployees() {
+
+        List&lt;EmployeeEntity&gt; entities =
+                employeeDAO.findAll();
+
+        List&lt;EmployeeDTO&gt; result =
+                new ArrayList&lt;&gt;();
+
+        for (EmployeeEntity entity : entities) {
+            result.add(toDTO(entity));
+        }
+
+        return result;
+    }
+
+    @Override
+    public void updateEmployee(EmployeeDTO dto) {
+
+        validate(dto);
+
+        EmployeeEntity employee =
+                toEntity(dto);
+
+        employeeDAO.update(employee);
+    }
+
+    @Override
+    public void deleteEmployee(int id) {
+
+        EmployeeEntity employee =
+                employeeDAO.findById(id);
+
+        if (employee == null) {
+            throw new IllegalArgumentException(
+                    "Employee with ID " + id +
+                    " does not exist."
+            );
+        }
+
+        employeeDAO.delete(id);
+    }
+
+    private void validate(EmployeeDTO dto) {
+
+        if (dto == null) {
+            throw new IllegalArgumentException(
+                    "Employee data cannot be null."
+            );
+        }
+
+        if (dto.getEmployeeId() &lt;= 0) {
+            throw new IllegalArgumentException(
+                    "Employee ID must be positive."
+            );
+        }
+
+        if (dto.getEmployeeName() == null ||
+                dto.getEmployeeName().trim().isEmpty()) {
+
+            throw new IllegalArgumentException(
+                    "Employee name is required."
+            );
+        }
+
+        if (dto.getSalary() &lt; 0) {
+            throw new IllegalArgumentException(
+                    "Salary cannot be negative."
+            );
+        }
+    }
+
+    private EmployeeEntity toEntity(
+            EmployeeDTO dto) {
+
+        return new EmployeeEntity(
+                dto.getEmployeeId(),
+                dto.getEmployeeName(),
+                dto.getRole(),
+                dto.getSalary(),
+                dto.getJoiningDate()
+        );
+    }
+
+    private EmployeeDTO toDTO(
+            EmployeeEntity entity) {
+
+        return new EmployeeDTO(
+                entity.getEmployeeId(),
+                entity.getEmployeeName(),
+                entity.getRole(),
+                entity.getSalary(),
+                entity.getJoiningDate()
+        );
+    }
+}</code></pre>
+
+  <h3>13. UITester.java — Complete CREATE / READ / UPDATE / DELETE</h3>
+
+  <pre><code>package com.example;
+
+import com.example.dto.EmployeeDTO;
+import com.example.service.EmployeeService;
+import com.example.service.EmployeeServiceImpl;
+import com.example.utility.JPAUtility;
+
+import java.util.Date;
+import java.util.List;
+
+public class UITester {
+
+    public static void main(String[] args) {
+
+        EmployeeService service =
+                new EmployeeServiceImpl();
+
+        try {
+
+            // =================================================
+            // 1. CREATE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== CREATE =========="
+            );
+
+            EmployeeDTO employee =
+                    new EmployeeDTO(
+                            1001,
+                            "Rahul",
+                            "Java Developer",
+                            50000.00,
+                            new Date()
+                    );
+
+            service.createEmployee(employee);
+
+            System.out.println(
+                    "Employee created successfully!"
+            );
+
+
+            // =================================================
+            // 2. READ ONE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== READ ONE =========="
+            );
+
+            EmployeeDTO found =
+                    service.getEmployee(1001);
+
+            if (found != null) {
+
+                System.out.println(
+                        "Employee found:"
+                );
+
+                System.out.println(found);
+
+            } else {
+
+                System.out.println(
+                        "Employee not found."
+                );
+            }
+
+
+            // =================================================
+            // 3. READ ALL
+            // =================================================
+
+            System.out.println(
+                    "\\n========== READ ALL =========="
+            );
+
+            List&lt;EmployeeDTO&gt; employees =
+                    service.getAllEmployees();
+
+            for (EmployeeDTO dto : employees) {
+                System.out.println(dto);
+            }
+
+
+            // =================================================
+            // 4. UPDATE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== UPDATE =========="
+            );
+
+            EmployeeDTO employeeToUpdate =
+                    service.getEmployee(1001);
+
+            if (employeeToUpdate != null) {
+
+                employeeToUpdate.setSalary(
+                        75000.00
+                );
+
+                employeeToUpdate.setRole(
+                        "Senior Java Developer"
+                );
+
+                service.updateEmployee(
+                        employeeToUpdate
+                );
+
+                System.out.println(
+                        "Employee updated successfully!"
+                );
+            }
+
+
+            // =================================================
+            // 5. READ AFTER UPDATE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== READ AFTER UPDATE =========="
+            );
+
+            EmployeeDTO updated =
+                    service.getEmployee(1001);
+
+            System.out.println(updated);
+
+
+            // =================================================
+            // 6. DELETE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== DELETE =========="
+            );
+
+            service.deleteEmployee(1001);
+
+            System.out.println(
+                    "Employee deleted successfully!"
+            );
+
+
+            // =================================================
+            // 7. VERIFY DELETE
+            // =================================================
+
+            System.out.println(
+                    "\\n========== VERIFY DELETE =========="
+            );
+
+            EmployeeDTO deleted =
+                    service.getEmployee(1001);
+
+            if (deleted == null) {
+
+                System.out.println(
+                        "Employee does not exist anymore."
+                );
+
+            } else {
+
+                System.out.println(
+                        "Employee still exists: " +
+                        deleted
+                );
+            }
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Operation failed: " +
+                    e.getMessage()
+            );
+
+            e.printStackTrace();
+
+        } finally {
+
+            // Close the application-level
+            // EntityManagerFactory.
+            JPAUtility.close();
+        }
+    }
+}</code></pre>
+
+  <h3>14. What the UI Tester actually triggers</h3>
+
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    participant UI as UITester
+    participant S as EmployeeServiceImpl
+    participant F as Factory
+    participant D as EmployeeDAOImpl
+    participant U as JPAUtility
+    participant EMF as EntityManagerFactory
+    participant EM as EntityManager
+    participant H as Hibernate
+    participant DB as MySQL
+
+    UI->>S: createEmployee(dto)
+    S->>S: DTO → Entity
+    S->>D: save(entity)
+    D->>U: getEntityManager()
+    U->>EMF: createEntityManager()
+    EMF-->>U: EM
+    U-->>D: EM
+    D->>EM: begin()
+    D->>EM: persist(entity)
+    D->>EM: commit()
+    EM->>H: flush
+    H->>DB: INSERT
+    DB-->>H: success
+
+    UI->>S: getEmployee(1001)
+    S->>D: findById(1001)
+    D->>EM: find(Entity.class, 1001)
+    EM->>DB: SELECT
+    DB-->>EM: row
+    EM-->>D: entity
+    D-->>S: entity
+    S->>S: Entity → DTO
+    S-->>UI: DTO
+
+    UI->>S: updateEmployee(dto)
+    S->>S: DTO → Entity
+    S->>D: update(entity)
+    D->>EM: begin()
+    D->>EM: merge(entity)
+    D->>EM: commit()
+    EM->>H: UPDATE
+    H->>DB: UPDATE
+
+    UI->>S: deleteEmployee(1001)
+    S->>D: delete(1001)
+    D->>EM: begin()
+    D->>EM: find(Entity.class, 1001)
+    D->>EM: remove(entity)
+    D->>EM: commit()
+    EM->>H: DELETE
+    H->>DB: DELETE
+    </div>
+  </div>
+
+  <h3>15. Expected Console Output</h3>
+
+  <pre><code>========== CREATE ==========
+Employee created successfully!
+
+========== READ ONE ==========
+Employee found:
+EmployeeDTO{
+    employeeId=1001,
+    employeeName='Rahul',
+    role='Java Developer',
+    salary=50000.0,
+    ...
+}
+
+========== READ ALL ==========
+EmployeeDTO{
+    employeeId=1001,
+    employeeName='Rahul',
+    role='Java Developer',
+    salary=50000.0,
+    ...
+}
+
+========== UPDATE ==========
+Employee updated successfully!
+
+========== READ AFTER UPDATE ==========
+EmployeeDTO{
+    employeeId=1001,
+    employeeName='Rahul',
+    role='Senior Java Developer',
+    salary=75000.0,
+    ...
+}
+
+========== DELETE ==========
+Employee deleted successfully!
+
+========== VERIFY DELETE ==========
+Employee does not exist anymore.</code></pre>
+
+  <div class="good">
+    <strong>Now you can follow one request from top to bottom:</strong><br>
+    UITester → Service → Factory → DAO → JPAUtility → EntityManagerFactory →
+    EntityManager → Hibernate → MySQL.
+  </div>
+</section>
+
+
+<section class="section" id="code">
+  <span class="badge">16 — COMPLETE DAO CODE</span>
+  <h2>One Place to See All CRUD Methods</h2>
+
+  <pre><code>public class EmployeeDAOImpl implements EmployeeDAO {
+
+    private EntityManagerFactory emf;
+
+    public EmployeeDAOImpl() {
+        emf = Persistence
+                .createEntityManagerFactory("employeePU");
+    }
+
+    // CREATE
+    public void save(Employee employee) {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            em.persist(employee);
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    // READ ONE
+    public Employee findById(int id) {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            return em.find(Employee.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    // READ ALL
+    public List&lt;Employee&gt; findAll() {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT e FROM Employee e",
+                    Employee.class
+            ).getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    // UPDATE
+    public void update(Employee employee) {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            em.merge(employee);
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    // DELETE
+    public void delete(int id) {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            Employee employee =
+                    em.find(Employee.class, id);
+
+            if (employee != null) {
+                em.remove(employee);
+            }
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+}</code></pre>
+</section>
+
+<section class="section" id="traps">
+  <span class="badge">17 — INTERVIEW + EXAM TRAPS</span>
+  <h2>Things You Must Not Mix Up</h2>
+
+  <details open>
+    <summary>JPA vs Hibernate?</summary>
+    <p>JPA is the specification/API. Hibernate is an implementation/provider of JPA.</p>
+  </details>
+
+  <details>
+    <summary>EntityManagerFactory vs EntityManager?</summary>
+    <p>EntityManagerFactory creates EntityManagers. EntityManager works with entities and the persistence context.</p>
+  </details>
+
+  <details>
+    <summary>Does EntityManager have update()?</summary>
+    <p>No. Managed entities are normally updated through dirty checking. Detached state can be re-associated through merge().</p>
+  </details>
+
+  <details>
+    <summary>Why find() before remove()?</summary>
+    <p>remove() expects a managed entity. find() obtains the entity through the current persistence context.</p>
+  </details>
+
+  <details>
+    <summary>What does merge() return?</summary>
+    <p>merge() returns a managed instance containing the merged state. Do not assume the original detached object becomes managed.</p>
+  </details>
+
+  <details>
+    <summary>What is dirty checking?</summary>
+    <p>Hibernate tracks managed entities and detects changes to their state, generating SQL during flush when required.</p>
+  </details>
+
+  <details>
+    <summary>Where is persistence.xml?</summary>
+    <p>META-INF/persistence.xml on the classpath.</p>
+  </details>
+
+  <details>
+    <summary>What is persistence-unit name?</summary>
+    <p>The logical configuration name used to bootstrap the EntityManagerFactory.</p>
+  </details>
+
+  <details>
+    <summary>What happens if find() cannot locate the ID?</summary>
+    <p>For EntityManager.find(), the result is null when no matching entity is found.</p>
+  </details>
+
+  <details>
+    <summary>Why begin/commit?</summary>
+    <p>Database-changing operations are performed within a transaction in this resource-local JPA example.</p>
+  </details>
+</section>
+
+<section class="section">
+  <span class="badge">18 — FINAL MEMORY MAP</span>
+  <h2>Learn This Sequence</h2>
+
+  <div class="flow">
+    <div>persistence.xml</div>
+    <div class="arrow">→</div>
+    <div>EntityManagerFactory</div>
+    <div class="arrow">→</div>
+    <div>EntityManager</div>
+    <div class="arrow">→</div>
+    <div>Entity</div>
+    <div class="arrow">→</div>
+    <div>Hibernate</div>
+    <div class="arrow">→</div>
+    <div>MySQL</div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><strong>CREATE</strong><br><code>begin → persist → commit</code></div>
+    <div class="card"><strong>READ</strong><br><code>find()</code></div>
+    <div class="card"><strong>READ ALL</strong><br><code>JPQL → getResultList()</code></div>
+    <div class="card"><strong>UPDATE</strong><br><code>managed → dirty checking</code></div>
+    <div class="card"><strong>UPDATE DETACHED</strong><br><code>merge()</code></div>
+    <div class="card"><strong>DELETE</strong><br><code>find → remove → commit</code></div>
+  </div>
+
+  <div class="good">
+    <strong>The entire topic in one sentence:</strong>
+    JPA uses persistence configuration to create an EntityManagerFactory, which creates
+    EntityManagers that manage entity objects inside a persistence context; transactions
+    synchronize those changes with the database through the JPA provider such as Hibernate.
+  </div>
+</section>
+
+
+<section class="section" id="scenarios">
+<span class="badge">19 — SCENARIO-BASED INTERVIEW QUESTIONS</span>
+<h2>50 Real JPA Interview Scenarios</h2>
+<p>Practice every question as <strong>Situation → Root cause → JPA concept → Fix → Interview answer</strong>. These are tied directly to the Employee CRUD project.</p>
+<div class="good"><strong>Interview mindset:</strong> The interviewer is usually testing whether you understand the entity state, persistence context and transaction boundary—not whether you memorized method names.</div>
+
+<details>
+<summary>01. persist() succeeds but no row appears</summary>
+<p><strong>What is happening:</strong> Check that a transaction was started and committed. persist() makes the entity managed; database synchronization happens during flush/commit.</p>
+<p><strong>What would you do:</strong> begin → persist → commit</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>02. persist() is called without begin()</summary>
+<p><strong>What is happening:</strong> Resource-local JPA write operations require an active transaction.</p>
+<p><strong>What would you do:</strong> Start the transaction before persist().</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>03. find() returns null</summary>
+<p><strong>What is happening:</strong> No entity exists for that primary-key value. find() normally returns null when nothing is found.</p>
+<p><strong>What would you do:</strong> Check the ID and database row.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>04. find() is called twice with the same EntityManager</summary>
+<p><strong>What is happening:</strong> The persistence context is the first-level cache, so the same managed entity can be reused.</p>
+<p><strong>What would you do:</strong> Same EntityManager → same persistence context.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>05. find() uses two EntityManagers</summary>
+<p><strong>What is happening:</strong> Each EntityManager has its own persistence context.</p>
+<p><strong>What would you do:</strong> Do not assume first-level cache is shared.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>06. Salary changes but no update() is called</summary>
+<p><strong>What is happening:</strong> A managed entity is tracked by dirty checking.</p>
+<p><strong>What would you do:</strong> find → modify → commit.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>07. Salary changes after EntityManager.close()</summary>
+<p><strong>What is happening:</strong> The entity is detached and the old persistence context no longer tracks it.</p>
+<p><strong>What would you do:</strong> Merge the state in a new persistence context.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>08. merge() is called but the original object is still detached</summary>
+<p><strong>What is happening:</strong> merge copies state into a managed instance and returns that managed instance.</p>
+<p><strong>What would you do:</strong> Capture EmployeeEntity managed = em.merge(detached).</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>09. merge() return value is ignored</summary>
+<p><strong>What is happening:</strong> Later changes to the original detached object are not automatically tracked.</p>
+<p><strong>What would you do:</strong> Continue with the object returned by merge().</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>10. remove() fails for an object</summary>
+<p><strong>What is happening:</strong> remove requires a managed entity in the current persistence context.</p>
+<p><strong>What would you do:</strong> find → remove → commit.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>11. remove() is called without a transaction</summary>
+<p><strong>What is happening:</strong> A database-changing operation is outside the required transaction.</p>
+<p><strong>What would you do:</strong> begin → remove → commit.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>12. An exception occurs halfway through a transaction</summary>
+<p><strong>What is happening:</strong> The incomplete transaction should be rolled back.</p>
+<p><strong>What would you do:</strong> Rollback if active, then propagate the exception.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>13. commit() throws an exception</summary>
+<p><strong>What is happening:</strong> The persistence operation did not complete successfully.</p>
+<p><strong>What would you do:</strong> Do not swallow the exception; handle rollback appropriately.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>14. EntityManagerFactory is created in every DAO method</summary>
+<p><strong>What is happening:</strong> EntityManagerFactory is heavyweight and should not be repeatedly created.</p>
+<p><strong>What would you do:</strong> Create one application-level factory per persistence unit.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>15. EntityManager is never closed</summary>
+<p><strong>What is happening:</strong> Persistence resources remain open unnecessarily.</p>
+<p><strong>What would you do:</strong> Close it in finally or an appropriate resource-management pattern.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>16. EntityManagerFactory is never closed</summary>
+<p><strong>What is happening:</strong> Application-level persistence resources are not released.</p>
+<p><strong>What would you do:</strong> Close it during application shutdown.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>17. persistence.xml cannot be found</summary>
+<p><strong>What is happening:</strong> It is not available on the runtime classpath at META-INF/persistence.xml.</p>
+<p><strong>What would you do:</strong> Place it under src/main/resources/META-INF.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>18. Persistence-unit name is wrong</summary>
+<p><strong>What is happening:</strong> The Java name passed to createEntityManagerFactory must match the XML name.</p>
+<p><strong>What would you do:</strong> Make employeePU match exactly.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>19. EmployeeEntity is not detected</summary>
+<p><strong>What is happening:</strong> The entity may not be registered in the persistence unit.</p>
+<p><strong>What would you do:</strong> Register its fully qualified class when explicit registration is used.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>20. Hibernate says the entity has no identifier</summary>
+<p><strong>What is happening:</strong> The entity lacks a valid primary-key mapping.</p>
+<p><strong>What would you do:</strong> Add @Id to the identifier.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>21. Java field and DB column names differ</summary>
+<p><strong>What is happening:</strong> ORM needs an explicit mapping when names do not match.</p>
+<p><strong>What would you do:</strong> Use @Column(name = &quot;employee_id&quot;).</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>22. Hibernate targets the wrong table</summary>
+<p><strong>What is happening:</strong> Entity-to-table mapping disagrees with the schema.</p>
+<p><strong>What would you do:</strong> Verify @Table(name = &quot;employee&quot;).</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>23. JPQL uses SELECT * FROM employee</summary>
+<p><strong>What is happening:</strong> JPQL is entity-oriented, unlike SQL.</p>
+<p><strong>What would you do:</strong> Use SELECT e FROM EmployeeEntity e.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>24. JPQL uses employee_name</summary>
+<p><strong>What is happening:</strong> JPQL refers to entity attributes, not physical column names.</p>
+<p><strong>What would you do:</strong> Use e.employeeName.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>25. getResultList() returns an empty list</summary>
+<p><strong>What is happening:</strong> The query succeeded but no matching entities were found.</p>
+<p><strong>What would you do:</strong> An empty list is normal and is not null.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>26. getSingleResult() finds multiple rows</summary>
+<p><strong>What is happening:</strong> A single-result API cannot represent multiple results.</p>
+<p><strong>What would you do:</strong> Use getResultList or make the query uniquely constrained.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>27. DTO is passed directly to DAO</summary>
+<p><strong>What is happening:</strong> DTO and Entity have different responsibilities.</p>
+<p><strong>What would you do:</strong> Map DTO → Entity before persistence.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>28. Why not expose Entity directly to UI?</summary>
+<p><strong>What is happening:</strong> DTOs provide an API boundary and avoid leaking persistence details.</p>
+<p><strong>What would you do:</strong> Use request/response DTOs.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>29. Business validation is inside DAO</summary>
+<p><strong>What is happening:</strong> DAO should focus on persistence access.</p>
+<p><strong>What would you do:</strong> Keep business rules in Service.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>30. Service contains all JPQL</summary>
+<p><strong>What is happening:</strong> Business logic becomes coupled to persistence implementation.</p>
+<p><strong>What would you do:</strong> Keep database access in DAO.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>31. Factory creates a new DAO for every request</summary>
+<p><strong>What is happening:</strong> A lightweight DAO can be recreated; the heavyweight EMF should not be.</p>
+<p><strong>What would you do:</strong> Separate DAO lifecycle from JPA infrastructure lifecycle.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>32. Two EntityManagers modify the same employee</summary>
+<p><strong>What is happening:</strong> They have separate persistence contexts.</p>
+<p><strong>What would you do:</strong> Managed state is not shared automatically.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>33. A managed entity is changed twice before commit</summary>
+<p><strong>What is happening:</strong> Dirty checking synchronizes the managed state at flush.</p>
+<p><strong>What would you do:</strong> Do not treat every setter as immediate SQL.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>34. persist() is called for an existing ID</summary>
+<p><strong>What is happening:</strong> persist is intended for new entity state; an existing key can cause an INSERT constraint failure.</p>
+<p><strong>What would you do:</strong> Use the lifecycle operation appropriate to the state.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>35. merge() is called on a new object</summary>
+<p><strong>What is happening:</strong> merge is not strictly update-only; it merges state into a managed instance and can result in insertion.</p>
+<p><strong>What would you do:</strong> Explain merge as state synchronization.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>36. merge() then the original object is modified</summary>
+<p><strong>What is happening:</strong> The original remains detached.</p>
+<p><strong>What would you do:</strong> Use the managed instance returned by merge().</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>37. clear() then a managed object is modified</summary>
+<p><strong>What is happening:</strong> clear detaches all entities from that persistence context.</p>
+<p><strong>What would you do:</strong> Those objects are no longer automatically tracked.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>38. Lazy data is accessed after EntityManager.close()</summary>
+<p><strong>What is happening:</strong> Unfetched lazy state may need an open persistence context.</p>
+<p><strong>What would you do:</strong> Load required data inside the correct persistence boundary.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>39. A Java reference is assumed to be automatically managed</summary>
+<p><strong>What is happening:</strong> Management belongs to the persistence context, not the Java reference.</p>
+<p><strong>What would you do:</strong> Know transient, managed, detached and removed states.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>40. SQL appears before commit</summary>
+<p><strong>What is happening:</strong> Hibernate can flush before commit when synchronization is required.</p>
+<p><strong>What would you do:</strong> Flush and commit are related but different concepts.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>41. Database-generated state is not visible in Java</summary>
+<p><strong>What is happening:</strong> Database state and in-memory state can differ.</p>
+<p><strong>What would you do:</strong> Understand refresh when current DB state is needed.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>42. External SQL changes a managed row</summary>
+<p><strong>What is happening:</strong> The persistence context may still contain older state.</p>
+<p><strong>What would you do:</strong> Use refresh when appropriate.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>43. One business operation performs several DAO calls</summary>
+<p><strong>What is happening:</strong> Separate transactions can partially commit a business operation.</p>
+<p><strong>What would you do:</strong> Use one appropriate transaction boundary for the use case.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>44. Delete employee and insert audit record must both succeed</summary>
+<p><strong>What is happening:</strong> The two changes should be atomic.</p>
+<p><strong>What would you do:</strong> Put both in the same transaction boundary.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>45. Works locally but fails elsewhere</summary>
+<p><strong>What is happening:</strong> Environment/configuration may differ.</p>
+<p><strong>What would you do:</strong> Check JDBC URL, DB, credentials, driver, port and schema.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>46. Hibernate cannot connect to MySQL</summary>
+<p><strong>What is happening:</strong> The issue may be connectivity rather than entity mapping.</p>
+<p><strong>What would you do:</strong> Check MySQL status, URL, credentials, driver and port.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>47. Table or column does not exist</summary>
+<p><strong>What is happening:</strong> Entity mapping and physical schema disagree.</p>
+<p><strong>What would you do:</strong> Check @Table, @Column and the actual schema.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>48. One EntityManager is created per tiny operation</summary>
+<p><strong>What is happening:</strong> Related work can end up in different persistence contexts and transactions.</p>
+<p><strong>What would you do:</strong> Choose a sensible persistence-context/transaction scope.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>49. Explain UI-to-database flow</summary>
+<p><strong>What is happening:</strong> UI calls Service; Service validates/maps; DAO uses EntityManager; Hibernate translates JPA operations into SQL; MySQL persists data.</p>
+<p><strong>What would you do:</strong> UI → Service → DAO → EntityManager → Hibernate → MySQL.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<details>
+<summary>50. Why use layered architecture?</summary>
+<p><strong>What is happening:</strong> Each layer has a focused responsibility, reducing coupling and improving maintenance and testing.</p>
+<p><strong>What would you do:</strong> UI interaction; Service business logic; DAO persistence; Utility infrastructure.</p>
+<p><strong>Follow-up:</strong> Explain which entity state and persistence-context/transaction boundary are involved, then show the smallest code change that fixes the problem.</p>
+</details>
+
+<h3>Rapid-Fire Coding Drill</h3>
+<pre><code>// Find employee 1001.
+// Increase salary if found.
+// No update() call is required because the entity is managed.
+
+em.getTransaction().begin();
+
+EmployeeEntity employee =
+        em.find(EmployeeEntity.class, 1001);
+
+if (employee != null) {
+    employee.setSalary(
+        employee.getSalary() + 10000
+    );
+}
+
+em.getTransaction().commit();</code></pre>
+<div class="good"><strong>Concept being tested:</strong> find() → managed entity → dirty checking → flush/commit.</div>
+</section>
+
+</main>
+
+<footer>
+  JPA Complete Visual Guide · All architecture diagrams are generated from Mermaid code.
+  Open this file in a browser with internet access for Mermaid CDN rendering.
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "strict",
+    theme: "base",
+    themeVariables: {
+      primaryColor: "#eee9ff",
+      primaryTextColor: "#18202a",
+      primaryBorderColor: "#6d28d9",
+      lineColor: "#7c3aed",
+      secondaryColor: "#e8f1ff",
+      tertiaryColor: "#f7f7f8",
+      fontFamily: "Inter, system-ui, sans-serif"
+    },
+    flowchart: {
+      htmlLabels: true,
+      curve: "basis"
+    },
+    sequence: {
+      useMaxWidth: true,
+      wrap: true
+    }
+  });
+</script>
+
+<!--
+  OPTIONAL SANDBOXING NOTE:
+  If you later want to embed a Mermaid preview/editor generated from user input,
+  render it inside an iframe with:
+      sandbox="allow-scripts"
+  and pass the diagram source through srcdoc.
+  Do NOT use allow-same-origin unless the embedded content genuinely needs it.
+-->
+</body>
+</html>

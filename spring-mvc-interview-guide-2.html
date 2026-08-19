@@ -1,0 +1,2448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Spring MVC beginner to interview preparation guide with complete XML, Java, JSP code, MVC flow, Mermaid diagrams and scenario-based questions.">
+<title>Spring MVC — Beginner to Interview Guide</title>
+
+<!-- Mermaid renders the architecture/flow diagrams. -->
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "loose",
+    theme: "base",
+    themeVariables: {
+      primaryColor: "#eef2ff",
+      primaryTextColor: "#172033",
+      primaryBorderColor: "#6366f1",
+      lineColor: "#64748b",
+      secondaryColor: "#ecfeff",
+      tertiaryColor: "#f8fafc"
+    }
+  });
+</script>
+
+<style>
+:root {
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --text: #172033;
+  --muted: #5f6b7a;
+  --border: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-2: #6366f1;
+  --primary-soft: #eef2ff;
+  --success: #0f766e;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --code: #0b1220;
+  --shadow: 0 12px 35px rgba(15, 23, 42, .08);
+  --radius: 18px;
+  --max: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.7;
+}
+
+a { color: var(--primary); }
+
+.container {
+  width: min(calc(100% - 32px), var(--max));
+  margin: 0 auto;
+}
+
+header.hero {
+  padding: 18px 0 56px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(99,102,241,.18), transparent 30%),
+    radial-gradient(circle at 90% 10%, rgba(14,165,233,.13), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #eef2ff 52%, #f8fafc 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.home-wrap {
+  padding: 2px 0 22px;
+}
+
+/* HOME BUTTON IS INTENTIONALLY ABOVE THE HERO H1. */
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 17px;
+  border: 1px solid rgba(79,70,229,.22);
+  border-radius: 12px;
+  background: rgba(255,255,255,.86);
+  color: #3730a3;
+  text-decoration: none;
+  font-weight: 750;
+  box-shadow: 0 5px 16px rgba(15,23,42,.06);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.home-button:hover {
+  transform: translateY(-1px);
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(15,23,42,.1);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: #3730a3;
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+h1 {
+  margin: 14px 0 12px;
+  font-size: clamp(2.15rem, 5vw, 4.2rem);
+  line-height: 1.04;
+  letter-spacing: -.045em;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.12rem);
+  max-width: 760px;
+}
+
+.hero-card {
+  background: rgba(255,255,255,.76);
+  border: 1px solid rgba(148,163,184,.3);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.hero-card strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.flow-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  color: #334155;
+  font-size: .88rem;
+}
+
+.flow-mini span {
+  padding: 6px 9px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+nav.toc {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(246,248,252,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-inner {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: thin;
+}
+
+.toc a {
+  white-space: nowrap;
+  text-decoration: none;
+  color: #475569;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+main {
+  padding: 34px 0 70px;
+}
+
+section {
+  scroll-margin-top: 76px;
+  margin: 0 0 28px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 30px);
+  box-shadow: var(--shadow);
+}
+
+h2 {
+  margin: 0 0 14px;
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+h3 {
+  margin: 24px 0 10px;
+  font-size: clamp(1.12rem, 2.3vw, 1.42rem);
+}
+
+h4 {
+  margin: 18px 0 8px;
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 1.03rem;
+}
+
+.callout {
+  margin: 18px 0;
+  padding: 15px 17px;
+  border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  background: var(--primary-soft);
+}
+
+.callout.success {
+  border-color: var(--success);
+  background: #ecfdf5;
+}
+
+.callout.warning {
+  border-color: var(--warning);
+  background: #fffbeb;
+}
+
+.callout.danger {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.topic {
+  padding: 17px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.topic strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-size: .94rem;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 11px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: var(--surface-2);
+}
+
+pre {
+  margin: 14px 0;
+  padding: 17px;
+  overflow-x: auto;
+  border-radius: 13px;
+  background: var(--code);
+  color: #e5edf8;
+  border: 1px solid #1e293b;
+  font: 13.5px/1.65 "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  -webkit-overflow-scrolling: touch;
+}
+
+code:not(pre code) {
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #eef2f7;
+  color: #312e81;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: .9em;
+}
+
+.file {
+  display: inline-block;
+  margin: 4px 0 7px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: #111827;
+  color: #e5e7eb;
+  font: 700 12px/1.2 monospace;
+}
+
+.diagram {
+  margin: 18px 0;
+  padding: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.mermaid {
+  min-width: 650px;
+}
+
+ul, ol {
+  padding-left: 22px;
+}
+
+li + li {
+  margin-top: 6px;
+}
+
+.question {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+  background: #fff;
+}
+
+.question summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.answer {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border-left: 3px solid var(--primary);
+}
+
+.memory {
+  background: linear-gradient(135deg, #eef2ff, #ecfeff);
+  border: 1px solid #c7d2fe;
+}
+
+footer {
+  padding: 34px 0 50px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.back-top {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(255,255,255,.92);
+  color: #3730a3;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 800px) {
+  .hero-grid,
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    width: min(calc(100% - 20px), var(--max));
+  }
+
+  header.hero {
+    padding-bottom: 34px;
+  }
+
+  .card {
+    border-radius: 15px;
+    padding: 17px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: normal;
+  }
+
+  pre {
+    font-size: 12.2px;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .diagram {
+    padding: 8px;
+  }
+
+  .mermaid {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 2.15rem;
+  }
+
+  h2 {
+    font-size: 1.48rem;
+  }
+
+  .home-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-card {
+    padding: 16px;
+  }
+
+  .flow-mini {
+    font-size: .78rem;
+  }
+
+  .toc-inner {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .question {
+    padding: 13px;
+  }
+}
+
+/* ===== DARK MODE ===== */
+body.dark {
+  --bg: #080b12;
+  --surface: #101722;
+  --surface-2: #151e2b;
+  --text: #e7edf7;
+  --muted: #a7b2c4;
+  --border: #263244;
+  --primary: #818cf8;
+  --primary-2: #a5b4fc;
+  --primary-soft: #1d2440;
+  --success: #34d399;
+  --warning: #f59e0b;
+  --danger: #f87171;
+  --code: #070b12;
+  --shadow: 0 14px 40px rgba(0,0,0,.28);
+}
+
+body.dark header.hero {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(99,102,241,.20), transparent 30%),
+    radial-gradient(circle at 90% 10%, rgba(14,165,233,.12), transparent 28%),
+    linear-gradient(135deg, #0b1019 0%, #11182a 52%, #0b111b 100%);
+  border-bottom-color: var(--border);
+}
+
+body.dark .hero-card,
+body.dark .home-button,
+body.dark .toc a,
+body.dark .card,
+body.dark .question,
+body.dark .back-top {
+  background: rgba(16,23,34,.92);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark .home-button {
+  color: #c7d2fe;
+  border-color: #39438a;
+}
+
+body.dark .toc {
+  background: rgba(8,11,18,.90);
+  border-bottom-color: var(--border);
+}
+
+body.dark .toc a {
+  color: #cbd5e1;
+}
+
+body.dark .topic {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+body.dark th {
+  background: #1a2432;
+}
+
+body.dark th,
+body.dark td {
+  border-color: var(--border);
+}
+
+body.dark code:not(pre code) {
+  background: #1b2433;
+  color: #c7d2fe;
+}
+
+body.dark .callout {
+  background: #171d35;
+}
+
+body.dark .callout.success {
+  background: #102b26;
+}
+
+body.dark .callout.warning {
+  background: #30240f;
+}
+
+body.dark .callout.danger {
+  background: #301719;
+}
+
+body.dark .answer {
+  background: #151e2b;
+  border-color: #818cf8;
+}
+
+body.dark .memory {
+  background: linear-gradient(135deg, #171d3a, #10272c);
+  border-color: #39438a;
+}
+
+body.dark footer {
+  color: #94a3b8;
+}
+
+body.dark .diagram {
+  background: #101722;
+  border-color: var(--border);
+}
+
+/* Theme button */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 5px 16px rgba(15,23,42,.06);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(15,23,42,.12);
+}
+
+.header-actions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .home-button,
+  .header-actions .theme-toggle {
+    flex: 1;
+  }
+}
+
+
+/* ===== MOBILE LAYOUT FIX ===== */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+.hero-grid > *,
+.grid-2 > *,
+.grid-3 > *,
+.topic,
+.card,
+.hero-card {
+  min-width: 0;
+}
+
+.diagram {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.diagram .mermaid {
+  min-width: 0;
+  width: max-content;
+  max-width: none;
+}
+
+.diagram .mermaid svg {
+  display: block;
+  max-width: none !important;
+}
+
+@media (max-width: 800px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-grid > div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .hero-card {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .flow-mini {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .flow-mini span {
+    max-width: 100%;
+  }
+
+  .hero p {
+    max-width: 100%;
+  }
+
+  pre {
+    max-width: 100%;
+  }
+
+  .diagram {
+    max-width: 100%;
+  }
+
+  .diagram .mermaid {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 600px) {
+  header.hero {
+    padding-top: 12px;
+    padding-bottom: 26px;
+  }
+
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .home-wrap {
+    padding-bottom: 16px;
+  }
+
+  .header-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .header-actions .home-button,
+  .header-actions .theme-toggle {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 9px 10px;
+  }
+
+  .badge {
+    font-size: .72rem;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 10vw, 2.65rem);
+    line-height: 1.04;
+    letter-spacing: -.04em;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .hero p {
+    font-size: .96rem;
+    line-height: 1.65;
+  }
+
+  .hero-card {
+    padding: 15px;
+    border-radius: 16px;
+  }
+
+  .flow-mini {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .flow-mini::before {
+    content: "";
+  }
+
+  .flow-mini span {
+    width: 100%;
+    text-align: center;
+    padding: 8px 10px;
+  }
+
+  .toc-inner {
+    gap: 6px;
+    padding: 8px 0;
+  }
+
+  .toc a {
+    font-size: .76rem;
+    padding: 7px 9px;
+  }
+
+  main {
+    padding-top: 20px;
+  }
+
+  section {
+    scroll-margin-top: 65px;
+    margin-bottom: 18px;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  h2 {
+    font-size: 1.45rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  .lead {
+    font-size: .96rem;
+  }
+
+  .diagram {
+    padding: 6px;
+    border-radius: 11px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .diagram .mermaid {
+    min-width: 600px;
+  }
+
+  table {
+    font-size: .84rem;
+  }
+
+  th, td {
+    padding: 9px 10px;
+  }
+
+  .question {
+    padding: 12px;
+  }
+
+  .answer {
+    padding: 10px 11px;
+  }
+}
+
+@media (max-width: 380px) {
+  .header-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions .home-button,
+  .header-actions .theme-toggle {
+    min-height: 43px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+  }
+
+  .container {
+    width: calc(100% - 18px);
+  }
+}
+
+</style>
+</head>
+
+<body id="top">
+
+<header class="hero">
+  <div class="container">
+
+    <!-- HOME BUTTON: deliberately above the hero H1 as requested. -->
+    <div class="home-wrap">
+      <div class="header-actions">
+        <!-- Change href="index.html" if your home page has a different filename. -->
+        <a class="home-button" href="index.html" aria-label="Go to home page">
+          ← Home
+        </a>
+
+        <button class="theme-toggle"
+                id="themeToggle"
+                type="button"
+                aria-label="Toggle dark mode"
+                aria-pressed="false">
+          <span id="themeIcon">☾</span>
+          <span id="themeText">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <span class="badge">BEGINNER → CODING → INTERVIEW</span>
+
+        <h1>Spring MVC<br>Complete Interview Guide</h1>
+
+        <p>
+          Learn Spring MVC from the ground up using one complete Login
+          application. Understand the MVC flow, XML configuration,
+          Controller → Service → DAO, ViewResolver, context hierarchy,
+          Java configuration, complete code files, Mermaid diagrams,
+          interview traps and scenario-based questions.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <strong>The flow to remember</strong>
+        <div class="flow-mini">
+          <span>Browser</span> →
+          <span>DispatcherServlet</span> →
+          <span>Controller</span> →
+          <span>Service</span> →
+          <span>DAO</span> →
+          <span>ViewResolver</span> →
+          <span>JSP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Guide navigation">
+  <div class="container toc-inner">
+    <a href="#mvc">MVC</a>
+    <a href="#project">Project</a>
+    <a href="#code">Complete Code</a>
+    <a href="#flow">Request Flow</a>
+    <a href="#contexts">Contexts</a>
+    <a href="#resolver">ViewResolver</a>
+    <a href="#java-config">Java Config</a>
+    <a href="#interview">Interview</a>
+    <a href="#traps">Traps</a>
+    <a href="#memory">Memory</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<section id="mvc">
+  <div class="card">
+    <h2>1. What is MVC?</h2>
+    <p class="lead">
+      MVC separates an application into Model, View and Controller so that
+      presentation, request handling and application/data logic do not become
+      one large class.
+    </p>
+
+    <div class="grid-3">
+      <div class="topic">
+        <strong>Model</strong>
+        Holds application data and participates in application logic.
+        In our project, <code>LoginBean</code> carries login data.
+      </div>
+      <div class="topic">
+        <strong>View</strong>
+        Presents the result to the user. Our views are JSP files.
+      </div>
+      <div class="topic">
+        <strong>Controller</strong>
+        Receives the web request and coordinates the Model and View.
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Restaurant memory trick:</strong>
+      Browser = customer, Controller = waiter, Service = business decision
+      maker, DAO = database worker, View = final plate.
+    </div>
+
+    <div class="diagram">
+      <div class="mermaid">
+flowchart LR
+    B["Browser"] --> C["Controller"]
+    C --> S["Service"]
+    S --> D["DAO"]
+    D --> DB["Database"]
+    DB --> D
+    D --> S
+    S --> C
+    C --> V["View"]
+    V --> B
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>2. Static vs Dynamic Request</h2>
+
+    <div class="grid-2">
+      <div class="topic">
+        <strong>Static request</strong>
+        Examples: CSS, images, a simple static HTML file.
+        <p>Server can locate the resource and return it.</p>
+      </div>
+
+      <div class="topic">
+        <strong>Dynamic request</strong>
+        Example: <code>POST /validateLogin.html</code>.
+        <p>The request requires application processing before a response is generated.</p>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="mermaid">
+flowchart LR
+    B["Browser"] --> S["Web Server"]
+    S --> F["Static Resource"]
+    F --> S
+    S --> B
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="mermaid">
+flowchart LR
+    B["Browser"] --> DS["DispatcherServlet"]
+    DS --> C["Controller"]
+    C --> S["Service"]
+    S --> D["DAO"]
+    D --> S
+    S --> C
+    C --> VR["ViewResolver"]
+    VR --> V["JSP"]
+    V --> B
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="project">
+  <div class="card">
+    <h2>3. Complete Project We Build</h2>
+
+    <pre>SpringMVCLogin/
+│
+├── pom.xml
+│
+├── src/main/java/
+│   └── com/example/mvc/
+│       ├── model/
+│       │   └── LoginBean.java
+│       ├── dao/
+│       │   └── LoginDAO.java
+│       ├── service/
+│       │   └── LoginService.java
+│       └── controller/
+│           └── LoginController.java
+│
+└── src/main/webapp/
+    ├── login.jsp
+    └── WEB-INF/
+        ├── web.xml
+        ├── spring-servlet.xml
+        └── views/
+            ├── success.jsp
+            └── failure.jsp</pre>
+
+    <table>
+      <thead>
+        <tr><th>File</th><th>Responsibility</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pom.xml</code></td><td>Maven dependencies and WAR build.</td></tr>
+        <tr><td><code>web.xml</code></td><td>Registers and maps DispatcherServlet.</td></tr>
+        <tr><td><code>spring-servlet.xml</code></td><td>Spring MVC configuration.</td></tr>
+        <tr><td><code>LoginBean.java</code></td><td>Model/data holder.</td></tr>
+        <tr><td><code>LoginDAO.java</code></td><td>Data-access operation.</td></tr>
+        <tr><td><code>LoginService.java</code></td><td>Business/service layer.</td></tr>
+        <tr><td><code>LoginController.java</code></td><td>Handles the HTTP request.</td></tr>
+        <tr><td><code>login.jsp</code></td><td>Login form.</td></tr>
+        <tr><td><code>success.jsp</code></td><td>Success view.</td></tr>
+        <tr><td><code>failure.jsp</code></td><td>Failure view.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="code">
+  <div class="card">
+    <h2>4. Complete Code — Every File</h2>
+
+    <h3><span class="file">pom.xml</span></h3>
+    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-mvc-login&lt;/artifactId&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+
+    &lt;!-- Traditional Servlet/Tomcat application --&gt;
+    &lt;packaging&gt;war&lt;/packaging&gt;
+
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;11&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;11&lt;/maven.compiler.target&gt;
+        &lt;spring.version&gt;5.3.39&lt;/spring.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+
+        &lt;!-- Spring MVC --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+            &lt;version&gt;${spring.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Tomcat supplies this at runtime --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+            &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+            &lt;version&gt;4.0.1&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet.jsp&lt;/groupId&gt;
+            &lt;artifactId&gt;javax.servlet.jsp-api&lt;/artifactId&gt;
+            &lt;version&gt;2.3.3&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+            &lt;artifactId&gt;jstl&lt;/artifactId&gt;
+            &lt;version&gt;1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;finalName&gt;spring-mvc-login&lt;/finalName&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.4.0&lt;/version&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;</pre>
+
+    <h3><span class="file">src/main/webapp/WEB-INF/web.xml</span></h3>
+    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;web-app
+        xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://xmlns.jcp.org/xml/ns/javaee
+        http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+        version="4.0"&gt;
+
+    &lt;!-- Welcome page when the application root is opened. --&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;login.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+
+    &lt;!--
+        DispatcherServlet is Spring MVC's Front Controller.
+        It receives requests and delegates to mapped controllers.
+    --&gt;
+    &lt;servlet&gt;
+
+        &lt;servlet-name&gt;spring&lt;/servlet-name&gt;
+
+        &lt;servlet-class&gt;
+            org.springframework.web.servlet.DispatcherServlet
+        &lt;/servlet-class&gt;
+
+        &lt;!-- Initialize DispatcherServlet during startup. --&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+
+    &lt;/servlet&gt;
+
+    &lt;!--
+        Requests ending in .html are handled by DispatcherServlet.
+        Example: POST /validateLogin.html
+    --&gt;
+    &lt;servlet-mapping&gt;
+
+        &lt;servlet-name&gt;spring&lt;/servlet-name&gt;
+
+        &lt;url-pattern&gt;*.html&lt;/url-pattern&gt;
+
+    &lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;</pre>
+
+    <h3><span class="file">src/main/webapp/WEB-INF/spring-servlet.xml</span></h3>
+    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd
+
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+
+       http://www.springframework.org/schema/mvc
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd"&gt;
+
+    &lt;!--
+        Scan our application packages for Spring components.
+
+        Spring discovers @Controller, @Service, @Repository,
+        and @Component classes.
+    --&gt;
+    &lt;context:component-scan
+            base-package="com.example.mvc"/&gt;
+
+    &lt;!--
+        Enables annotation-driven Spring MVC infrastructure.
+    --&gt;
+    &lt;mvc:annotation-driven/&gt;
+
+    &lt;!--
+        Converts a logical view name into a JSP location.
+
+        "success"
+            ↓
+        /WEB-INF/views/success.jsp
+    --&gt;
+    &lt;bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+
+        &lt;property name="prefix"&gt;
+            &lt;value&gt;/WEB-INF/views/&lt;/value&gt;
+        &lt;/property&gt;
+
+        &lt;property name="suffix"&gt;
+            &lt;value&gt;.jsp&lt;/value&gt;
+        &lt;/property&gt;
+
+    &lt;/bean&gt;
+
+&lt;/beans&gt;</pre>
+
+    <h3><span class="file">src/main/java/com/example/mvc/model/LoginBean.java</span></h3>
+    <pre>package com.example.mvc.model;
+
+/**
+ * Model / JavaBean.
+ *
+ * It carries the login data.
+ * It does not decide whether login is valid.
+ */
+public class LoginBean {
+
+    private String userName;
+    private String password;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}</pre>
+
+    <h3><span class="file">src/main/java/com/example/mvc/dao/LoginDAO.java</span></h3>
+    <pre>package com.example.mvc.dao;
+
+import com.example.mvc.model.LoginBean;
+import org.springframework.stereotype.Repository;
+
+/**
+ * DAO = Data Access Object.
+ *
+ * In a real project this class would normally communicate
+ * with a database using JDBC/JPA/etc.
+ */
+@Repository
+public class LoginDAO {
+
+    public boolean validateLogin(LoginBean loginBean) {
+
+        String userName = loginBean.getUserName();
+        String password = loginBean.getPassword();
+
+        // Demo credentials only.
+        if ("MSD".equals(userName)
+                &amp;&amp; "MSD@123".equals(password)) {
+
+            return true;
+        }
+
+        return false;
+    }
+}</pre>
+
+    <h3><span class="file">src/main/java/com/example/mvc/service/LoginService.java</span></h3>
+    <pre>package com.example.mvc.service;
+
+import com.example.mvc.dao.LoginDAO;
+import com.example.mvc.model.LoginBean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service layer.
+ *
+ * Business rules should live here rather than inside
+ * the controller or DAO.
+ */
+@Service
+public class LoginService {
+
+    private final LoginDAO loginDAO;
+
+    /**
+     * Constructor injection.
+     * Spring supplies LoginDAO.
+     */
+    @Autowired
+    public LoginService(LoginDAO loginDAO) {
+        this.loginDAO = loginDAO;
+    }
+
+    public boolean validateLogin(LoginBean loginBean) {
+
+        // Delegate data access to DAO.
+        return loginDAO.validateLogin(loginBean);
+    }
+}</pre>
+
+    <h3><span class="file">src/main/java/com/example/mvc/controller/LoginController.java</span></h3>
+    <pre>package com.example.mvc.controller;
+
+import com.example.mvc.model.LoginBean;
+import com.example.mvc.service.LoginService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * @Controller tells Spring that this is a web controller.
+ */
+@Controller
+public class LoginController {
+
+    private final LoginService loginService;
+
+    @Autowired
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
+    /**
+     * Handles:
+     *
+     * POST /validateLogin.html
+     */
+    @RequestMapping(
+            value = "/validateLogin.html",
+            method = RequestMethod.POST
+    )
+    public ModelAndView validateLogin(
+
+            // Reads: &lt;input name="uName"&gt;
+            @RequestParam("uName")
+            String userName,
+
+            // Reads: &lt;input name="pwd"&gt;
+            @RequestParam("pwd")
+            String password
+    ) {
+
+        // Create the Model object.
+        LoginBean loginBean = new LoginBean();
+
+        // Copy browser data into the Model.
+        loginBean.setUserName(userName);
+        loginBean.setPassword(password);
+
+        // Controller delegates business work to Service.
+        boolean valid = loginService.validateLogin(loginBean);
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (valid) {
+
+            // Logical view name, NOT the physical JSP filename.
+            modelAndView.setViewName("success");
+
+            // Data made available to success.jsp.
+            modelAndView.addObject(
+                    "message",
+                    "Welcome " + userName
+            );
+
+        } else {
+
+            modelAndView.setViewName("failure");
+
+            modelAndView.addObject(
+                    "errorMessage",
+                    "Invalid username or password"
+            );
+        }
+
+        // DispatcherServlet receives this result.
+        return modelAndView;
+    }
+}</pre>
+
+    <h3><span class="file">src/main/webapp/login.jsp</span></h3>
+    <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;title&gt;Spring MVC Login&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+    &lt;h2&gt;Spring MVC Login&lt;/h2&gt;
+
+    &lt;!--
+        Browser sends POST request to:
+        /validateLogin.html
+    --&gt;
+    &lt;form method="post"
+          action="${pageContext.request.contextPath}/validateLogin.html"&gt;
+
+        &lt;label&gt;Username:&lt;/label&gt;
+
+        &lt;!--
+            name="uName" MUST match:
+            @RequestParam("uName")
+        --&gt;
+        &lt;input type="text"
+               name="uName"
+               required /&gt;
+
+        &lt;br&gt;&lt;br&gt;
+
+        &lt;label&gt;Password:&lt;/label&gt;
+
+        &lt;input type="password"
+               name="pwd"
+               required /&gt;
+
+        &lt;br&gt;&lt;br&gt;
+
+        &lt;input type="submit" value="Login" /&gt;
+
+    &lt;/form&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+
+    <h3><span class="file">src/main/webapp/WEB-INF/views/success.jsp</span></h3>
+    <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;title&gt;Login Successful&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+    &lt;h2&gt;Login Successful&lt;/h2&gt;
+
+    &lt;!-- Comes from ModelAndView.addObject("message", ...). --&gt;
+    &lt;h3&gt;${message}&lt;/h3&gt;
+
+    &lt;a href="${pageContext.request.contextPath}/login.jsp"&gt;
+        Back to Login
+    &lt;/a&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+
+    <h3><span class="file">src/main/webapp/WEB-INF/views/failure.jsp</span></h3>
+    <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;title&gt;Login Failed&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+    &lt;h2&gt;Login Failed&lt;/h2&gt;
+
+    &lt;!-- Comes from Controller's ModelAndView. --&gt;
+    &lt;h3&gt;${errorMessage}&lt;/h3&gt;
+
+    &lt;a href="${pageContext.request.contextPath}/login.jsp"&gt;
+        Try Again
+    &lt;/a&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="card">
+    <h2>5. Complete MVC Request Flow</h2>
+
+    <p>
+      Suppose the user enters <strong>MSD</strong> and <strong>MSD@123</strong>
+      and presses Login.
+    </p>
+
+    <div class="diagram">
+      <div class="mermaid">
+sequenceDiagram
+    participant B as Browser
+    participant T as Tomcat
+    participant DS as DispatcherServlet
+    participant C as LoginController
+    participant S as LoginService
+    participant DAO as LoginDAO
+    participant VR as ViewResolver
+    participant JSP as success.jsp
+
+    B->>T: POST /validateLogin.html
+    T->>DS: Forward request
+    DS->>C: Find mapped controller method
+    C->>C: Read @RequestParam values
+    C->>S: validateLogin(LoginBean)
+    S->>DAO: validateLogin(LoginBean)
+    DAO-->>S: true
+    S-->>C: true
+    C->>C: Create ModelAndView("success")
+    C-->>DS: ModelAndView
+    DS->>VR: Resolve "success"
+    VR-->>DS: /WEB-INF/views/success.jsp
+    DS->>JSP: Render view
+    JSP-->>B: HTTP response
+      </div>
+    </div>
+
+    <h3>Step-by-step</h3>
+
+    <ol>
+      <li>Browser submits <code>POST /validateLogin.html</code>.</li>
+      <li>Tomcat receives the request.</li>
+      <li><code>web.xml</code> maps the request to DispatcherServlet.</li>
+      <li>DispatcherServlet finds the controller method matching the URL and HTTP method.</li>
+      <li><code>@RequestParam</code> reads <code>uName</code> and <code>pwd</code>.</li>
+      <li>Controller creates <code>LoginBean</code>.</li>
+      <li>Controller calls Service.</li>
+      <li>Service calls DAO.</li>
+      <li>DAO returns the result.</li>
+      <li>Controller creates ModelAndView.</li>
+      <li>ViewResolver turns <code>success</code> into <code>/WEB-INF/views/success.jsp</code>.</li>
+      <li>JSP renders the response.</li>
+      <li>Browser receives the final HTTP response.</li>
+    </ol>
+
+    <div class="callout success">
+      <strong>Interview flow:</strong><br>
+      Browser → DispatcherServlet → Controller → Service → DAO →
+      Controller → ModelAndView → ViewResolver → JSP → Browser
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>6. Important Spring MVC Annotations</h2>
+
+    <table>
+      <thead>
+        <tr><th>Annotation</th><th>Beginner meaning</th><th>Used in</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>@Controller</code></td>
+          <td>Marks a class as a Spring MVC web controller.</td>
+          <td>Controller</td>
+        </tr>
+        <tr>
+          <td><code>@Service</code></td>
+          <td>Marks a service/business-layer component.</td>
+          <td>Service</td>
+        </tr>
+        <tr>
+          <td><code>@Repository</code></td>
+          <td>Marks a persistence/data-access component.</td>
+          <td>DAO</td>
+        </tr>
+        <tr>
+          <td><code>@RequestMapping</code></td>
+          <td>Maps a request URL and optionally its HTTP method.</td>
+          <td>Controller</td>
+        </tr>
+        <tr>
+          <td><code>@RequestParam</code></td>
+          <td>Reads a request parameter.</td>
+          <td>Controller method parameter</td>
+        </tr>
+        <tr>
+          <td><code>@Autowired</code></td>
+          <td>Asks Spring to provide a dependency.</td>
+          <td>Dependency injection</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>7. <code>@RequestMapping</code> and <code>@RequestParam</code></h2>
+
+    <h3>RequestMapping</h3>
+    <pre>@RequestMapping(
+    value = "/validateLogin.html",
+    method = RequestMethod.POST
+)</pre>
+
+    <p>
+      This says that the method handles a POST request for
+      <code>/validateLogin.html</code>.
+    </p>
+
+    <h3>RequestParam</h3>
+    <pre>@RequestParam("uName")
+String userName</pre>
+
+    <p>
+      The HTML parameter named <code>uName</code> is placed into the
+      Java variable <code>userName</code>.
+    </p>
+
+    <div class="callout warning">
+      <strong>Common bug:</strong>
+      <code>&lt;input name="username"&gt;</code> does not automatically match
+      <code>@RequestParam("uName")</code>. The parameter names must line up
+      unless you explicitly configure another binding strategy.
+    </div>
+  </div>
+</section>
+
+<section id="resolver">
+  <div class="card">
+    <h2>8. ViewResolver</h2>
+
+    <p>
+      A controller should normally return a logical view name instead of
+      hard-coding the physical JSP path.
+    </p>
+
+    <pre>Controller returns:
+"success"
+
+        ↓
+
+InternalResourceViewResolver
+
+prefix = /WEB-INF/views/
+suffix = .jsp
+
+        ↓
+
+/WEB-INF/views/success.jsp</pre>
+
+    <h3>Important ViewResolver types from the source material</h3>
+
+    <ul>
+      <li><strong>UrlBasedViewResolver:</strong> direct resolution of logical view names to URLs.</li>
+      <li><strong>InternalResourceViewResolver:</strong> JSP/Servlet/JSTL/Tiles resolution using prefix and suffix.</li>
+      <li><strong>ResourceBundleViewResolver:</strong> explicit view mappings through a properties file.</li>
+      <li><strong>XmlViewResolver:</strong> explicit view mappings through XML.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>For this project:</strong>
+      Focus on <code>InternalResourceViewResolver</code>.
+    </div>
+  </div>
+</section>
+
+<section id="contexts">
+  <div class="card">
+    <h2>9. Root / Parent and Child Context</h2>
+
+    <p>
+      The source material describes two web application contexts:
+      a Root/Parent context for application-wide components and a
+      Servlet/Child context associated with DispatcherServlet.
+    </p>
+
+    <div class="diagram">
+      <div class="mermaid">
+flowchart TB
+    ROOT["Root / Parent WebApplicationContext"]
+    S["@Service<br/>LoginService"]
+    D["@Repository<br/>LoginDAO"]
+
+    CHILD["Servlet / Child WebApplicationContext"]
+    C["@Controller<br/>LoginController"]
+    VR["ViewResolver"]
+
+    ROOT --> S
+    ROOT --> D
+
+    CHILD --> C
+    CHILD --> VR
+
+    CHILD -. "can access parent beans" .-> ROOT
+      </div>
+    </div>
+
+    <div class="callout success">
+      <strong>Memory rule:</strong>
+      Child → Parent access is allowed. Parent should not depend on
+      child-only beans.
+    </div>
+
+    <h3>Root context responsibilities</h3>
+    <ul>
+      <li>Application-wide services.</li>
+      <li>Repositories / DAOs.</li>
+      <li>Infrastructure such as security or persistence configuration.</li>
+    </ul>
+
+    <h3>Child / servlet context responsibilities</h3>
+    <ul>
+      <li>Controllers.</li>
+      <li>ViewResolvers.</li>
+      <li>Web/MVC configuration.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>10. ContextLoaderListener</h2>
+
+    <p>
+      In the traditional two-context configuration, the
+      <code>ContextLoaderListener</code> loads the Root/Parent
+      WebApplicationContext.
+    </p>
+
+    <pre>&lt;listener&gt;
+    &lt;listener-class&gt;
+        org.springframework.web.context.ContextLoaderListener
+    &lt;/listener-class&gt;
+&lt;/listener&gt;
+
+&lt;context-param&gt;
+    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+    &lt;param-value&gt;/WEB-INF/root-context.xml&lt;/param-value&gt;
+&lt;/context-param&gt;</pre>
+
+    <p>
+      DispatcherServlet then creates the servlet/child WebApplicationContext.
+    </p>
+
+    <div class="diagram">
+      <div class="mermaid">
+sequenceDiagram
+    participant T as Tomcat
+    participant W as web.xml
+    participant CL as ContextLoaderListener
+    participant R as Root Context
+    participant DS as DispatcherServlet
+    participant C as Child Context
+
+    T->>W: Read deployment configuration
+    W->>CL: Initialize listener
+    CL->>R: Load root-context.xml
+    W->>DS: Initialize DispatcherServlet
+    DS->>C: Load MVC context
+    C-->>DS: Web layer ready
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="java-config">
+  <div class="card">
+    <h2>11. XML Configuration vs Java Configuration</h2>
+
+    <p>
+      Spring can express configuration using XML or Java configuration.
+      The important interview point is understanding what each configuration
+      is responsible for rather than memorizing syntax only.
+    </p>
+
+    <h3>RootConfig.java</h3>
+    <pre>package com.example.mvc.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan({
+    "com.example.mvc.service",
+    "com.example.mvc.dao"
+})
+public class RootConfig {
+}</pre>
+
+    <h3>WebConfig.java</h3>
+    <pre>package com.example.mvc.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan("com.example.mvc.controller")
+public class WebConfig implements WebMvcConfigurer {
+
+    @Bean
+    public InternalResourceViewResolver viewResolver() {
+
+        InternalResourceViewResolver resolver =
+                new InternalResourceViewResolver();
+
+        resolver.setPrefix("/WEB-INF/views/");
+        resolver.setSuffix(".jsp");
+
+        return resolver;
+    }
+}</pre>
+
+    <div class="callout">
+      <strong>Interview memory:</strong>
+      XML and Java configuration are two ways of expressing Spring
+      configuration. The architecture remains the same.
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>12. Custom Spring MVC Context Configuration</h2>
+
+    <p>
+      If the MVC configuration file does not use the traditional
+      <code>spring-servlet.xml</code> convention, explicitly provide its
+      location to DispatcherServlet.
+    </p>
+
+    <pre>&lt;servlet&gt;
+
+    &lt;servlet-name&gt;spring&lt;/servlet-name&gt;
+
+    &lt;servlet-class&gt;
+        org.springframework.web.servlet.DispatcherServlet
+    &lt;/servlet-class&gt;
+
+    &lt;init-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;/WEB-INF/config/my-mvc.xml&lt;/param-value&gt;
+    &lt;/init-param&gt;
+
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+
+&lt;/servlet&gt;</pre>
+
+    <p>
+      The key idea is:
+    </p>
+
+    <pre>DispatcherServlet
+      ↓
+contextConfigLocation
+      ↓
+my-mvc.xml</pre>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>13. Startup Flow vs Request Flow</h2>
+
+    <div class="grid-2">
+      <div class="topic">
+        <strong>Application startup</strong>
+        <pre>Tomcat
+ ↓
+web.xml
+ ↓
+Context initialization
+ ↓
+DispatcherServlet
+ ↓
+Bean creation
+ ↓
+MVC infrastructure
+ ↓
+Application ready</pre>
+      </div>
+
+      <div class="topic">
+        <strong>Request time</strong>
+        <pre>Browser
+ ↓
+DispatcherServlet
+ ↓
+Controller
+ ↓
+Service
+ ↓
+DAO
+ ↓
+Controller
+ ↓
+ViewResolver
+ ↓
+JSP
+ ↓
+Browser</pre>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <strong>Interview trap:</strong>
+      Do not explain application startup as if it happens again for every
+      HTTP request. Spring creates and initializes the application context
+      during startup; requests are then dispatched through the initialized
+      infrastructure.
+    </div>
+  </div>
+</section>
+
+<section id="interview">
+  <div class="card">
+    <h2>14. Interview Answers — Core Questions</h2>
+
+    <details class="question">
+      <summary>1. Explain Spring MVC flow.</summary>
+      <div class="answer">
+        Spring MVC uses DispatcherServlet as the Front Controller. It receives
+        the request, finds the mapped controller method, the controller
+        delegates business work to the service and data access to the DAO,
+        then returns a logical view or ModelAndView. ViewResolver maps the
+        logical view name to the actual view and the response is returned to
+        the client.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>2. Why is DispatcherServlet called Front Controller?</summary>
+      <div class="answer">
+        Because it acts as a centralized entry point for Spring MVC requests
+        and coordinates request processing instead of every request going
+        directly to an application controller.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>3. What does @Controller do?</summary>
+      <div class="answer">
+        It identifies a Spring-managed component as a web controller whose
+        methods can handle web requests through Spring MVC's request mapping
+        infrastructure.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>4. What does component scanning do?</summary>
+      <div class="answer">
+        It scans configured packages and discovers Spring stereotype
+        components such as @Controller, @Service and @Repository so that
+        Spring can register them as beans.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>5. Why do we need a Service layer?</summary>
+      <div class="answer">
+        It separates business logic from web and persistence concerns.
+        Business rules can therefore evolve without putting them into the
+        controller or DAO.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>6. Why use DAO?</summary>
+      <div class="answer">
+        DAO isolates data-access logic. The controller and service should not
+        need to know the details of how data is stored or queried.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>7. What does @RequestMapping do?</summary>
+      <div class="answer">
+        It maps incoming web requests to a controller class or handler method,
+        optionally restricting the HTTP method.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>8. What does @RequestParam do?</summary>
+      <div class="answer">
+        It binds a request parameter to a controller method parameter, such as
+        mapping HTML parameter uName to a Java String userName.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>9. What is ModelAndView?</summary>
+      <div class="answer">
+        It is a return value that can carry both the logical view name and
+        model attributes required by that view.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>10. What does ViewResolver do?</summary>
+      <div class="answer">
+        It translates a logical view name returned by the controller into an
+        actual view resource such as a JSP.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>11. What is InternalResourceViewResolver?</summary>
+      <div class="answer">
+        It resolves internal resources such as JSP views, commonly using a
+        configured prefix and suffix around the logical view name.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>12. Why put JSP files under WEB-INF/views?</summary>
+      <div class="answer">
+        It keeps those JSP resources from being directly accessed by the
+        browser and encourages them to be rendered through the MVC flow.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>13. What is a root application context?</summary>
+      <div class="answer">
+        It is the parent application context commonly used for application-wide
+        components such as services, repositories and infrastructure.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>14. What is a child WebApplicationContext?</summary>
+      <div class="answer">
+        It is the context associated with DispatcherServlet and commonly
+        contains web-layer components such as controllers and view resolvers.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>15. Can child context access parent beans?</summary>
+      <div class="answer">
+        Yes. A child context can access beans from its parent.
+      </div>
+    </details>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>15. Scenario-Based Interview Questions</h2>
+
+    <details class="question">
+      <summary>Scenario 1 — @Controller exists but is not found</summary>
+      <div class="answer">
+        Check whether component scanning covers the controller package,
+        whether the correct application context is loaded, and whether the
+        controller is actually registered as a Spring bean.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 2 — /validateLogin.html returns 404</summary>
+      <div class="answer">
+        Check the DispatcherServlet mapping in web.xml, the controller's
+        @RequestMapping path, the HTTP method, component scanning, and whether
+        the correct context was initialized.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 3 — username arrives as null/missing</summary>
+      <div class="answer">
+        Check that the HTML input's name exactly matches @RequestParam, for
+        example name="uName" with @RequestParam("uName"), and verify the form
+        is actually submitting that parameter.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 4 — Controller returns "success" but JSP is not found</summary>
+      <div class="answer">
+        Check the ViewResolver's prefix and suffix and confirm the physical JSP
+        exists at the resolved path. "success" should resolve to
+        /WEB-INF/views/success.jsp in this project.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 5 — Developer puts SQL directly in Controller</summary>
+      <div class="answer">
+        Move persistence logic into DAO. The controller should handle the web
+        request and delegate business work to the service layer.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 6 — Service currently only calls DAO</summary>
+      <div class="answer">
+        That is still a useful separation. Business rules can be added to the
+        service without changing the controller's responsibility.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 7 — Removed mvc:annotation-driven</summary>
+      <div class="answer">
+        In this XML-based configuration, the MVC annotation infrastructure
+        may not be registered correctly. Verify the MVC configuration and
+        annotation-driven setup.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 8 — Custom MVC XML filename</summary>
+      <div class="answer">
+        Configure DispatcherServlet's contextConfigLocation init parameter
+        with the custom XML path.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 9 — Parent context tries to access Controller</summary>
+      <div class="answer">
+        Reconsider the dependency direction. The child web context can access
+        parent beans, but the parent should not depend on child-only web beans.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 10 — Why does "success" work without success.jsp in Controller?</summary>
+      <div class="answer">
+        Because "success" is a logical view name. InternalResourceViewResolver
+        adds the configured prefix and suffix and locates the actual JSP.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 11 — Controller contains validation, database calls and HTML</summary>
+      <div class="answer">
+        The class has too many responsibilities. Separate request handling,
+        business rules, data access and presentation into Controller, Service,
+        DAO and View respectively.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 12 — POST request is mapped but GET request fails</summary>
+      <div class="answer">
+        Check the method attribute of @RequestMapping. If the handler is
+        restricted to RequestMethod.POST, a GET request will not match it.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 13 — JSP can be opened directly by URL</summary>
+      <div class="answer">
+        Place protected view JSPs under WEB-INF/views and resolve them through
+        the controller/ViewResolver flow rather than exposing them directly.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 14 — Spring does not inject LoginService into Controller</summary>
+      <div class="answer">
+        Check that LoginService is a Spring bean, for example through @Service
+        and component scanning, and that the controller itself is managed by
+        Spring.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 15 — Application starts but controller mappings fail</summary>
+      <div class="answer">
+        Check the DispatcherServlet context, MVC annotation configuration,
+        component scanning and request mappings. Startup success does not
+        guarantee that the expected controller is in the correct context.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 16 — Two contexts are configured. Where should Controller go?</summary>
+      <div class="answer">
+        Put presentation-layer components such as controllers in the child
+        DispatcherServlet context, while application-wide services and DAOs
+        can live in the root context.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 17 — DAO depends on Controller</summary>
+      <div class="answer">
+        That is a poor layering direction. DAO should focus on data access and
+        should not depend on the web/presentation layer.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 18 — ViewResolver prefix is wrong</summary>
+      <div class="answer">
+        The controller can return the correct logical name but resolution will
+        point to the wrong physical location. Verify prefix, suffix and JSP
+        directory structure.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 19 — Browser sends uName but code expects username</summary>
+      <div class="answer">
+        Align the request parameter names or explicitly configure the expected
+        parameter name. Binding depends on the parameter name.
+      </div>
+    </details>
+
+    <details class="question">
+      <summary>Scenario 20 — Interviewer asks what happens before the first request</summary>
+      <div class="answer">
+        The servlet container loads web configuration, Spring contexts are
+        initialized, Spring discovers/configures beans, DispatcherServlet and
+        MVC infrastructure are initialized, and the application becomes ready
+        to process requests.
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="traps">
+  <div class="card">
+    <h2>16. Interview Traps</h2>
+
+    <div class="grid-2">
+      <div class="topic">
+        <strong>Trap 1</strong>
+        DispatcherServlet is not the same thing as every Controller.
+        It is the Front Controller that coordinates request processing.
+      </div>
+
+      <div class="topic">
+        <strong>Trap 2</strong>
+        @RequestMapping does not by itself mean the class was discovered as a
+        Spring bean. Component registration still matters.
+      </div>
+
+      <div class="topic">
+        <strong>Trap 3</strong>
+        "success" is a logical view name, not necessarily the JSP filename.
+      </div>
+
+      <div class="topic">
+        <strong>Trap 4</strong>
+        Spring does not force you to create a Service layer. It is an
+        architectural separation used for maintainability.
+      </div>
+
+      <div class="topic">
+        <strong>Trap 5</strong>
+        DAO means Data Access Object, not "database table".
+      </div>
+
+      <div class="topic">
+        <strong>Trap 6</strong>
+        Startup and request processing are different phases.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="memory">
+  <div class="card memory">
+    <h2>17. Final Memory Sheet</h2>
+
+    <h3>The one-line flow</h3>
+    <pre>Browser
+ → DispatcherServlet
+ → Controller
+ → Service
+ → DAO
+ → Controller
+ → ViewResolver
+ → JSP
+ → Browser</pre>
+
+    <h3>The configuration memory</h3>
+    <pre>web.xml
+ ↓
+DispatcherServlet
+
+spring-servlet.xml
+ ↓
+component-scan
+ ↓
+mvc:annotation-driven
+ ↓
+ViewResolver</pre>
+
+    <h3>The layer memory</h3>
+    <pre>Controller = HTTP / web concern
+Service    = business concern
+DAO        = data-access concern
+Model      = data
+View       = presentation</pre>
+
+    <h3>The context memory</h3>
+    <pre>Root / Parent
+ ├─ Service
+ └─ DAO
+
+Child / DispatcherServlet
+ ├─ Controller
+ └─ ViewResolver
+
+Child can access Parent.</pre>
+
+    <h3>The ViewResolver memory</h3>
+    <pre>"success"
+   +
+prefix: /WEB-INF/views/
+   +
+suffix: .jsp
+   =
+/WEB-INF/views/success.jsp</pre>
+
+    <div class="callout success">
+      <strong>Interview-ready sentence:</strong><br>
+      Spring MVC uses DispatcherServlet as the Front Controller. It dispatches
+      requests to mapped controllers, which delegate business logic to services
+      and data access to DAOs. The controller returns a logical view name or
+      ModelAndView, and ViewResolver resolves that logical name to the actual
+      view.
+    </div>
+
+    <div class="callout warning">
+      <strong>Practice task:</strong>
+      Close this page and try writing web.xml, spring-servlet.xml,
+      Controller → Service → DAO and the three JSPs from memory. Then explain
+      the request flow aloud without looking at the diagram.
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <h2>18. Source-Aligned Coverage</h2>
+    <p>
+      This guide follows the uploaded Spring MVC material's terminology and
+      coverage around Model2/MVC, dynamic request flow, DispatcherServlet,
+      Controller/Service/DAO, context configuration, Root/Child context
+      hierarchy, ViewResolver, InternalResourceViewResolver and Java
+      configuration.
+    </p>
+
+    <p>
+      Where this guide uses a concrete Login project, the implementation is
+      used as the teaching example so the concepts can be connected into one
+      complete application rather than learned as isolated definitions.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Spring MVC Beginner → Coding → Interview Guide
+    <br>
+    <small>Responsive single-file HTML • Mobile + Desktop • Mermaid diagrams</small>
+  </div>
+</footer>
+
+<button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Back to top">↑</button>
+
+
+<script>
+(function () {
+  const body = document.body;
+  const button = document.getElementById("themeToggle");
+  const icon = document.getElementById("themeIcon");
+  const text = document.getElementById("themeText");
+
+  function applyTheme(isDark) {
+    body.classList.toggle("dark", isDark);
+    button.setAttribute("aria-pressed", String(isDark));
+    icon.textContent = isDark ? "☀" : "☾";
+    text.textContent = isDark ? "Light Mode" : "Dark Mode";
+    localStorage.setItem("springMvcTheme", isDark ? "dark" : "light");
+  }
+
+  const saved = localStorage.getItem("springMvcTheme");
+
+  if (saved === "dark") {
+    applyTheme(true);
+  } else if (saved === "light") {
+    applyTheme(false);
+  } else {
+    applyTheme(window.matchMedia &&
+               window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+
+  button.addEventListener("click", function () {
+    applyTheme(!body.classList.contains("dark"));
+  });
+})();
+</script>
+
+</body>
+</html>
