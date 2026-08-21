@@ -790,13 +790,20 @@
     function applyTheme(isDark) {
       document.body.classList.toggle('light', !isDark);
       toggleBtns.forEach((btn) => {
-        btn.setAttribute('aria-pressed', String(isDark));
+        btn.setAttribute('aria-pressed', String(!isDark));
         const icon = btn.querySelector('#themeIcon') || btn.querySelector('span:first-child');
         const text = btn.querySelector('#themeText');
         if (icon) icon.textContent = isDark ? '☀' : '☾';
         if (text) text.textContent = isDark ? 'Light' : 'Dark';
       });
       localStorage.setItem('springHubTheme', isDark ? 'dark' : 'light');
+
+      // Re-trigger Mermaid diagram render if available
+      if (window.mermaid && typeof window.mermaid.run === 'function') {
+        try {
+          window.mermaid.run();
+        } catch (e) {}
+      }
     }
 
     const savedTheme = localStorage.getItem('springHubTheme') || localStorage.getItem('springMvcTheme');
