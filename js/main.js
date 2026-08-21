@@ -794,7 +794,7 @@
         const icon = btn.querySelector('#themeIcon') || btn.querySelector('span:first-child');
         const text = btn.querySelector('#themeText');
         if (icon) icon.textContent = isDark ? '☀' : '☾';
-        if (text) text.textContent = isDark ? 'Tokyo Day' : 'Tokyo Night';
+        if (text) text.textContent = isDark ? 'Light' : 'Dark';
       });
       localStorage.setItem('springHubTheme', isDark ? 'dark' : 'light');
     }
