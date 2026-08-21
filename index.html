@@ -4,393 +4,137 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Spring JPA Learning Hub</title>
-  <meta name="description" content="A simple landing page for Spring Transactions and Spring Data JPA study guides.">
-  <style>
-    :root {
-      --bg: #000000;
-      --panel: #0a0a0a;
-      --panel2: #141414;
-      --text: #ededed;
-      --text-bright: #ffffff;
-      --muted: #888888;
-      --line: #262626;
-      --border: #262626;
-      --accent: #ffffff;
-      --accent2: #a3a3a3;
-      --cyan: #ffffff;
-      --purple: #ffffff;
-      --shadow: 0 16px 45px rgba(0, 0, 0, 0.9);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background: var(--bg);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    }
-
-    a {
-      color: inherit;
-    }
-
-    .container {
-      width: min(1120px, calc(100% - 36px));
-      margin: auto;
-    }
-
-    header {
-      min-height: 72vh;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--line);
-      background: #000000;
-    }
-
-    nav {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 68px;
-      display: flex;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.95);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .nav-inner {
-      width: min(1120px, calc(100% - 36px));
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-weight: 800;
-      letter-spacing: -.03em;
-      text-decoration: none;
-      color: #ffffff;
-    }
-
-    .logo span {
-      color: var(--muted);
-    }
-
-    .nav-link {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: .9rem;
-      transition: color .2s ease;
-    }
-
-    .nav-link:hover {
-      color: #ffffff;
-    }
-
-    .hero {
-      width: min(850px, 100%);
-      padding: 110px 0 70px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      padding: 7px 11px;
-      border: 1px solid var(--line);
-      background: #111111;
-      border-radius: 999px;
-      color: #ffffff;
-      font-size: .78rem;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    h1 {
-      margin: 22px 0 18px;
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      line-height: .94;
-      letter-spacing: -.065em;
-      color: #ffffff;
-    }
-
-    h1 span {
-      color: #a3a3a3;
-    }
-
-    .hero p {
-      max-width: 700px;
-      color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.75;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      padding: 11px 16px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: #111111;
-      color: #ffffff;
-      font-size: .9rem;
-      transition: all .2s ease;
-    }
-
-    .button:hover {
-      border-color: #555555;
-      background: #1a1a1a;
-    }
-
-    .button.primary {
-      background: #ffffff;
-      color: #000000;
-      border-color: #ffffff;
-      font-weight: 700;
-    }
-
-    .button.primary:hover {
-      background: #d4d4d4;
-      border-color: #d4d4d4;
-    }
-
-    section {
-      padding: 70px 0;
-      background: #000000;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      align-items: end;
-      margin-bottom: 24px;
-    }
-
-    .section-head h2 {
-      margin: 0;
-      font-size: 2rem;
-      letter-spacing: -.04em;
-      color: #ffffff;
-    }
-
-    .section-head p {
-      margin: 0;
-      max-width: 500px;
-      color: var(--muted);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .card {
-      position: relative;
-      display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      padding: 19px;
-      min-height: 118px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #0a0a0a;
-      text-decoration: none;
-      transition: .18s ease;
-      color: #ffffff;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: #555555;
-      background: #141414;
-    }
-
-    .num {
-      flex: 0 0 auto;
-      color: #ffffff;
-      font: 700 .75rem/1.2 ui-monospace, SFMono-Regular, monospace;
-      padding-top: 3px;
-    }
-
-    .card h3 {
-      margin: 0 30px 5px 0;
-      font-size: 1.02rem;
-      color: #ffffff;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: .86rem;
-      line-height: 1.5;
-    }
-
-    .arrow {
-      position: absolute;
-      top: 17px;
-      right: 17px;
-      color: #888888;
-    }
-
-    .note {
-      margin-top: 22px;
-      padding: 17px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      color: var(--muted);
-      background: #0a0a0a;
-    }
-
-    footer {
-      padding: 35px 0 55px;
-      border-top: 1px solid var(--line);
-      color: #666666;
-      font-size: .82rem;
-      background: #000000;
-    }
-
-    @media(max-width:760px) {
-      header {
-        min-height: auto;
-      }
-
-      .hero {
-        padding-top: 120px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-head {
-        display: block;
-      }
-
-      .section-head p {
-        margin-top: 10px;
-      }
-
-      .nav-link {
-        display: none;
-      }
-    }
-  </style>
+  <title>Spring JPA & MVC Learning Hub — Tokyo Night Edition</title>
+  <meta name="description" content="A modern visual portal for Spring MVC, Spring Data JPA, and Transaction Management study guides with Tokyo Night theme, interactive diagrams, and vibrant code sandboxes.">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body id="top">
 
-  <nav>
+  <!-- TOP NAVIGATION -->
+  <nav class="landing-nav">
     <div class="nav-inner">
-      <a class="logo" href="#top">Spring<span>Hub</span></a>
-      <a class="nav-link" href="#topics">Browse topics ↓</a>
+      <a class="logo" href="#top">
+        <svg class="spring-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28" height="28">
+          <path fill="#8bc34a" d="M43.982,23.635c0.069-4.261-0.891-9.328-2.891-15.273l-1.568-4.662l-2.13,4.433 c-0.114,0.237-0.244,0.469-0.38,0.698C33.514,5.827,28.974,4,24,4C12.954,4,4,12.954,4,24c0,11.046,8.954,20,20,20s20-8.954,20-20 C44,23.877,43.984,23.758,43.982,23.635z"></path>
+          <path fill="#fff" d="M39.385 32.558c-3.123 4.302-8.651 4.533-13.854 4.442H18.75h-1.938c4.428-1.593 7.063-1.972 9.754-3.4 5.068-2.665 10.078-8.496 11.121-14.562-1.93 5.836-7.779 10.85-13.109 12.889-3.652 1.393-10.248 2.745-10.248 2.745l-.267-.145C9.573 32.268 9.437 22.214 17.6 18.968c3.574-1.423 6.993-.641 10.854-1.593 4.122-1.012 8.89-4.208 10.83-8.375C41.456 15.667 44.07 26.106 39.385 32.558L39.385 32.558zM15.668 38.445C15.386 38.795 14.955 39 14.505 39c-.823 0-1.495-.677-1.495-1.5s.677-1.5 1.495-1.5c.341 0 .677.118.941.336C16.086 36.855 16.186 37.805 15.668 38.445L15.668 38.445z"></path>
+        </svg>
+        <span>Spring<b>Hub</b></span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-pressed="false">
+          <span id="themeIcon">☾</span>
+          <span id="themeText">Tokyo Night</span>
+        </button>
+      </div>
     </div>
   </nav>
 
-  <header>
+  <!-- HERO SECTION -->
+  <header class="hero-landing">
     <div class="container">
       <div class="hero">
-        <div class="eyebrow">Java · Spring · JPA · Transactions</div>
+        <div class="eyebrow">✨ Java · Spring MVC · Spring Data JPA · Architecture Guides</div>
 
         <h1>Learn it.<br><span>See it.</span><br>Build it.</h1>
 
-        <p>
-          A single home page for your Spring learning material.
-          Keep every topic in its own HTML file and use this page
-          as the central index. Add new guides without changing the
-          structure of your project.
+        <p class="subtitle">
+          Your centralized visual learning hub for Spring Framework, JPA ORM, and enterprise architecture.
+          Packed with high-resolution interactive Mermaid diagrams, scenario-based interview questions,
+          and colorful, copy-ready code sandboxes in a stunning Tokyo Night theme.
         </p>
 
         <div class="buttons">
-          <a class="button primary" href="#topics">Explore topics</a>
-          <!-- <a class="button" href="spring-jpa-concepts-theory-diagrams-complete-code.html#code">
-            Open complete project
-          </a> -->
+          <a class="button primary" href="#topics">Explore Guides ↓</a>
         </div>
       </div>
     </div>
   </header>
 
-  <section id="topics">
+  <!-- LEARNING LIBRARY SECTION -->
+  <section id="topics" class="topics-section">
     <div class="container">
       <div class="section-head">
         <div>
-          <h2>Learning library</h2>
+          <h2>Learning Library</h2>
         </div>
         <p>
-          Each card is simply an anchor tag pointing to another HTML file
-          or a section inside that file.
+          Select a guide to open the visual walkthrough or use <strong>+ Add Page</strong> to index your custom HTML files.
         </p>
       </div>
 
-      <div class="grid">
+      <!-- SEARCH BAR & ADD PAGE CONTROLS -->
+      <div class="controls-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="librarySearch" placeholder="Search guides by title, keyword, or filename (e.g. jpa, mvc, crud)..." autocomplete="off" />
+        </div>
+        <button type="button" class="add-page-btn primary open-add-page-modal">
+          + Add New Page
+        </button>
+      </div>
+
+      <!-- CARDS GRID -->
+      <div class="grid" id="topicsGrid">
         <a class="card" href="jpa_bootstrapping_complete_crud_interview_guide.html">
           <div class="num">01</div>
-          <div>
-            <h3>Unit 17:JPA ORM CRUD</h3>
-            <p>Core crud operations</p>
+          <div style="flex: 1;">
+            <h3>Unit 17: JPA ORM CRUD & Bootstrapping</h3>
+            <p>Entity lifecycle, persistence.xml, EntityManager, SessionFactory, dirty checking, and complete CRUD operations.</p>
+            <span class="file-tag">jpa_bootstrapping_complete_crud_interview_guide.html</span>
           </div>
           <span class="arrow">↗</span>
         </a>
 
-      </div>
-
-      <div class="grid">
         <a class="card" href="spring-jpa-concepts-theory-diagrams-complete-code-v2.html">
-          <div class="num">01</div>
-          <div>
+          <div class="num">02</div>
+          <div style="flex: 1;">
             <h3>Unit 20: Transaction Management & Custom Repository</h3>
-            <p>Core transaction concepts and mental model</p>
+            <p>Declarative @Transactional, Propagation behaviors, Isolation levels, rollback rules, and custom Spring Data repositories.</p>
+            <span class="file-tag">spring-jpa-concepts-theory-diagrams-complete-code-v2.html</span>
           </div>
           <span class="arrow">↗</span>
         </a>
 
-      </div>
-
-      
-<div class="grid">
         <a class="card" href="spring-mvc-interview-guide.html">
-          <div class="num">01</div>
-          <div>
-            <h3>SPRING MVC</h3>
-            <p>Spring mvc concepts</p>
+          <div class="num">03</div>
+          <div style="flex: 1;">
+            <h3>Unit 23: Spring MVC Architecture & Interview Guide</h3>
+            <p>DispatcherServlet request lifecycle, WebApplicationContext hierarchy, form handling, controllers, and interview traps.</p>
+            <span class="file-tag">spring-mvc-interview-guide.html</span>
           </div>
           <span class="arrow">↗</span>
         </a>
 
+        <a class="card" href="spring-mvc-forms.html">
+          <div class="num">04</div>
+          <div style="flex: 1;">
+            <h3>Unit 24: Spring MVC Forms, Validation & Exception Handling</h3>
+            <p>Form taglib (&lt;form:form&gt;), @ModelAttribute, Bean Validation (@Valid &amp; BindingResult), custom validators, and @ControllerAdvice exception handling.</p>
+            <span class="file-tag">spring-mvc-forms.html</span>
+          </div>
+          <span class="arrow">↗</span>
+        </a>
       </div>
- 
 
-      
+      <!-- PAGINATION BAR -->
+      <div class="pagination-container" id="paginationContainer">
+        <div class="pagination-info" id="paginationInfo">Showing 1-4 of 4 guides</div>
+        <div class="pagination-controls" id="paginationControls">
+          <!-- Dynamically populated by js/main.js -->
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer>
     <div class="container">
-      Spring Learning Hub · Static HTML · Simple to host anywhere
+      Spring Learning Hub · Tokyo Night Edition · Modular CSS & JS · Fast & Offline Ready
     </div>
   </footer>
 
+  <script src="js/main.js"></script>
 </body>
 
 </html>

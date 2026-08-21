@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Unit 24: Spring MVC Forms, Validation & Exception Handling — Visual Guide</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+<header class="hero" id="top">
+  <a class="home-btn" href="index.html" aria-label="Go to home page">⌂ Home</a>
+  <h1>Spring MVC Forms, Validation &amp; Exception Handling</h1>
+  <p class="hero-subtitle">
+    Beginner-friendly interview and exam guide based on the uploaded Spring MVC training chapter.
+    Learn the concepts first, then see complete code, diagrams, common traps, and scenario-based questions.
+  </p>
+  <div class="badges">
+    <span class="badge">Tokyo Night</span>
+    <span class="badge">Beginner → Interview</span>
+    <span class="badge">JSP + Spring Forms</span>
+    <span class="badge">Validation</span>
+    <span class="badge">Exception Handling</span>
+  </div>
+</header>
+
+<div class="content-switcher" id="contentSwitcher" role="tablist" aria-label="Study mode">
+  <span class="switch-indicator" aria-hidden="true"></span>
+  <button class="switch-btn active" id="studyTab" type="button" role="tab" aria-selected="true" aria-controls="studyPanel">Study Guide</button>
+  <button class="switch-btn" id="interviewTab" type="button" role="tab" aria-selected="false" aria-controls="interviewPanel">Interview Guide</button>
+</div>
+
+<div class="content-panel active" id="studyPanel" role="tabpanel" aria-labelledby="studyTab">
+
+<nav class="toc" aria-label="Table of contents">
+  <div class="toc-title">📚 Chapter Map</div>
+  <div class="toc-grid">
+    <a href="#big-picture">1. Big Picture</a>
+    <a href="#forms">2. Spring MVC Forms</a>
+    <a href="#static">3. Static UI Components</a>
+    <a href="#dynamic">4. Dynamic UI Components</a>
+    <a href="#modelattribute">5. @ModelAttribute</a>
+    <a href="#model-request">6. Model vs Request</a>
+    <a href="#validation">7. Validation</a>
+    <a href="#custom-validation">8. Custom Validation</a>
+    <a href="#exceptions">9. Exception Handling</a>
+    <a href="#advice">10. @ControllerAdvice</a>
+    <a href="#complete-flow">11. Complete Flow</a>
+    <a href="#interview">12. Scenario Questions</a>
+    <a href="#memory">13. Exam Memory Sheet</a>
+  </div>
+</nav>
+
+<section id="big-picture">
+  <h2>1. 🧠 What is this whole chapter about?</h2>
+  <div class="card">
+    <p>Imagine an <strong>Employee Registration</strong> page. The user enters a name, password, gender, country, community, age, joining date, and other information.</p>
+    <p>Spring MVC has to solve four connected problems:</p>
+
+    <div class="flow">
+      <div class="flow-item">📝 Build the form</div>
+      <div class="flow-item">🔄 Bind data to Java objects</div>
+      <div class="flow-item">✅ Validate input</div>
+      <div class="flow-item">🛡️ Handle exceptions</div>
+      <div class="flow-item">🗃️ Run business logic</div>
+      <div class="flow-item">🖥️ Return a view</div>
+    </div>
+
+    <div class="callout memory">
+      <div class="callout-title">🧠 The one-line mental model</div>
+      <strong>Form → Model → Controller → Validation → BindingResult → Service → Exception Handling → View</strong>
+    </div>
+
+    <p>The uploaded chapter's summary focuses on Spring MVC Forms, static/dynamic UI components, Model Attribute, standard/custom validation, and exception handling.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    U["👤 User"] --> F["📝 JSP Spring Form"]
+    F --> C["🎮 Controller"]
+    C --> M["📦 Spring Model"]
+    C --> V["✅ Validation"]
+    V --> BR["📋 BindingResult"]
+    BR -->|Errors| F
+    BR -->|Valid| S["⚙️ Service"]
+    S --> D["🗄️ DAO"]
+    D --> DB[("Database")]
+    S -->|Business exception| EH["🛡️ Exception Handler"]
+    EH --> EV["❌ Error View"]
+    S -->|Success| SV["🎉 Success View"]
+    SV --> U
+    EV --> U
+    </div>
+  </div>
+</section>
+
+<section id="forms">
+  <h2>2. 📝 Spring MVC Forms</h2>
+  <div class="card">
+    <h3>First: normal HTML form</h3>
+    <p>Forget Spring for a moment. A normal HTML form can look like this:</p>
+    <div class="code-wrap"><pre><code>&lt;form method="post" action="/register"&gt;
+
+    Name:
+    &lt;input type="text" name="name"&gt;
+
+    Password:
+    &lt;input type="password" name="password"&gt;
+
+    &lt;button type="submit"&gt;
+        Register
+    &lt;/button&gt;
+
+&lt;/form&gt;</code></pre></div>
+
+    <p>In Spring MVC, we usually have a Java object representing the form:</p>
+    <div class="code-wrap"><pre><code>public class EmployeeBean {
+
+    private String name;
+    private String password;
+    private String gender;
+    private String country;
+
+    // getters and setters
+}</code></pre></div>
+
+    <p>Spring Form tags connect the HTML controls to that Java object.</p>
+
+    <h3>Spring Form tag library</h3>
+    <div class="code-wrap"><pre><code>&lt;%@ taglib
+    prefix="form"
+    uri="http://www.springframework.org/tags/form" %&gt;</code></pre></div>
+
+    <p>Common tags from the chapter include:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tag</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><span class="inline-code">&lt;form:form&gt;</span></td><td>Spring-aware form container</td></tr>
+          <tr><td><span class="inline-code">&lt;form:input&gt;</span></td><td>Text input</td></tr>
+          <tr><td><span class="inline-code">&lt;form:password&gt;</span></td><td>Password input</td></tr>
+          <tr><td><span class="inline-code">&lt;form:radiobutton&gt;</span></td><td>Single radio button</td></tr>
+          <tr><td><span class="inline-code">&lt;form:radiobuttons&gt;</span></td><td>Multiple/dynamic radio buttons</td></tr>
+          <tr><td><span class="inline-code">&lt;form:select&gt;</span></td><td>Select/dropdown</td></tr>
+          <tr><td><span class="inline-code">&lt;form:option&gt;</span></td><td>Individual option</td></tr>
+          <tr><td><span class="inline-code">&lt;form:checkbox&gt;</span></td><td>Single checkbox</td></tr>
+          <tr><td><span class="inline-code">&lt;form:checkboxes&gt;</span></td><td>Multiple checkboxes</td></tr>
+          <tr><td><span class="inline-code">&lt;form:textarea&gt;</span></td><td>Multi-line input</td></tr>
+          <tr><td><span class="inline-code">&lt;form:hidden&gt;</span></td><td>Hidden form field</td></tr>
+          <tr><td><span class="inline-code">&lt;form:errors&gt;</span></td><td>Display validation errors</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>The most important idea: modelAttribute</h3>
+    <p>Suppose the controller sends an object under the name <span class="inline-code">employeeBean</span>.</p>
+    <div class="code-wrap"><pre><code>&lt;form:form
+    modelAttribute="employeeBean"
+    method="POST"
+    action="registration"&gt;</code></pre></div>
+
+    <p>Now:</p>
+    <div class="code-wrap"><pre><code>&lt;form:input path="name"/&gt;</code></pre></div>
+    <p>means: <strong>connect this field to employeeBean.name.</strong></p>
+
+    <div class="callout">
+      <div class="callout-title">🧠 Remember</div>
+      <span class="inline-code">modelAttribute</span> = which Java object the form is bound to.<br>
+      <span class="inline-code">path</span> = which property inside that object the field represents.
+    </div>
+
+    <h3>Complete basic form</h3>
+    <div class="code-wrap"><pre><code>&lt;%@ taglib
+    prefix="form"
+    uri="http://www.springframework.org/tags/form" %&gt;
+
+&lt;html&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Employee Registration&lt;/h2&gt;
+
+&lt;!--
+    modelAttribute="employeeBean"
+    tells Spring that this form is bound
+    to the EmployeeBean object.
+--&gt;
+&lt;form:form
+        method="POST"
+        modelAttribute="employeeBean"
+        action="registration"&gt;
+
+    &lt;label&gt;Name:&lt;/label&gt;
+
+    &lt;!--
+        path="name"
+        connects this field with employeeBean.name
+    --&gt;
+    &lt;form:input path="name"/&gt;
+
+    &lt;br&gt;&lt;br&gt;
+
+    &lt;label&gt;Password:&lt;/label&gt;
+
+    &lt;!-- Connects with employeeBean.password --&gt;
+    &lt;form:password path="password"/&gt;
+
+    &lt;br&gt;&lt;br&gt;
+
+    &lt;input type="submit" value="Register"/&gt;
+
+&lt;/form:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div>
+
+    <h3>Controller</h3>
+    <div class="code-wrap"><pre><code>@Controller
+public class EmployeeController {
+
+    @RequestMapping(
+        value = "/loadEmployee",
+        method = RequestMethod.GET
+    )
+    public ModelAndView loadEmployeePage() {
+
+        /*
+         * Create the Java object that will be
+         * used by the Spring Form.
+         */
+        EmployeeBean employeeBean = new EmployeeBean();
+
+        /*
+         * "Registration" = logical view name.
+         *
+         * "employeeBean" = name by which JSP
+         * will access the Java object.
+         */
+        ModelAndView modelAndView =
+            new ModelAndView(
+                "Registration",
+                "employeeBean",
+                employeeBean
+            );
+
+        return modelAndView;
+    }
+}</code></pre></div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    A["Browser requests /loadEmployee"] --> B["DispatcherServlet"]
+    B --> C["EmployeeController"]
+    C --> D["Create EmployeeBean"]
+    D --> E["Put EmployeeBean into Model"]
+    E --> F["Return logical view: Registration"]
+    F --> G["ViewResolver"]
+    G --> H["Registration.jsp"]
+    H --> I["Spring Form reads modelAttribute"]
+    I --> J["Form fields bind to EmployeeBean"]
+    </div>
+  </div>
+</section>
+
+<section id="static">
+  <h2>3. 🎛️ Static UI Components</h2>
+  <div class="card">
+    <p><strong>Static</strong> means the values are written directly in the JSP.</p>
+
+    <h3>Static radio buttons</h3>
+    <div class="code-wrap"><pre><code>&lt;form:radiobutton
+        path="gender"
+        value="M"
+        label="Male"/&gt;
+
+&lt;form:radiobutton
+        path="gender"
+        value="F"
+        label="Female"/&gt;</code></pre></div>
+
+    <p>If Male is selected, <span class="inline-code">employeeBean.getGender()</span> can return <strong>M</strong>.</p>
+
+    <h3>Static dropdown</h3>
+    <div class="code-wrap"><pre><code>&lt;form:select path="country"&gt;
+
+    &lt;form:option
+        value=""
+        label="--Select--"/&gt;
+
+    &lt;form:option
+        value="1"
+        label="India"/&gt;
+
+    &lt;form:option
+        value="2"
+        label="USA"/&gt;
+
+    &lt;form:option
+        value="3"
+        label="UK"/&gt;
+
+&lt;/form:select&gt;</code></pre></div>
+
+    <h3>Static checkbox</h3>
+    <div class="code-wrap"><pre><code>&lt;form:checkbox
+    path="mailingList"
+    label="Would you like to join our mailing list?"/&gt;</code></pre></div>
+
+    <p>A single checkbox can represent a Boolean value.</p>
+
+    <h3>Multiple checkboxes</h3>
+    <div class="code-wrap"><pre><code>&lt;form:checkbox
+        path="community"
+        value="Spring"
+        label="Spring"/&gt;
+
+&lt;form:checkbox
+        path="community"
+        value="Hibernate"
+        label="Hibernate"/&gt;
+
+&lt;form:checkbox
+        path="community"
+        value="Struts"
+        label="Struts"/&gt;</code></pre></div>
+
+    <p>The Java property can be an array/collection, for example:</p>
+    <div class="code-wrap"><pre><code>private String[] community;</code></pre></div>
+
+    <h3>Textarea</h3>
+    <div class="code-wrap"><pre><code>&lt;form:textarea path="aboutYou"/&gt;</code></pre></div>
+  </div>
+</section>
+
+<section id="dynamic">
+  <h2>4. 🔄 Dynamic UI Components</h2>
+  <div class="card">
+    <p><strong>Dynamic</strong> means the values are supplied at runtime, commonly through the backend.</p>
+
+    <div class="callout memory">
+      <div class="callout-title">🧠 Dynamic UI flow</div>
+      Database → DAO → Service → Controller → Model → JSP
+    </div>
+
+    <h3>Dynamic radio buttons</h3>
+    <div class="code-wrap"><pre><code>@ModelAttribute("gender")
+public Map&lt;String, String&gt; populateGenderRadio() {
+
+    /*
+     * Normally this could come from:
+     * Service → DAO → Database.
+     */
+    return employeeService.getGender();
+}</code></pre></div>
+
+    <p>Example returned map:</p>
+    <div class="code-wrap"><pre><code>{
+    "M" : "Male",
+    "F" : "Female"
+}</code></pre></div>
+
+    <p>JSP:</p>
+    <div class="code-wrap"><pre><code>&lt;form:radiobuttons
+    path="gender"
+    items="${gender}"/&gt;</code></pre></div>
+
+    <h3>Dynamic checkboxes</h3>
+    <div class="code-wrap"><pre><code>@ModelAttribute("communityList")
+public Map&lt;String, String&gt; populateCommunityCheckBoxes() {
+
+    return employeeService.getCommunities();
+}</code></pre></div>
+
+    <div class="code-wrap"><pre><code>&lt;form:checkboxes
+    path="community"
+    items="${communityList}"/&gt;</code></pre></div>
+
+    <h3>Dynamic dropdown</h3>
+    <div class="code-wrap"><pre><code>@ModelAttribute("countryList")
+public Map&lt;String, String&gt; populateCountries() {
+
+    return employeeService.getCountries();
+}</code></pre></div>
+
+    <div class="code-wrap"><pre><code>&lt;form:select
+    path="country"
+    items="${countryList}"/&gt;</code></pre></div>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Debugging a blank dynamic dropdown</div>
+      Trace: DAO → Service → @ModelAttribute method → Model attribute name → JSP <span class="inline-code">items</span> expression.
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart LR
+    DB[("Database")] --> DAO["DAO"]
+    DAO --> S["Service"]
+    S --> C["Controller"]
+    C --> MA["@ModelAttribute"]
+    MA --> M["Model"]
+    M --> JSP["JSP Spring Form"]
+    JSP --> UI["Dynamic UI"]
+    </div>
+  </div>
+</section>
+
+<section id="modelattribute">
+  <h2>5. 🏷️ @ModelAttribute</h2>
+  <div class="card">
+    <p><span class="inline-code">@ModelAttribute</span> has two important uses in this chapter.</p>
+
+    <h3>Use 1 — method level</h3>
+    <div class="code-wrap"><pre><code>@ModelAttribute("countries")
+public List&lt;String&gt; countries() {
+
+    return employeeService.getCountries();
+}</code></pre></div>
+
+    <p>Think:</p>
+    <div class="callout memory">
+      <strong>Method level @ModelAttribute = prepare/populate Model data before the handler runs.</strong>
+    </div>
+
+    <h3>Use 2 — method parameter</h3>
+    <div class="code-wrap"><pre><code>public ModelAndView register(
+        @ModelAttribute("employeeBean")
+        EmployeeBean employeeBean) {
+
+    // employeeBean contains bound form data.
+
+    return new ModelAndView("success");
+}</code></pre></div>
+
+    <p>Think:</p>
+    <div class="callout memory">
+      <strong>Parameter level @ModelAttribute = bind submitted request/form data to a Java object.</strong>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Where?</th><th>Main idea</th></tr></thead>
+        <tbody>
+          <tr><td>Above a method</td><td>Prepare Model data</td></tr>
+          <tr><td>On a method parameter</td><td>Bind request/form data to an object</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="model-request">
+  <h2>6. 📦 Spring Model vs Request Scope</h2>
+  <div class="card">
+    <p>Think of the Spring <span class="inline-code">Model</span> as a temporary bag of data that the controller wants to make available to the view.</p>
+
+    <h3>Using Model</h3>
+    <div class="code-wrap"><pre><code>public String register(Model model) {
+
+    model.addAttribute(
+        "message",
+        "Registration successful"
+    );
+
+    return "success";
+}</code></pre></div>
+
+    <h3>Using ModelMap</h3>
+    <div class="code-wrap"><pre><code>public String register(ModelMap map) {
+
+    map.addAttribute(
+        "message",
+        "Registration successful"
+    );
+
+    return "success";
+}</code></pre></div>
+
+    <h3>Request object</h3>
+    <div class="code-wrap"><pre><code>request.setAttribute(
+    "message",
+    "Hello"
+);</code></pre></div>
+
+    <p>The chapter's demo highlights an important lifecycle point: during controller execution, the submitted bean is available through Spring's Model/ModelMap, while request attributes are exposed to the view during the later rendering stage.</p>
+
+    <div class="callout interview">
+      <div class="callout-title">🎯 Interview way to say it</div>
+      The controller works with Spring's Model during request processing. When Spring MVC renders the selected view, model attributes are exposed so the JSP can read them.
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+sequenceDiagram
+    participant B as Browser
+    participant DS as DispatcherServlet
+    participant C as Controller
+    participant M as Spring Model
+    participant V as JSP View
+
+    B->>DS: POST /registration
+    DS->>C: Invoke handler
+    C->>M: Bound form data available
+    C->>M: Add response data
+    C-->>DS: ModelAndView
+    DS->>V: Render view using model
+    V->>M: Read attributes
+    M-->>V: Data
+    V-->>B: HTML response
+    </div>
+  </div>
+</section>
+
+<section id="validation">
+  <h2>7. ✅ Validation</h2>
+  <div class="card">
+    <p>Validation prevents invalid user input from continuing into business logic or being stored incorrectly.</p>
+
+    <div class="callout memory">
+      <div class="callout-title">Two major approaches in this chapter</div>
+      <strong>Standard Bean Validation</strong> using annotations, and <strong>custom validation</strong> using custom rules/validators.
+    </div>
+
+    <h3>Standard validation example</h3>
+    <div class="code-wrap"><pre><code>public class EmployeeBean {
+
+    @Size(min = 2, max = 10)
+    private String name;
+
+    @NotEmpty
+    private String password;
+
+    @NotEmpty
+    private String gender;
+
+    @NotNull
+    @Range(min = 10, max = 110)
+    private Integer age;
+
+    @NotNull
+    @Range(min = 1000, max = 800000)
+    private Integer salary;
+
+    @Future
+    @DateTimeFormat(pattern = "dd-MMM-yyyy")
+    private Date joiningDate;
+
+    @AssertTrue
+    private Boolean mailingList;
+
+    // getters and setters
+}</code></pre></div>
+
+    <h3>What do the annotations mean?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Annotation</th><th>Beginner meaning</th></tr></thead>
+        <tbody>
+          <tr><td>@NotNull</td><td>Value cannot be null</td></tr>
+          <tr><td>@NotEmpty</td><td>Value cannot be null/empty for supported types</td></tr>
+          <tr><td>@Size</td><td>Length/size must be within a range</td></tr>
+          <tr><td>@Range</td><td>Numeric value must be inside a range</td></tr>
+          <tr><td>@Future</td><td>Date/time must be in the future</td></tr>
+          <tr><td>@AssertTrue</td><td>Boolean value must be true</td></tr>
+          <tr><td>@DateTimeFormat</td><td>Controls date parsing/formatting</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Controller with @Valid + BindingResult</h3>
+    <div class="code-wrap"><pre><code>@Controller
+public class EmployeeController {
+
+    @RequestMapping(
+        value = "/registration",
+        method = RequestMethod.POST
+    )
+    public ModelAndView register(
+
+        /*
+         * @Valid tells Spring:
+         * run validation annotations
+         * defined on EmployeeBean.
+         */
+        @ModelAttribute("employeeBean")
+        @Valid EmployeeBean employeeBean,
+
+        /*
+         * Stores binding and validation errors.
+         *
+         * IMPORTANT:
+         * keep it immediately after the
+         * validated object parameter.
+         */
+        BindingResult result) {
+
+        ModelAndView modelAndView =
+            new ModelAndView();
+
+        if (result.hasErrors()) {
+
+            /*
+             * Validation failed.
+             * Stay on the form.
+             */
+            modelAndView.setViewName(
+                "Registration"
+            );
+
+        } else {
+
+            /*
+             * Validation passed.
+             * Continue with business logic.
+             */
+            modelAndView.setViewName(
+                "RegistrationSuccess"
+            );
+
+            modelAndView.addObject(
+                "message",
+                "Welcome " + employeeBean.getName()
+            );
+        }
+
+        return modelAndView;
+    }
+}</code></pre></div>
+
+    <h3>Display errors in JSP</h3>
+    <div class="code-wrap"><pre><code>&lt;form:input path="name"/&gt;
+
+&lt;form:errors
+    path="name"
+    cssClass="error"/&gt;</code></pre></div>
+
+    <p>To display all errors:</p>
+    <div class="code-wrap"><pre><code>&lt;form:errors path="*"/&gt;</code></pre></div>
+
+    <h3>Validation lifecycle</h3>
+    <div class="flow">
+      <div class="flow-item">1. Field validation</div>
+      <div class="flow-item">2. Cross-field validation</div>
+      <div class="flow-item">3. BindingResult</div>
+      <div class="flow-item">4. Errors?</div>
+      <div class="flow-item">5. Form again OR continue</div>
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-title">🚨 Common interview trap</div>
+      If <span class="inline-code">BindingResult</span> is not immediately after the validated bean, the expected validation result may not be associated with that bean correctly.
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    A["POST form"] --> B["@ModelAttribute + @Valid"]
+    B --> C["Field validation"]
+    C --> D["Cross-field validation"]
+    D --> E["BindingResult"]
+    E --> F{"result.hasErrors()?"}
+    F -->|Yes| G["Return Registration.jsp"]
+    F -->|No| H["Continue to Service"]
+    G --> I["form:errors displays messages"]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Validation messages</h3>
+    <p>The chapter uses a message properties file for validation messages.</p>
+
+    <div class="code-wrap"><pre><code>Size.employeeBean.name=Employee name must be between {2} and {1} characters.
+NotEmpty.employeeBean.password=Password is required.
+NotNull.employeeBean.age=Age is required.
+Range.employeeBean.age=Age must be between {2} and {1}.</code></pre></div>
+
+    <p>Generic messages can also be defined, depending on the message-resolution configuration.</p>
+
+    <div class="code-wrap"><pre><code>NotNull=This is a required field
+NotEmpty=This is a required field
+Future=Date should be a future date</code></pre></div>
+
+    <h3>Older XML message source configuration from the chapter style</h3>
+    <div class="code-wrap"><pre><code>&lt;bean id="messageSource"
+      class="org.springframework.context.support.ReloadableResourceBundleMessageSource"&gt;
+
+    &lt;property
+        name="basename"
+        value="classpath:com/accenture/ltt/resources/messages"/&gt;
+
+    &lt;property
+        name="defaultEncoding"
+        value="UTF-8"/&gt;
+
+&lt;/bean&gt;</code></pre></div>
+  </div>
+</section>
+
+<section id="custom-validation">
+  <h2>8. 🧩 Custom Validation</h2>
+  <div class="card">
+    <p>Use custom validation when the business rule is specific to your application and cannot be expressed conveniently with the standard constraints.</p>
+
+    <div class="callout memory">
+      <div class="callout-title">Four-step memory trick</div>
+      <strong>Annotation → Validator → Connect them → Use annotation</strong>
+    </div>
+
+    <h3>Step 1 — Custom annotation</h3>
+    <div class="code-wrap"><pre><code>@Documented
+@Target({
+    ElementType.FIELD,
+    ElementType.METHOD
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(
+    validatedBy = EmployeeNameValidator.class
+)
+public @interface EmployeeNameValidatorVal {
+
+    String message()
+        default "{EmployeeNameValidatorVal}";
+
+    Class&lt;?&gt;[] groups()
+        default {};
+
+    Class&lt;? extends Payload&gt;[] payload()
+        default {};
+}</code></pre></div>
+
+    <h3>Step 2 — Validator</h3>
+    <div class="code-wrap"><pre><code>public class EmployeeNameValidator
+        implements ConstraintValidator&lt;
+            EmployeeNameValidatorVal,
+            String&gt; {
+
+    @Override
+    public void initialize(
+            EmployeeNameValidatorVal annotation) {
+
+        // Initialization logic can go here.
+    }
+
+    @Override
+    public boolean isValid(
+            String employeeName,
+            ConstraintValidatorContext context) {
+
+        if (employeeName == null) {
+            return false;
+        }
+
+        if (employeeName.length() &lt; 3) {
+            return false;
+        }
+
+        return true;
+    }
+}</code></pre></div>
+
+    <h3>Step 3 — Connect annotation and validator</h3>
+    <p>The important line is:</p>
+    <div class="code-wrap"><pre><code>@Constraint(
+    validatedBy = EmployeeNameValidator.class
+)</code></pre></div>
+
+    <h3>Step 4 — Use it on the bean</h3>
+    <div class="code-wrap"><pre><code>public class EmployeeBean {
+
+    @EmployeeNameValidatorVal
+    private String name;
+
+}</code></pre></div>
+
+    <h3>Field vs cross-field validation</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Field validation</td><td>Age must be >= 18</td></tr>
+          <tr><td>Cross-field validation</td><td>Password must equal confirmPassword</td></tr>
+          <tr><td>Cross-field business rule</td><td>Country + age combination must be valid</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Custom validation with InitBinder</h3>
+    <p>The chapter also references a Spring MVC <span class="inline-code">@InitBinder</span> approach using the Spring <span class="inline-code">Validator</span> interface.</p>
+
+    <div class="code-wrap"><pre><code>@InitBinder
+protected void initBinder(
+        WebDataBinder binder) {
+
+    /*
+     * Register the custom Spring MVC validator.
+     */
+    binder.addValidators(
+        new EmployeeValidator()
+    );
+}</code></pre></div>
+
+    <div class="code-wrap"><pre><code>public class EmployeeValidator
+        implements Validator {
+
+    @Override
+    public boolean supports(
+            Class&lt;?&gt; clazz) {
+
+        return EmployeeBean.class
+                .isAssignableFrom(clazz);
+    }
+
+    @Override
+    public void validate(
+            Object target,
+            Errors errors) {
+
+        EmployeeBean employee =
+            (EmployeeBean) target;
+
+        if (employee.getName() == null ||
+            employee.getName().length() &lt; 3) {
+
+            errors.rejectValue(
+                "name",
+                "employee.name.invalid"
+            );
+        }
+    }
+}</code></pre></div>
+
+    <div class="callout">
+      <div class="callout-title">🧠 Easy distinction</div>
+      <span class="inline-code">Bean Validation</span> → annotations → <span class="inline-code">@Valid</span><br>
+      <span class="inline-code">Spring Validator</span> → <span class="inline-code">Validator</span> interface → <span class="inline-code">@InitBinder</span>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    A["EmployeeBean.name"] --> B["@EmployeeNameValidatorVal"]
+    B --> C["@Constraint"]
+    C --> D["EmployeeNameValidator"]
+    D --> E["isValid()"]
+    E --> F{"Valid?"}
+    F -->|Yes| G["Continue"]
+    F -->|No| H["BindingResult gets error"]
+    H --> I["form:errors displays message"]
+    </div>
+  </div>
+</section>
+
+<section id="exceptions">
+  <h2>9. 🛡️ Exception Handling</h2>
+  <div class="card">
+    <p>Suppose validation succeeds but business logic discovers an invalid country/age combination and throws a custom exception.</p>
+
+    <p>Without handling, the user may see an ugly HTTP 500 response. The chapter demonstrates this problem before introducing exception handlers.</p>
+
+    <div class="callout danger">
+      <div class="callout-title">Bad user experience</div>
+      Business exception → unhandled exception → server error page / stack trace.
+    </div>
+
+    <div class="callout memory">
+      <div class="callout-title">Goal</div>
+      Exception → controlled handler → friendly error view.
+    </div>
+
+    <h3>@ExceptionHandler</h3>
+    <div class="code-wrap"><pre><code>@ExceptionHandler(
+    value =
+        InvalidCountryNameAndAgeCombinationException.class
+)
+public ModelAndView
+handleInvalidCountryAgeException(
+        InvalidCountryNameAndAgeCombinationException exception) {
+
+    ModelAndView modelAndView =
+        new ModelAndView();
+
+    /*
+     * Navigate to friendly error page.
+     */
+    modelAndView.setViewName(
+        "ExceptionHandlerPage"
+    );
+
+    /*
+     * Put useful information into the model.
+     */
+    modelAndView.addObject(
+        "message",
+        exception.getMessage()
+    );
+
+    modelAndView.addObject(
+        "exception",
+        exception
+    );
+
+    return modelAndView;
+}</code></pre></div>
+
+    <h3>General fallback handler</h3>
+    <div class="code-wrap"><pre><code>@ExceptionHandler(
+    value = Exception.class
+)
+public ModelAndView
+handleAllExceptions(
+        Exception exception) {
+
+    ModelAndView modelAndView =
+        new ModelAndView();
+
+    modelAndView.setViewName(
+        "GeneralizedExceptionHandlerPage"
+    );
+
+    modelAndView.addObject(
+        "message",
+        exception.getMessage()
+    );
+
+    modelAndView.addObject(
+        "exception",
+        exception
+    );
+
+    return modelAndView;
+}</code></pre></div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    B["Browser submits form"] --> C["Controller"]
+    C --> S["Service"]
+    S --> D{"Business logic"}
+    D -->|Success| SV["Success View"]
+    D -->|Exception| X["Exception thrown"]
+    X --> EH["@ExceptionHandler"]
+    EH --> Q{"Which exception?"}
+    Q -->|Specific| SE["Specific Error View"]
+    Q -->|Other| GE["General Error View"]
+    SV --> B
+    SE --> B
+    GE --> B
+    </div>
+  </div>
+</section>
+
+<section id="advice">
+  <h2>10. 🌐 @ControllerAdvice</h2>
+  <div class="card">
+    <p>Imagine you have EmployeeController, OrderController, PaymentController, and CustomerController. Copying the same exception handlers into every controller creates duplicated code.</p>
+
+    <p><span class="inline-code">@ControllerAdvice</span> gives you a centralized place for controller-wide/global exception handling.</p>
+
+    <div class="code-wrap"><pre><code>@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(
+        InvalidCountryNameAndAgeCombinationException.class
+    )
+    public ModelAndView
+    handleCountryAgeException(
+        InvalidCountryNameAndAgeCombinationException ex) {
+
+        ModelAndView modelAndView =
+            new ModelAndView(
+                "ExceptionHandlerPage"
+            );
+
+        modelAndView.addObject(
+            "message",
+            ex.getMessage()
+        );
+
+        return modelAndView;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView
+    handleGeneralException(
+        Exception ex) {
+
+        ModelAndView modelAndView =
+            new ModelAndView(
+                "GeneralizedExceptionHandlerPage"
+            );
+
+        modelAndView.addObject(
+            "message",
+            "Something went wrong."
+        );
+
+        return modelAndView;
+    }
+}</code></pre></div>
+
+    <h3>@ExceptionHandler vs @ControllerAdvice</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Concept</th><th>Think of it as</th></tr></thead>
+        <tbody>
+          <tr><td>@ExceptionHandler</td><td>The method that handles an exception</td></tr>
+          <tr><td>@ControllerAdvice</td><td>A centralized place to share controller-related handling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout interview">
+      <div class="callout-title">🎯 Interview answer</div>
+      <span class="inline-code">@ExceptionHandler</span> handles an exception, while <span class="inline-code">@ControllerAdvice</span> allows exception-handling logic to be centralized and shared across multiple controllers.
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TB
+    E["EmployeeController"] --> A["Central @ControllerAdvice"]
+    O["OrderController"] --> A
+    P["PaymentController"] --> A
+    CU["CustomerController"] --> A
+    A --> H["@ExceptionHandler methods"]
+    H --> V["Error View"]
+    </div>
+  </div>
+</section>
+
+<section id="complete-flow">
+  <h2>11. 🔥 Complete Chapter Architecture</h2>
+  <div class="card">
+    <p>This is the diagram to memorize before the exam/interview.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    B["👤 Browser"]
+
+    FORM["📝 JSP Spring Form"]
+    MODEL["📦 Spring Model"]
+    CONTROLLER["🎮 Controller"]
+    VALIDATE["✅ @Valid Validation"]
+    RESULT["📋 BindingResult"]
+    SERVICE["⚙️ Service"]
+    DAO["🗄️ DAO"]
+    DB[("Database")]
+    EXCEPTION["💥 Business Exception"]
+    HANDLER["🛡️ @ExceptionHandler"]
+    ADVICE["🌐 @ControllerAdvice"]
+    SUCCESS["🎉 Success View"]
+    ERROR["❌ Error View"]
+
+    B --> FORM
+    FORM --> CONTROLLER
+    CONTROLLER --> MODEL
+    MODEL --> FORM
+
+    CONTROLLER --> VALIDATE
+    VALIDATE --> RESULT
+
+    RESULT -->|Errors| FORM
+    RESULT -->|Valid| SERVICE
+
+    SERVICE --> DAO
+    DAO --> DB
+
+    SERVICE -->|Exception| EXCEPTION
+    EXCEPTION --> HANDLER
+    ADVICE -. centralizes .-> HANDLER
+    HANDLER --> ERROR
+
+    SERVICE --> SUCCESS
+    SUCCESS --> B
+    ERROR --> B
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="callout memory">
+      <div class="callout-title">🧠 If you forget everything, remember this</div>
+      <strong>
+        User submits Form → Spring binds it to Bean → @Valid validates it →
+        BindingResult tells us whether it failed → valid data goes to Service/DAO →
+        exceptions go to exception handling → a View goes back to the user.
+      </strong>
+    </div>
+  </div>
+</section>
+
+<section id="interview">
+  <h2>12. 🎯 Scenario-Based Interview Questions</h2>
+
+  <div class="question">
+    <div class="q">1. Your JSP contains &lt;form:input path="name"/&gt;, but Spring says it cannot find the property. What do you check?</div>
+    <div class="answer">Check whether the object specified by <span class="inline-code">modelAttribute</span> actually has a <span class="inline-code">name</span> property and the corresponding JavaBean getter/setter.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">2. modelAttribute="employeeBean" causes an error when the form loads. Why?</div>
+    <div class="answer">The controller probably did not add an object named <span class="inline-code">employeeBean</span> to the Model, or the controller/JSP names do not match.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">3. You need a dropdown whose values come from the database. Static or dynamic?</div>
+    <div class="answer">Dynamic. Retrieve values through Service/DAO, expose them through the Model, and use a dynamic Spring Form component such as <span class="inline-code">form:select</span> with <span class="inline-code">items</span>.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">4. Your dynamic dropdown is empty. How do you debug it?</div>
+    <div class="answer">Trace DAO → Service → controller's <span class="inline-code">@ModelAttribute</span> method → Model attribute name → JSP <span class="inline-code">items</span> expression and verify the returned collection/map contains data.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">5. Why use @ModelAttribute at method level?</div>
+    <div class="answer">To prepare/populate Model data before the request handler executes, especially for dynamic UI data.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">6. Why use @ModelAttribute on a method parameter?</div>
+    <div class="answer">To bind submitted form/request data to a Java bean used by the controller.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">7. Validation annotations exist, but validation never executes. What do you check?</div>
+    <div class="answer">Check whether <span class="inline-code">@Valid</span> is present on the controller parameter and whether the required validation configuration/dependencies are available.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">8. Validation fails but the application still goes to the success page.</div>
+    <div class="answer">Check whether <span class="inline-code">BindingResult.hasErrors()</span> is being checked and whether <span class="inline-code">BindingResult</span> immediately follows the validated bean.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">9. Why should BindingResult immediately follow the validated object?</div>
+    <div class="answer">Spring associates the BindingResult with the immediately preceding model attribute during argument resolution.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">10. @NotNull is present, but an empty string passes. Why?</div>
+    <div class="answer"><span class="inline-code">@NotNull</span> checks nullness, not string emptiness. Use an appropriate constraint such as <span class="inline-code">@NotEmpty</span> for the intended rule.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">11. Password and confirmPassword must match. What type of validation?</div>
+    <div class="answer">Cross-field validation because the rule depends on multiple fields.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">12. You need a business rule that standard annotations do not express. What do you do?</div>
+    <div class="answer">Create a custom validation annotation, a <span class="inline-code">ConstraintValidator</span>, connect them using <span class="inline-code">@Constraint(validatedBy=...)</span>, and apply the annotation.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">13. Your custom validator never executes. What do you check?</div>
+    <div class="answer">Check the <span class="inline-code">@Constraint(validatedBy=...)</span> connection, runtime retention, correct target, annotation usage, and that validation is actually triggered.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">14. Validation fails but no message appears in JSP.</div>
+    <div class="answer">Check BindingResult, the messages properties key, message-source configuration, and the appropriate <span class="inline-code">&lt;form:errors&gt;</span> tag.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">15. Display all validation errors at once.</div>
+    <div class="answer"><span class="inline-code">&lt;form:errors path="*"/&gt;</span></div>
+  </div>
+
+  <div class="question">
+    <div class="q">16. Display only the name error.</div>
+    <div class="answer"><span class="inline-code">&lt;form:errors path="name"/&gt;</span></div>
+  </div>
+
+  <div class="question">
+    <div class="q">17. Business logic throws HTTP 500. What would you implement?</div>
+    <div class="answer">Create an <span class="inline-code">@ExceptionHandler</span> for the expected business exception and return a controlled error view.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">18. Ten controllers need identical exception handling. Would you copy the handler ten times?</div>
+    <div class="answer">No. Use <span class="inline-code">@ControllerAdvice</span> to centralize the exception-handling logic.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">19. You have a specific exception handler and Exception.class fallback. Which handles the specific exception?</div>
+    <div class="answer">The specific exception handler should handle its matching exception; the generic handler acts as a fallback for other exceptions.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">20. @ControllerAdvice is not detected. What do you investigate?</div>
+    <div class="answer">Check component scanning and ensure the package containing the advice class is included in the Spring application context.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">21. Static vs dynamic UI components?</div>
+    <div class="answer">Static components have values hard-coded in JSP; dynamic components receive their values at runtime, commonly from backend data exposed through the Model.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">22. Why is Model useful for dynamic UI?</div>
+    <div class="answer">The controller can prepare data in the Model before rendering the view, allowing JSP to create UI components dynamically.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">23. request.getAttribute() is null inside the controller but ModelMap has the bean. Is that necessarily a problem?</div>
+    <div class="answer">No. The chapter's lifecycle distinction is that Spring's Model is used during controller processing and model data becomes available to the view during view rendering.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">24. Why does Spring Form use path?</div>
+    <div class="answer"><span class="inline-code">path</span> identifies the property of the model object to which the form element is bound.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">25. path="username" but the bean has only userName. What happens?</div>
+    <div class="answer">Binding can fail because the specified property does not match the JavaBean property name.</div>
+  </div>
+</section>
+
+<section id="memory">
+  <h2>13. 📝 Exam Memory Sheet</h2>
+
+  <div class="memory-grid">
+    <div class="memory-item"><b>Spring Form</b><br><span class="inline-code">&lt;form:form&gt;</span> → <span class="inline-code">modelAttribute</span> → JavaBean</div>
+    <div class="memory-item"><b>path</b><br><span class="inline-code">path="name"</span> → bean.name</div>
+    <div class="memory-item"><b>@ModelAttribute method</b><br>Prepare Model data</div>
+    <div class="memory-item"><b>@ModelAttribute parameter</b><br>Bind request/form data → Bean</div>
+    <div class="memory-item"><b>Static UI</b><br>Hard-coded values in JSP</div>
+    <div class="memory-item"><b>Dynamic UI</b><br>Runtime values supplied through backend/Model</div>
+    <div class="memory-item"><b>Validation</b><br><span class="inline-code">@Valid</span> → validation → <span class="inline-code">BindingResult</span></div>
+    <div class="memory-item"><b>Custom validation</b><br>Annotation → Validator → Connect → Use</div>
+    <div class="memory-item"><b>Exception</b><br>Exception → <span class="inline-code">@ExceptionHandler</span> → Error View</div>
+    <div class="memory-item"><b>Global handling</b><br><span class="inline-code">@ControllerAdvice</span> → centralized handling</div>
+  </div>
+
+  <div class="card">
+    <h3>🚨 10 biggest exam/interview traps</h3>
+    <ol>
+      <li><span class="inline-code">@ModelAttribute</span> method and parameter have different roles.</li>
+      <li><span class="inline-code">path</span> must correspond to a bean property.</li>
+      <li>Static UI is not the same as dynamic UI.</li>
+      <li><span class="inline-code">@NotNull</span> does not mean "non-empty".</li>
+      <li><span class="inline-code">@Valid</span> triggers Bean Validation.</li>
+      <li><span class="inline-code">BindingResult</span> should immediately follow the validated object.</li>
+      <li>Field validation and cross-field validation are different.</li>
+      <li><span class="inline-code">form:errors path="name"</span> is field-specific.</li>
+      <li><span class="inline-code">@ExceptionHandler</span> handles exceptions; <span class="inline-code">@ControllerAdvice</span> centralizes controller-related handling.</li>
+      <li>Model data is prepared during controller processing and exposed to the view during rendering.</li>
+    </ol>
+  </div>
+
+  <div class="callout memory">
+    <div class="callout-title">❤️ Final memory sentence</div>
+    <strong>
+      The user fills a Spring Form; Spring binds it to a JavaBean; @Valid checks it;
+      BindingResult tells us whether validation failed; valid data continues to Service/DAO;
+      exceptions are intercepted; finally Spring renders the appropriate view.
+    </strong>
+  </div>
+</section>
+
+</div>
+
+<div class="content-panel" id="interviewPanel" role="tabpanel" aria-labelledby="interviewTab">
+
+<section class="interview-hero">
+  <div class="card">
+    <h2>Spring MVC Forms, Validation &amp; Exception Handling — Interview Guide</h2>
+    <p>Comprehensive, deep-dive interview preparation covering Spring Form taglib, two-way data binding, @ModelAttribute lifecycles, Bean Validation (JSR-380), BindingResult placement rules, custom validators, and @ControllerAdvice exception architecture.</p>
+    <div class="quick-nav">
+      <a href="#i-forms">Form Taglib</a>
+      <a href="#i-modelattr">@ModelAttribute</a>
+      <a href="#i-model-req">Model vs Request</a>
+      <a href="#i-validation">Validation &amp; Binding</a>
+      <a href="#i-custom-val">Custom Validator</a>
+      <a href="#i-exceptions">Exception Handling</a>
+      <a href="#i-scenarios">25 Scenarios &amp; Traps</a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 1: SPRING FORM TAGLIB & TWO-WAY DATA BINDING
+     ========================================================================= -->
+<section id="i-forms">
+  <h2>Part 1: Spring MVC Form Taglib &amp; Two-Way Binding</h2>
+  <div class="card">
+    <h3>1. Why use Spring Form Taglib instead of standard HTML?</h3>
+    <p>
+      Standard HTML forms only submit flat request parameters and cannot automatically pre-populate form fields when editing or redisplaying invalid inputs.
+      The Spring Form Taglib (<code>&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %&gt;</code>) provides <strong>two-way data binding</strong>:
+    </p>
+    <ul>
+      <li><strong>Form Pre-population (Model → View):</strong> Automatically reads properties from the backing JavaBean specified in <code>modelAttribute</code> and populates input values, selects, and checkboxes.</li>
+      <li><strong>Request Binding (View → Controller):</strong> Binds user inputs back into the JavaBean properties when submitted.</li>
+      <li><strong>Automatic Error Rendering:</strong> Seamlessly hooks into <code>BindingResult</code> to highlight invalid fields via <code>&lt;form:errors&gt;</code>.</li>
+    </ul>
+
+    <h3>2. Essential Spring Form Tags</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Spring Form Tag</th>
+          <th>Equivalent HTML</th>
+          <th>Key Attributes</th>
+          <th>Description &amp; Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;form:form&gt;</code></td>
+          <td><code>&lt;form&gt;</code></td>
+          <td><code>modelAttribute</code>, <code>action</code>, <code>method</code></td>
+          <td>Root container that binds the form to a model attribute bean.</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:input&gt;</code></td>
+          <td><code>&lt;input type="text"&gt;</code></td>
+          <td><code>path</code></td>
+          <td>Binds to a bean property for text input and auto-populates value.</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:password&gt;</code></td>
+          <td><code>&lt;input type="password"&gt;</code></td>
+          <td><code>path</code>, <code>showPassword</code></td>
+          <td>Password field (defaults to masking and clears value on validation failure).</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:select&gt;</code></td>
+          <td><code>&lt;select&gt;&lt;option&gt;</code></td>
+          <td><code>path</code>, <code>items</code>, <code>itemValue</code>, <code>itemLabel</code></td>
+          <td>Renders dynamic dropdown menus populated from a List/Map in the Model.</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:checkboxes&gt;</code></td>
+          <td>Multiple <code>&lt;input type="checkbox"&gt;</code></td>
+          <td><code>path</code>, <code>items</code></td>
+          <td>Binds multi-select checkboxes directly to a <code>List&lt;String&gt;</code> or <code>String[]</code>.</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:radiobuttons&gt;</code></td>
+          <td>Multiple <code>&lt;input type="radio"&gt;</code></td>
+          <td><code>path</code>, <code>items</code></td>
+          <td>Renders a set of mutually exclusive radio options bound to a single property.</td>
+        </tr>
+        <tr>
+          <td><code>&lt;form:errors&gt;</code></td>
+          <td><code>&lt;span class="error"&gt;</code></td>
+          <td><code>path</code>, <code>cssClass</code></td>
+          <td>Displays field validation error messages (<code>path="name"</code>) or all errors (<code>path="*"</code>).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Common Interview Trap: path vs name attribute</div>
+      In standard HTML you use <code>name="user_name"</code>. In Spring Form tags, you <strong>MUST use <code>path="userName"</code></strong>, which directly matches the JavaBean getter/setter property name. If the case or spelling does not match, Spring throws a <code>NotReadablePropertyException</code>.
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant B as Browser
+    participant DS as DispatcherServlet
+    participant C as Controller
+    participant M as Model
+    participant JSP as Spring Form JSP
+
+    Note over B,JSP: Step 1: Form Display (GET)
+    B->>DS: GET /register.html
+    DS->>C: showForm(Model model)
+    C->>M: model.addAttribute("user", new UserBean())
+    C-->>DS: return "registerForm"
+    DS->>JSP: Render with modelAttribute="user"
+    JSP-->>B: HTML with pre-bound inputs
+
+    Note over B,JSP: Step 2: Form Submission (POST)
+    B->>DS: POST /saveUser.html (Form Data)
+    DS->>C: submitForm(@Valid @ModelAttribute("user") UserBean, BindingResult)
+    C-->>B: Success View or Re-render Form with Errors
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 2: @MODELATTRIBUTE MECHANICS & LIFECYCLE
+     ========================================================================= -->
+<section id="i-modelattr">
+  <h2>Part 2: @ModelAttribute Deep Dive (Method vs Parameter)</h2>
+  <div class="card">
+    <h3>Method-Level vs Parameter-Level @ModelAttribute</h3>
+    <p>One of the most frequently asked interview questions is the dual purpose of <code>@ModelAttribute</code>:</p>
+
+    <div class="grid-2">
+      <div class="topic">
+        <h4>1. Method-Level @ModelAttribute</h4>
+        <p><strong>Purpose:</strong> Prepares reference data (like country lists, department dropdowns, roles) for the Model <em>before any request handler method is invoked</em>.</p>
+        <pre><code class="language-java">// Executed before every @RequestMapping in this controller
+@ModelAttribute("countryList")
+public List&lt;String&gt; populateCountries() {
+    return countryService.getAllCountryNames();
+}</code></pre>
+        <p>In JSP: <code>&lt;form:select path="country" items="${countryList}" /&gt;</code></p>
+      </div>
+
+      <div class="topic">
+        <h4>2. Parameter-Level @ModelAttribute</h4>
+        <p><strong>Purpose:</strong> Binds submitted HTTP request parameters to a command object JavaBean, exposes it to the Model, and passes it as a method parameter.</p>
+        <pre><code class="language-java">@PostMapping("/register")
+public String processRegistration(
+    @Valid @ModelAttribute("user") UserDTO userDTO,
+    BindingResult result,
+    Model model) {
+    
+    if (result.hasErrors()) {
+        return "registerForm"; // Redisplay form with errors
+    }
+    userService.save(userDTO);
+    return "success";
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="callout memory">
+      <div class="callout-title">🧠 Interview Golden Rule</div>
+      <strong>Method-level @ModelAttribute</strong> = "Put this data in the Model before handling requests."<br>
+      <strong>Parameter-level @ModelAttribute</strong> = "Take incoming request data, populate this JavaBean, and pass it to my method."
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 3: MODEL VS HTTPSERVLETREQUEST VS MODELANDVIEW
+     ========================================================================= -->
+<section id="i-model-req">
+  <h2>Part 3: Model vs HttpServletRequest vs ModelAndView</h2>
+  <div class="card">
+    <h3>Comparative Architecture</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Mechanism</th>
+          <th>Type / Interface</th>
+          <th>Coupling Level</th>
+          <th>Lifecycle &amp; Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Model / ModelMap</code></td>
+          <td>Spring Interface</td>
+          <td><strong>Zero Servlet Coupling</strong> (Highly testable)</td>
+          <td>Carries data attributes for the view during controller processing. Exposes data to request scope only during view rendering.</td>
+        </tr>
+        <tr>
+          <td><code>ModelAndView</code></td>
+          <td>Spring Holder Object</td>
+          <td><strong>Zero Servlet Coupling</strong></td>
+          <td>Holds both the logical view name (e.g. <code>"userProfile"</code>) and model data in a single return object.</td>
+        </tr>
+        <tr>
+          <td><code>HttpServletRequest</code></td>
+          <td>Servlet API</td>
+          <td><strong>Tightly Coupled</strong> to Servlet Container</td>
+          <td>Low-level servlet container object. Testing requires mock request objects (e.g. <code>MockHttpServletRequest</code>).</td>
+        </tr>
+        <tr>
+          <td><code>RedirectAttributes</code></td>
+          <td>Spring Interface</td>
+          <td>Zero Servlet Coupling</td>
+          <td>Specialized for Post/Redirect/Get (PRG). Provides Flash Attributes stored temporarily in session across redirects.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout interview">
+      <div class="callout-title">🎯 Interview Question: Why not just use HttpServletRequest?</div>
+      Spring MVC abstracts the Servlet API so controller methods can be unit-tested as plain Java POJOs without booting a servlet container (Tomcat) or mocking servlet APIs.
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 4: BEAN VALIDATION & BINDINGRESULT RULES
+     ========================================================================= -->
+<section id="i-validation">
+  <h2>Part 4: Bean Validation (JSR-380) &amp; BindingResult Rules</h2>
+  <div class="card">
+    <h3>1. The Critical BindingResult Placement Rule</h3>
+    <div class="callout danger">
+      <div class="callout-title">🚨 The #1 Spring MVC Interview Trap</div>
+      <code>BindingResult</code> <strong>MUST IMMEDIATELY FOLLOW</strong> the object annotated with <code>@Valid</code> / <code>@ModelAttribute</code> in the method signature.
+    </div>
+    
+    <div class="grid-2">
+      <div class="topic">
+        <h4>❌ WRONG (Throws IllegalStateException or ignores errors)</h4>
+        <pre><code class="language-java">@PostMapping("/save")
+public String saveUser(
+    @Valid @ModelAttribute("user") UserDTO user,
+    Model model,              // <-- WRONG! Model placed in between
+    BindingResult result) {    // <-- Throws error or fails to bind
+    ...
+}</code></pre>
+      </div>
+
+      <div class="topic">
+        <h4>✅ CORRECT (Immediately Follows)</h4>
+        <pre><code class="language-java">@PostMapping("/save")
+public String saveUser(
+    @Valid @ModelAttribute("user") UserDTO user,
+    BindingResult result,     // <-- CORRECT! Immediately after @Valid
+    Model model) {
+    
+    if (result.hasErrors()) {
+        return "userForm";
+    }
+    return "userSuccess";
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>2. Standard Bean Validation (JSR-380 / Hibernate Validator) Annotations</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Annotation</th>
+          <th>Applies To</th>
+          <th>Validation Rule</th>
+          <th>Common Trap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>@NotNull</code></td>
+          <td>Any Object</td>
+          <td>Value must not be <code>null</code></td>
+          <td>Does NOT check empty strings (<code>""</code> passes!).</td>
+        </tr>
+        <tr>
+          <td><code>@NotEmpty</code></td>
+          <td>CharSequence, Collection, Map, Array</td>
+          <td>Must not be <code>null</code> and size/length &gt; 0</td>
+          <td>Strings with only whitespace (<code>"   "</code>) pass.</td>
+        </tr>
+        <tr>
+          <td><code>@NotBlank</code></td>
+          <td>CharSequence (Strings)</td>
+          <td>Must not be null and contains at least 1 non-whitespace char</td>
+          <td>Best choice for form text fields (e.g. name, username).</td>
+        </tr>
+        <tr>
+          <td><code>@Size(min=2, max=30)</code></td>
+          <td>Strings, Collections, Arrays</td>
+          <td>Length or element count must be within range</td>
+          <td>If field is <code>null</code>, validation passes (pair with <code>@NotNull</code>).</td>
+        </tr>
+        <tr>
+          <td><code>@Min(18) / @Max(100)</code></td>
+          <td>Numeric types, BigDecimal</td>
+          <td>Value must be &gt;= min or &lt;= max</td>
+          <td>Used for age, salary, quantity constraints.</td>
+        </tr>
+        <tr>
+          <td><code>@Pattern(regexp="...")</code></td>
+          <td>String</td>
+          <td>Must match the specified regular expression</td>
+          <td>Used for phone numbers, zip codes, alphanumeric codes.</td>
+        </tr>
+        <tr>
+          <td><code>@Email</code></td>
+          <td>String</td>
+          <td>Must be a valid RFC-compliant email address</td>
+          <td>Accepts <code>null</code>; combine with <code>@NotBlank</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 5: CUSTOM VALIDATOR & ANNOTATION IMPLEMENTATION
+     ========================================================================= -->
+<section id="i-custom-val">
+  <h2>Part 5: Custom Validation Implementation (2 Approaches)</h2>
+  <div class="card">
+    <div class="grid-2">
+      <div class="topic">
+        <h4>Approach 1: Custom JSR-380 Annotation &amp; ConstraintValidator</h4>
+        <p>Best practice for reusable, declarative annotation-based validation across DTOs.</p>
+        <pre><code class="language-java">// 1. Custom Annotation
+@Target({ ElementType.FIELD, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = CourseCodeValidator.class)
+public @interface CourseCode {
+    String value() default "SP";
+    String message() default "must start with SP";
+    Class&lt;?&gt;[] groups() default {};
+    Class&lt;? extends Payload&gt;[] payload() default {};
+}
+
+// 2. ConstraintValidator Implementation
+public class CourseCodeValidator 
+    implements ConstraintValidator&lt;CourseCode, String&gt; {
+    
+    private String prefix;
+    
+    @Override
+    public void initialize(CourseCode code) {
+        this.prefix = code.value();
+    }
+    
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) return true; // Let @NotNull handle nulls
+        return value.startsWith(prefix);
+    }
+}</code></pre>
+      </div>
+
+      <div class="topic">
+        <h4>Approach 2: Spring Validator Interface (Programmatic)</h4>
+        <p>Best for cross-field validation (e.g. matching password &amp; confirmPassword).</p>
+        <pre><code class="language-java">@Component
+public class UserFormValidator implements org.springframework.validation.Validator {
+
+    @Override
+    public boolean supports(Class&lt;?&gt; clazz) {
+        return UserDTO.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        UserDTO user = (UserDTO) target;
+        
+        // Cross-field comparison
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
+            errors.rejectValue("confirmPassword", "password.mismatch", "Passwords do not match");
+        }
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 6: EXCEPTION HANDLING ARCHITECTURE
+     ========================================================================= -->
+<section id="i-exceptions">
+  <h2>Part 6: Exception Handling Architecture &amp; @ControllerAdvice</h2>
+  <div class="card">
+    <h3>Spring MVC Exception Handling Hierarchy</h3>
+    <p>Spring provides three levels of exception handling, evaluated in priority order:</p>
+
+    <div class="grid-3">
+      <div class="topic">
+        <h4>1. Local @ExceptionHandler</h4>
+        <p><strong>Scope:</strong> Single Controller class.<br>
+        <strong>Usage:</strong> Handles exceptions thrown only within that specific controller.</p>
+        <pre><code class="language-java">@ExceptionHandler(UserNotFoundException.class)
+public ModelAndView handleUserNotFound(UserNotFoundException ex) {
+    ModelAndView mv = new ModelAndView("error/userError");
+    mv.addObject("errorMsg", ex.getMessage());
+    return mv;
+}</code></pre>
+      </div>
+
+      <div class="topic">
+        <h4>2. Global @ControllerAdvice</h4>
+        <p><strong>Scope:</strong> Application-wide (All controllers).<br>
+        <strong>Usage:</strong> Centralized cross-cutting exception handling, model attributes, and init binders.</p>
+        <pre><code class="language-java">@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(SQLException.class)
+    public String handleDatabaseError(Model model) {
+        model.addAttribute("msg", "Database error occurred");
+        return "error/database";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleGenericError(Exception ex, Model model) {
+        model.addAttribute("msg", "An unexpected error occurred");
+        return "error/general";
+    }
+}</code></pre>
+      </div>
+
+      <div class="topic">
+        <h4>3. HandlerExceptionResolver</h4>
+        <p><strong>Scope:</strong> Low-level Spring infrastructure.<br>
+        <strong>Example:</strong> <code>SimpleMappingExceptionResolver</code> mapping exception class names directly to view names in XML.</p>
+        <pre><code class="language-xml">&lt;bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"&gt;
+    &lt;property name="exceptionMappings"&gt;
+        &lt;props&gt;
+            &lt;prop key="java.lang.Exception"&gt;error/general&lt;/prop&gt;
+        &lt;/props&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="mermaid">
+flowchart TD
+    Ex["Exception Thrown in Controller Method"] --> CheckLocal{"Local @ExceptionHandler exists in Controller?"}
+    CheckLocal -->|Yes| HandleLocal["Execute Controller @ExceptionHandler -> Return Error View"]
+    CheckLocal -->|No| CheckGlobal{"@ControllerAdvice matches Exception?"}
+    CheckGlobal -->|Yes| HandleGlobal["Execute @ControllerAdvice Handler -> Return Error View"]
+    CheckGlobal -->|No| CheckResolver{"HandlerExceptionResolver / SimpleMapping configured?"}
+    CheckResolver -->|Yes| HandleResolver["Map Exception to Configured Error View"]
+    CheckResolver -->|No| DefaultServlet["Standard Servlet Container 500 Error Page"]
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     PART 7: 25 SCENARIO-BASED INTERVIEW QUESTIONS & TRAPS
+     ========================================================================= -->
+<section id="i-scenarios">
+  <h2>Top 25 Scenario-Based Interview Questions &amp; Traps</h2>
+
+  <div class="question">
+    <div class="q">1. Your JSP has &lt;form:input path="fullName"/&gt;, but Spring throws NotReadablePropertyException on page load. Why?</div>
+    <div class="answer">The backing JavaBean bound to <code>modelAttribute</code> lacks a getter or setter matching the exact property name <code>fullName</code> (e.g. named <code>getFullname()</code> instead of <code>getFullName()</code>).</div>
+  </div>
+
+  <div class="question">
+    <div class="q">2. What happens if a controller forwards to a JSP with &lt;form:form modelAttribute="employee"&gt; without adding "employee" to the Model?</div>
+    <div class="answer">Spring throws an <code>IllegalStateException: Neither BindingResult nor plain target object for bean name 'employee' available as request attribute</code>. You must populate an empty bean in the GET controller.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">3. A dropdown's options must come from a database. How do you implement this in Spring MVC?</div>
+    <div class="answer">Retrieve the collection in an <code>@ModelAttribute("departments")</code> method in the controller, then bind it in JSP via <code>&lt;form:select path="departmentId" items="${departments}" itemValue="id" itemLabel="name"/&gt;</code>.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">4. You annotated a field with @NotNull, but when a user leaves the form field blank, validation still passes. Why?</div>
+    <div class="answer">An empty form text input sends an empty String (<code>""</code>), which is <strong>not null</strong>. You must use <strong><code>@NotBlank</code></strong> (or <code>@NotEmpty</code>) to reject empty/whitespace strings.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">5. Validation annotations exist on the DTO, but validation is never triggered upon form submission. What is missing?</div>
+    <div class="answer">The controller method parameter is missing the <strong><code>@Valid</code></strong> or <code>@Validated</code> annotation.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">6. Form validation fails, but the controller still navigates to the success page. What was overlooked?</div>
+    <div class="answer">The controller did not check <code>if (bindingResult.hasErrors()) { return "formView"; }</code>. Validation populates errors into BindingResult, but it is the developer's responsibility to inspect it.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">7. Why must BindingResult immediately follow the @Valid model attribute in the method parameter list?</div>
+    <div class="answer">Spring resolves arguments sequentially; it binds the <code>BindingResult</code> to the immediately preceding target object. Placing other parameters in between breaks this linkage.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">8. How do you display all form errors at the top of the form, vs next to each individual input?</div>
+    <div class="answer">Use <code>&lt;form:errors path="*"/&gt;</code> for the complete summary at the top, and <code>&lt;form:errors path="email" cssClass="error"/&gt;</code> beside individual fields.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">9. How do you customize validation error messages instead of displaying default Hibernate messages?</div>
+    <div class="answer">Define a <code>messages.properties</code> file with keys like <code>NotBlank.user.username=Username is required</code> and configure a <code>ResourceBundleMessageSource</code> bean.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">10. Password and Confirm Password must match. Can you achieve this with standard field annotations like @Pattern?</div>
+    <div class="answer">No. Cross-field validation involves comparing two distinct properties. It requires a class-level custom constraint or a Spring <code>Validator</code> implementation.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">11. A controller method throws a CustomBusinessException. There is an @ExceptionHandler for CustomBusinessException in the controller and an Exception.class handler in @ControllerAdvice. Which one runs?</div>
+    <div class="answer">The <strong>local @ExceptionHandler</strong> inside the controller runs. Local handlers take precedence over global advice handlers, and specific exception types take precedence over generic base types.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">12. What is the difference between @ControllerAdvice and @RestControllerAdvice?</div>
+    <div class="answer"><code>@ControllerAdvice</code> returns view names (JSP/Thymeleaf) or Model objects. <code>@RestControllerAdvice</code> combines <code>@ControllerAdvice</code> and <code>@ResponseBody</code>, serializing error responses directly to JSON/XML.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">13. How does Spring MVC handle checkboxes when unchecking a checkbox in HTML sends no parameter at all?</div>
+    <div class="answer">Spring's <code>&lt;form:checkbox&gt;</code> automatically emits a hidden input prefixed with an underscore (<code>_agree</code>). If the checkbox is unchecked, Spring detects the underscore field and sets the boolean property to <code>false</code>.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">14. What is the Post/Redirect/Get (PRG) pattern and how does Spring MVC support it?</div>
+    <div class="answer">PRG prevents duplicate form submissions on browser refresh by redirecting (<code>return "redirect:/success.html"</code>). Spring supports <code>RedirectAttributes.addFlashAttribute()</code> to pass data across the redirect.</div>
+  </div>
+
+  <div class="question">
+    <div class="q">15. Why does Spring MVC recommend using Model instead of HttpSession to pass data to the view?</div>
+    <div class="answer"><code>Model</code> attributes are request-scoped and automatically cleared after rendering, avoiding memory bloat and session concurrency bugs.</div>
+  </div>
+</section>
+
+<div class="card">
+  <div class="callout memory">
+    <div class="callout-title">Complete Spring MVC Mental Model</div>
+    <strong>Client Form Request → DispatcherServlet → Controller @ModelAttribute Method (prepares reference lists) → Form GET View (Pre-populates via modelAttribute &amp; path) → Form POST Submission → Handler Method (@Valid &amp; Parameter @ModelAttribute) → BindingResult Validation Check → Service / DAO Processing → View Selection or @ControllerAdvice Exception Handling.</strong>
+  </div>
+</div>
+
+<div class="footer">
+  Spring MVC Forms &amp; Validation Interview Guide • Tokyo Night Edition • Fast &amp; Offline Ready
+</div>
+
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
