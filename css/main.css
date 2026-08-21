@@ -5,53 +5,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-  /* Tokyo Night Authentic Palette */
-  --bg: #1a1b26;                /* Tokyo Night base background */
-  --bg-gradient: #16161e;       /* Deep Night */
-  --panel: #1f2335;             /* Card and Section Surface */
-  --panel2: #24283b;            /* Raised Surface / Sub-elements */
-  --surface: #1f2335;
-  --surface-2: #24283b;
-  --text: #c0caf5;              /* Tokyo Night primary text */
+  /* Pure Black & Clean High-Contrast White System */
+  --bg: #000000;                /* Pure Black Background */
+  --bg-gradient: #000000;
+  --panel: #0a0a0c;             /* Deep Black Card & Section Surface */
+  --panel2: #121318;            /* Sleek Dark Secondary Surface */
+  --surface: #0a0a0c;
+  --surface-2: #121318;
+  --text: #f0f2f5;              /* Clean, crisp high-contrast white text */
   --text-bright: #ffffff;       /* Pure white headings */
-  --muted: #7982a9;             /* Secondary / Muted comments */
-  --border: #292e42;            /* Tokyo Night border line */
-  --line: #292e42;
-  --border-focus: #7aa2f7;      /* Tokyo Night Blue focus */
+  --muted: #9ca3af;             /* Clean readable silver gray */
+  --border: #22242e;            /* Subtle dark border line */
+  --line: #22242e;
+  --border-focus: #7aa2f7;
   --primary: #7aa2f7;
   --primary-2: #bb9af7;
-  --primary-soft: #24283b;
-  --accent: #7aa2f7;            /* Tokyo Night Blue */
-  --accent2: #7dcfff;           /* Tokyo Night Cyan */
-  --cyan: #7dcfff;              /* Cyan */
-  --purple: #bb9af7;            /* Purple / Magenta */
+  --primary-soft: #121318;
+  --accent: #7aa2f7;            /* Vibrant Blue */
+  --accent2: #7dcfff;           /* Vibrant Cyan */
+  --cyan: #7dcfff;
+  --purple: #bb9af7;
   --magenta: #ff007c;
-  --green: #9ece6a;             /* Emerald Green */
+  --green: #9ece6a;
   --success: #9ece6a;
-  --yellow: #e0af68;            /* Warm Gold/Amber */
+  --yellow: #e0af68;
   --warning: #e0af68;
-  --orange: #ff9e64;            /* Tokyo Night Orange */
-  --danger: #f7768e;             /* Tokyo Night Coral Red */
-  --code-bg: #16161e;           /* Tokyo Night Dark Code Background */
-  --code-header: #1a1b26;        /* Sandbox Titlebar */
-  --shadow: 0 16px 45px rgba(0, 0, 0, 0.65);
-  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --orange: #ff9e64;
+  --danger: #f7768e;
+  --code-bg: #050508;           /* Pure Deep Black Code Sandbox */
+  --code-header: #0e0f14;        /* Sandbox Titlebar */
+  --shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.5);
   --radius: 14px;
   --max: 1280px;
 
-  /* Tokyo Night Code Syntax Tokens */
-  --syn-keyword: #bb9af7;       /* Tokyo Night Purple - public, class, return, void */
-  --syn-annotation: #f7768e;    /* Tokyo Night Coral Pink - @Transactional, @Entity */
-  --syn-type: #e0af68;          /* Tokyo Night Amber - String, EntityManager */
-  --syn-string: #9ece6a;        /* Tokyo Night Mint Green - "strings", 'chars' */
-  --syn-function: #7aa2f7;      /* Tokyo Night Blue - methods, functions */
-  --syn-comment: #565f89;       /* Tokyo Night Slate - comments */
-  --syn-number: #ff9e64;        /* Tokyo Night Orange - 123, 0.5 */
-  --syn-tag: #f7768e;           /* Tokyo Night Pink/Red - <bean>, <servlet> */
-  --syn-attr: #7dcfff;          /* Tokyo Night Cyan - id=, class=, name= */
-  --syn-entity: #e0af68;        /* Amber - &lt; &gt; */
-  --syn-operator: #89ddff;      /* Sky Blue - =, +, -, -> */
-  --syn-property: #7aa2f7;      /* Sky Blue - properties, keys */
+  /* Rich & Vibrant Code Syntax Tokens on Pure Black */
+  --syn-keyword: #c678dd;       /* Vibrant Purple - public, class, return, void */
+  --syn-annotation: #ff7b72;    /* Vibrant Coral Red - @Transactional, @Entity, @Valid */
+  --syn-type: #e5c07b;          /* Vibrant Gold/Amber - String, EntityManager, DTO */
+  --syn-string: #98c379;        /* Vibrant Mint Green - "strings", 'chars' */
+  --syn-function: #61afef;      /* Vibrant Sky Blue - methods, functions */
+  --syn-comment: #768390;       /* Readable Slate Gray - comments */
+  --syn-number: #d19a66;        /* Vibrant Orange - 123, 0.5 */
+  --syn-tag: #ff7b72;           /* Vibrant Red/Pink - <bean>, <servlet>, <form:form> */
+  --syn-attr: #79c0ff;          /* Vibrant Cyan - id=, class=, name=, path= */
+  --syn-entity: #e5c07b;        /* Amber - &lt; &gt; */
+  --syn-operator: #56b6c2;      /* Cyan - =, +, -, -> */
+  --syn-property: #61afef;      /* Sky Blue - properties, keys */
   --syn-sql: #ff9e64;           /* Orange - SELECT, WHERE */
 }
 
