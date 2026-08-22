@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit 17: JPA ORM &amp; CRUD — Layman Concepts Guide</title>
+  <meta name="description" content="JPA ORM and CRUD explained in plain English. Understand EntityManager, persistence context, entity lifecycle, JPQL — all in layman terms for interviews." />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag">Unit 17 &middot; JPA ORM &amp; CRUD</span>
+    </div>
+    <h1>JPA &amp; ORM &mdash; <span class="accent">Layman Concepts</span></h1>
+    <p class="hero-subtitle">Stop memorising jargon. Understand <em>why</em> JPA exists, what every piece does, and how to explain it clearly in an interview &mdash; all in plain English with real analogies.</p>
+    <div class="hero-badges">
+      <span class="hbadge green">ORM &amp; Why It Exists</span>
+      <span class="hbadge blue">EntityManager Explained</span>
+      <span class="hbadge purple">4 Entity States</span>
+      <span class="hbadge orange">CRUD in Plain English</span>
+      <span class="hbadge">JPQL vs SQL</span>
+      <span class="hbadge">Dirty Checking</span>
+      <span class="hbadge">Interview Q&amp;A</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">Java Object</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">@Entity</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">EntityManager</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Hibernate</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Database Row</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#why-orm">1. Why ORM?</a>
+    <a href="#big-picture">2. Big Picture</a>
+    <a href="#emf-em">3. EMF vs EM</a>
+    <a href="#entity">4. @Entity</a>
+    <a href="#lifecycle">5. Entity States</a>
+    <a href="#persist">6. persist()</a>
+    <a href="#find">7. find()</a>
+    <a href="#jpql">8. JPQL</a>
+    <a href="#dirty">9. Dirty Checking</a>
+    <a href="#merge">10. merge()</a>
+    <a href="#remove">11. remove()</a>
+    <a href="#transaction">12. Transactions</a>
+    <a href="#interview">13. Interview Q&amp;A</a>
+    <a href="#memory">14. Memory Sheet</a>
+  </nav>
+
+  <!-- 1. WHY ORM -->
+  <section class="concept-section" id="why-orm">
+    <div class="section-label">01 &mdash; The Problem</div>
+    <h2>Why Do We Need ORM? (The Problem Statement)</h2>
+    <p class="tagline">&ldquo;Why not just use plain SQL?&rdquo;</p>
+    <p>Before JPA/ORM, every Java developer had to write raw JDBC code like this &mdash; just to save ONE employee:</p>
+    <div class="code-block"><span class="cmt">// Without ORM — nightmare boilerplate</span>
+<span class="cls">Connection</span> conn = <span class="cls">DriverManager</span>.<span class="fn">getConnection</span>(<span class="str">"jdbc:mysql://..."</span>);
+<span class="cls">PreparedStatement</span> ps = conn.<span class="fn">prepareStatement</span>(<span class="str">"INSERT INTO employee VALUES (?, ?, ?)"</span>);
+ps.<span class="fn">setInt</span>(<span class="num">1</span>, emp.<span class="fn">getId</span>());
+ps.<span class="fn">setString</span>(<span class="num">2</span>, emp.<span class="fn">getName</span>());
+ps.<span class="fn">setDouble</span>(<span class="num">3</span>, emp.<span class="fn">getSalary</span>());
+ps.<span class="fn">executeUpdate</span>();
+conn.<span class="fn">close</span>();   <span class="cmt">// Don't forget or you leak connections!</span></div>
+    <p>Problems with this approach:</p>
+    <ul>
+      <li><strong>Repetitive:</strong> Every entity needs the same boilerplate write/read code.</li>
+      <li><strong>Type mismatch:</strong> Java has objects; databases have tables/rows. You are always converting.</li>
+      <li><strong>SQL is not Java:</strong> Raw strings — easy to have typos, no compile-time checking.</li>
+      <li><strong>Manual connection management:</strong> Forget to close = memory/connection leak.</li>
+    </ul>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127968; Real-World Analogy</div>
+      <p>Think of ORM as a <strong>Google Translate between Java and the Database</strong>. You write in Java, ORM translates it to SQL so the database understands. You read from the database, ORM translates the result back into Java objects. You never have to "speak SQL" directly.</p>
+    </div>
+    <div class="ccard">
+      <h3><span class="icon">&#9989;</span> With ORM (JPA + Hibernate)</h3>
+      <p>You just call <code>em.persist(employee)</code> and Hibernate generates and runs the SQL for you. No boilerplate, no connection management, no manual type conversion.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. BIG PICTURE -->
+  <section class="concept-section" id="big-picture">
+    <div class="section-label">02 &mdash; Big Picture</div>
+    <h2>How JPA Fits in Your App (Layered Architecture)</h2>
+    <p class="tagline">&ldquo;Who calls who?&rdquo;</p>
+    <div class="grid-2">
+      <div class="ccard"><h3><span class="icon">&#128187;</span> UI / Tester Layer</h3><p>The starting point. Could be a main() method, JSP form, or REST controller. It talks to the Service layer with plain Java objects (DTOs). <strong>Never</strong> talks to DAO or Database directly.</p></div>
+      <div class="ccard"><h3><span class="icon">&#9881;&#65039;</span> Service Layer</h3><p>Business logic lives here. It knows <em>what</em> needs to happen but delegates database work to the DAO. This is also where <strong>transactions</strong> are managed.</p></div>
+      <div class="ccard"><h3><span class="icon">&#128452;&#65039;</span> DAO Layer</h3><p>Data Access Object &mdash; the only layer that talks to the database via <code>EntityManager</code>. It knows <em>how</em> to do CRUD but has no business rules.</p></div>
+      <div class="ccard"><h3><span class="icon">&#128268;</span> JPA / Hibernate Layer</h3><p>Hibernate (the JPA implementation) receives the calls from EntityManager and generates the actual SQL. It&apos;s the translator between Java and the DB.</p></div>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127829; Pizza Shop Analogy</div>
+      <p><strong>UI</strong> = Customer ordering. <strong>Service</strong> = Manager deciding what to cook. <strong>DAO</strong> = Chef who actually interacts with the kitchen. <strong>JPA/Hibernate</strong> = The recipe book that translates the order into cooking steps. <strong>Database</strong> = The actual ingredients pantry.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. EMF vs EM -->
+  <section class="concept-section" id="emf-em">
+    <div class="section-label">03 &mdash; Core API</div>
+    <h2>EntityManagerFactory vs EntityManager</h2>
+    <p class="tagline">&ldquo;Two different things that confuse everyone&rdquo;</p>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3><span class="icon">&#127981;</span> EntityManagerFactory (EMF)</h3>
+        <p><strong>Created once</strong> when the app starts. It&apos;s expensive to create (reads persistence.xml, connects to DB, sets up Hibernate). Think of it as the <strong>factory/plant</strong> that produces workers. You build the factory once, then ask it to produce workers whenever needed.</p>
+        <div class="code-block" style="margin-top:10px; font-size:.8rem;"><span class="cls">EntityManagerFactory</span> emf =
+  <span class="cls">Persistence</span>.<span class="fn">createEntityManagerFactory</span>(<span class="str">"employeePU"</span>);</div>
+      </div>
+      <div class="ccard">
+        <h3><span class="icon">&#128119;</span> EntityManager (EM)</h3>
+        <p><strong>Created per request</strong> (or per transaction). Cheap to create and manages one <em>persistence context</em> (its own first-level cache). Think of it as a <strong>worker/employee</strong> that does actual database work for one session, then is dismissed.</p>
+        <div class="code-block" style="margin-top:10px; font-size:.8rem;"><span class="cls">EntityManager</span> em = emf.<span class="fn">createEntityManager</span>();</div>
+      </div>
+    </div>
+    <table class="concept-table">
+      <thead><tr><th>Feature</th><th>EntityManagerFactory</th><th>EntityManager</th></tr></thead>
+      <tbody>
+        <tr><td>Created</td><td>Once at app startup</td><td>Per request / transaction</td></tr>
+        <tr><td>Thread-safe?</td><td>&#9989; Yes &mdash; share it</td><td>&#10060; No &mdash; one per thread</td></tr>
+        <tr><td>Cost</td><td>Expensive to create</td><td>Cheap to create</td></tr>
+        <tr><td>Analogy</td><td>The factory building</td><td>The worker inside</td></tr>
+        <tr><td>Manages</td><td>Connection pool, config</td><td>Persistence Context (cache)</td></tr>
+      </tbody>
+    </table>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p><strong>"Is EntityManager thread-safe?"</strong> &mdash; NO! Each thread (request) must have its own EntityManager. EMF is thread-safe and shared. EM is NOT thread-safe.</p>
+    </div>
+    <p><strong>What is persistence.xml?</strong></p>
+    <div class="ccard"><p>It&apos;s a <strong>config file</strong> in <code>META-INF/persistence.xml</code> that tells JPA: which database to connect to, which driver to use, which entity classes to manage, and which Hibernate settings to apply. Think of it as the <strong>recipe card</strong> that EMF reads to know how to set up the system.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. ENTITY -->
+  <section class="concept-section" id="entity">
+    <div class="section-label">04 &mdash; The @Entity</div>
+    <h2>What is a JPA Entity?</h2>
+    <p class="tagline">&ldquo;How a Java class becomes a database table&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128196; Analogy</div>
+      <p>A <strong>Java class = Database Table</strong> structure. An <strong>object of that class = one Row</strong> in the table. <strong>Fields = Columns</strong>. JPA annotations are the &ldquo;translation instructions&rdquo; telling Hibernate how to map each.</p>
+    </div>
+    <div class="code-block"><span class="ann">@Entity</span>                       <span class="cmt">// "This class is a DB table"</span>
+<span class="ann">@Table</span>(name = <span class="str">"employee"</span>)   <span class="cmt">// table name in DB</span>
+<span class="kw">public class</span> <span class="cls">Employee</span> {
+
+    <span class="ann">@Id</span>                         <span class="cmt">// Primary key column</span>
+    <span class="ann">@Column</span>(name = <span class="str">"employee_id"</span>)
+    <span class="kw">private int</span> employeeId;
+
+    <span class="ann">@Column</span>(name = <span class="str">"employee_name"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> employeeName;
+
+    <span class="kw">private double</span> salary;  <span class="cmt">// column name = "salary" by default</span>
+
+    <span class="ann">@Temporal</span>(<span class="cls">TemporalType</span>.DATE)   <span class="cmt">// Date type in DB</span>
+    <span class="kw">private</span> <span class="cls">Date</span> joiningDate;
+}</div>
+    <div class="grid-3">
+      <div class="ccard"><h3>@Entity</h3><p>Marks the class as JPA-managed. Without this, JPA ignores the class completely.</p></div>
+      <div class="ccard"><h3>@Table</h3><p>Specifies which DB table this entity maps to. If omitted, uses the class name.</p></div>
+      <div class="ccard"><h3>@Id</h3><p>Marks the primary key field. Every entity <strong>must</strong> have exactly one <code>@Id</code>.</p></div>
+      <div class="ccard"><h3>@Column</h3><p>Maps a field to a specific DB column name. If omitted, uses the field name.</p></div>
+      <div class="ccard"><h3>@Temporal</h3><p>Tells JPA how to handle <code>java.util.Date</code> &mdash; as DATE, TIME, or TIMESTAMP in the DB.</p></div>
+      <div class="ccard"><h3>No-arg Constructor</h3><p>JPA <strong>requires</strong> a no-argument constructor on every entity &mdash; it uses it to recreate objects from DB results.</p></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. LIFECYCLE -->
+  <section class="concept-section" id="lifecycle">
+    <div class="section-label">05 &mdash; Entity Lifecycle</div>
+    <h2>The 4 States of an Entity Object</h2>
+    <p class="tagline">&ldquo;The life story of an Employee object&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#129489;&#8205;&#128188; Employee Career Analogy</div>
+      <p>Think of an entity object like an employee&apos;s career: <strong>New</strong> (applied, no job yet) &rarr; <strong>Managed</strong> (hired, actively employed) &rarr; <strong>Detached</strong> (on leave/resigned) &rarr; <strong>Removed</strong> (fired, will be gone).</p>
+    </div>
+    <div class="grid-4">
+      <div class="state-box new"><div class="state-name">1. NEW (Transient)</div><p>Object created with <code>new</code>. JPA doesn&apos;t know about it. No DB row exists. Not in any persistence context.</p><p style="margin-top:8px;font-size:.8rem;color:#888">&rarr; <code>new Employee()</code></p></div>
+      <div class="state-box managed"><div class="state-name">2. MANAGED</div><p>JPA is tracking this object. Any changes you make will be automatically saved on commit (dirty checking!).</p><p style="margin-top:8px;font-size:.8rem;color:#888">&rarr; after <code>persist()</code> or <code>find()</code></p></div>
+      <div class="state-box detached"><div class="state-name">3. DETACHED</div><p>EntityManager is closed or <code>detach()</code> was called. JPA is no longer watching. Changes are NOT saved automatically.</p><p style="margin-top:8px;font-size:.8rem;color:#888">&rarr; after EM closes</p></div>
+      <div class="state-box removed"><div class="state-name">4. REMOVED</div><p>Marked for deletion. JPA will run <code>DELETE</code> SQL on transaction commit. Object still exists in memory until then.</p><p style="margin-top:8px;font-size:.8rem;color:#888">&rarr; after <code>remove()</code></p></div>
+    </div>
+    <div class="key-box" style="margin-top:20px"><p>&#128273; <strong>Key insight:</strong> Only objects in <strong>MANAGED</strong> state are tracked by JPA. When a transaction commits, JPA flushes all changes from managed entities to the database automatically.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. PERSIST -->
+  <section class="concept-section" id="persist">
+    <div class="section-label">06 &mdash; CREATE</div>
+    <h2>persist() &mdash; How to Save a New Record</h2>
+    <p class="tagline">&ldquo;Making JPA aware of your new object&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128203; Analogy</div>
+      <p><code>persist()</code> is like <strong>handing your CV to HR</strong>. You hand it over (persist), HR registers you (managed state), and only on the day you join (commit/flush) does the actual INSERT happen in the database.</p>
+    </div>
+    <div class="code-block"><span class="cls">Employee</span> emp = <span class="kw">new</span> <span class="cls">Employee</span>();  <span class="cmt">// State: NEW</span>
+emp.<span class="fn">setName</span>(<span class="str">"Rahul"</span>);
+emp.<span class="fn">setSalary</span>(<span class="num">50000</span>);
+
+em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();   <span class="cmt">// Start a transaction</span>
+em.<span class="fn">persist</span>(emp);                 <span class="cmt">// State: MANAGED — JPA is now watching</span>
+em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();   <span class="cmt">// SQL INSERT runs NOW</span></div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Common Mistake</div>
+      <p><code>persist()</code> does <strong>NOT</strong> immediately run an INSERT. It schedules it. The actual INSERT SQL runs when the transaction is committed. Many beginners think calling persist() is enough &mdash; but without <code>commit()</code>, nothing reaches the database.</p>
+    </div>
+    <ul>
+      <li>Changes state from <strong>NEW &rarr; MANAGED</strong></li>
+      <li>Requires an active transaction</li>
+      <li>Cannot be called on a <strong>DETACHED</strong> entity (use <code>merge()</code> instead)</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7. FIND -->
+  <section class="concept-section" id="find">
+    <div class="section-label">07 &mdash; READ</div>
+    <h2>find() &mdash; How to Fetch a Record by ID</h2>
+    <p class="tagline">&ldquo;Looking up one record by its primary key&rdquo;</p>
+    <div class="code-block"><span class="cls">Employee</span> emp = em.<span class="fn">find</span>(<span class="cls">Employee</span>.<span class="kw">class</span>, <span class="num">1</span>);
+<span class="cmt">// Generates: SELECT * FROM employee WHERE employee_id = 1</span></div>
+    <div class="grid-2">
+      <div class="ccard"><h3><span class="icon">&#9989;</span> find() behaviour</h3><ul><li>First checks the <strong>first-level cache</strong> (persistence context). If the object was already loaded, it returns the cached copy &mdash; no SQL query!</li><li>If not in cache, hits the database.</li><li>Returns <code>null</code> if not found.</li><li>Returned object is in <strong>MANAGED</strong> state.</li></ul></div>
+      <div class="ccard"><h3><span class="icon">&#9888;&#65039;</span> find() vs getReference()</h3><ul><li><code>find()</code> &mdash; Hits DB immediately, returns full object or null.</li><li><code>getReference()</code> &mdash; Returns a <em>proxy</em> (lazy placeholder). DB is hit only when you access a field. Throws exception if not found.</li></ul></div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p>The second argument to <code>find()</code> is the <strong>primary key value</strong> (the value of the <code>@Id</code> field), NOT just any column value. <code>em.find(Employee.class, "Rahul")</code> would look for an employee with ID "Rahul", not name "Rahul".</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8. JPQL -->
+  <section class="concept-section" id="jpql">
+    <div class="section-label">08 &mdash; READ ALL</div>
+    <h2>JPQL &mdash; Query All Records (Not Just One)</h2>
+    <p class="tagline">&ldquo;Writing queries in Java terms, not SQL terms&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127760; Analogy</div>
+      <p>Regular SQL talks about <strong>tables and columns</strong> (<code>SELECT * FROM employee</code>). JPQL talks about <strong>Java classes and fields</strong> (<code>SELECT e FROM Employee e</code>). JPQL is object-oriented SQL &mdash; Hibernate converts it to real SQL at runtime.</p>
+    </div>
+    <table class="concept-table">
+      <thead><tr><th>Concept</th><th>SQL</th><th>JPQL</th></tr></thead>
+      <tbody>
+        <tr><td>Select all</td><td><code>SELECT * FROM employee</code></td><td><code>SELECT e FROM Employee e</code></td></tr>
+        <tr><td>With condition</td><td><code>WHERE employee_id = 1</code></td><td><code>WHERE e.employeeId = 1</code></td></tr>
+        <tr><td>Order by</td><td><code>ORDER BY salary DESC</code></td><td><code>ORDER BY e.salary DESC</code></td></tr>
+        <tr><td>Table name?</td><td>Database table name</td><td><strong>Entity class name</strong> (case-sensitive!)</td></tr>
+        <tr><td>Column name?</td><td>Database column name</td><td><strong>Java field name</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="code-block"><span class="kw">List</span>&lt;<span class="cls">Employee</span>&gt; list = em.<span class="fn">createQuery</span>(
+    <span class="str">"SELECT e FROM Employee e"</span>, <span class="cls">Employee</span>.<span class="kw">class</span>)
+    .<span class="fn">getResultList</span>();
+
+<span class="cmt">// With parameter</span>
+<span class="kw">List</span>&lt;<span class="cls">Employee</span>&gt; list = em.<span class="fn">createQuery</span>(
+    <span class="str">"SELECT e FROM Employee e WHERE e.role = :r"</span>, <span class="cls">Employee</span>.<span class="kw">class</span>)
+    .<span class="fn">setParameter</span>(<span class="str">"r"</span>, <span class="str">"Manager"</span>)
+    .<span class="fn">getResultList</span>();</div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; JPQL Gotcha</div>
+      <p>In JPQL, <code>Employee</code> refers to the <strong>Java class name</strong>, not the database table name. So if your class is <code>Employee</code> but your table is <code>tbl_employee</code>, JPQL still uses <code>Employee</code>. <strong>It&apos;s case-sensitive!</strong></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 9. DIRTY CHECKING -->
+  <section class="concept-section" id="dirty">
+    <div class="section-label">09 &mdash; UPDATE (Managed)</div>
+    <h2>Dirty Checking &mdash; The &ldquo;Magic&rdquo; Auto-Update</h2>
+    <p class="tagline">&ldquo;JPA watches your objects and saves changes automatically&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128247; Analogy</div>
+      <p>When you <code>find()</code> an entity, JPA takes a <strong>snapshot photo</strong> of the object. When the transaction commits, JPA takes another photo and <strong>compares the two</strong>. If anything changed (it&apos;s &ldquo;dirty&rdquo;), JPA automatically generates an UPDATE SQL. You never have to call any update method!</p>
+    </div>
+    <div class="code-block">em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();
+
+<span class="cls">Employee</span> emp = em.<span class="fn">find</span>(<span class="cls">Employee</span>.<span class="kw">class</span>, <span class="num">1</span>); <span class="cmt">// MANAGED — JPA takes a snapshot</span>
+emp.<span class="fn">setSalary</span>(<span class="num">75000</span>);  <span class="cmt">// You just changed the object</span>
+<span class="cmt">// No em.update() needed!</span>
+
+em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();  <span class="cmt">// JPA detects change, runs UPDATE automatically</span></div>
+    <div class="key-box"><p>&#128273; <strong>Dirty checking only works on MANAGED entities.</strong> If the entity is DETACHED (EM is closed, or you fetched it in a different session), changes are NOT tracked. You must use <code>merge()</code> instead.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 10. MERGE -->
+  <section class="concept-section" id="merge">
+    <div class="section-label">10 &mdash; UPDATE (Detached)</div>
+    <h2>merge() &mdash; Updating a Detached Entity</h2>
+    <p class="tagline">&ldquo;Reattaching an object that JPA stopped tracking&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128260; Analogy</div>
+      <p><code>merge()</code> is like bringing an old employee back from leave. The company (JPA) doesn&apos;t know what they did while away. You <strong>hand back the updated copy</strong> and the company merges the changes into the official record. The <strong>returned object from merge()</strong> is the new managed version &mdash; not the original you passed in.</p>
+    </div>
+    <div class="code-block"><span class="cmt">// emp is DETACHED (came from a web form or a previous session)</span>
+emp.<span class="fn">setSalary</span>(<span class="num">80000</span>);
+
+em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();
+<span class="cls">Employee</span> managedEmp = em.<span class="fn">merge</span>(emp);  <span class="cmt">// Returns MANAGED copy</span>
+em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();       <span class="cmt">// UPDATE runs for managedEmp</span></div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p><code>merge()</code> returns a <strong>new managed object</strong>. The original object you passed in is still DETACHED. Use the return value: <code>Employee managed = em.merge(detached);</code> &mdash; never continue working with the original <code>detached</code> variable after merging.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 11. REMOVE -->
+  <section class="concept-section" id="remove">
+    <div class="section-label">11 &mdash; DELETE</div>
+    <h2>remove() &mdash; Deleting a Record</h2>
+    <p class="tagline">&ldquo;You must find it before you can delete it&rdquo;</p>
+    <div class="code-block">em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();
+
+<span class="cls">Employee</span> emp = em.<span class="fn">find</span>(<span class="cls">Employee</span>.<span class="kw">class</span>, <span class="num">1</span>); <span class="cmt">// Must be MANAGED</span>
+em.<span class="fn">remove</span>(emp);  <span class="cmt">// State: REMOVED</span>
+
+em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();  <span class="cmt">// DELETE FROM employee WHERE employee_id = 1</span></div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p><code>remove()</code> only works on <strong>MANAGED</strong> entities. You cannot pass a detached object directly. If your entity is detached, first <code>merge()</code> it to get a managed copy, then call <code>remove()</code> on the managed copy.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 12. TRANSACTIONS -->
+  <section class="concept-section" id="transaction">
+    <div class="section-label">12 &mdash; Transactions</div>
+    <h2>Why Transactions Matter (Plain English)</h2>
+    <p class="tagline">&ldquo;All or nothing &mdash; the banking principle&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127974; Bank Transfer Analogy</div>
+      <p>Transferring money from Account A to Account B involves two operations: <strong>Debit A</strong> and <strong>Credit B</strong>. If the app crashes after debiting A but before crediting B, money disappears. A <strong>transaction</strong> wraps both operations and guarantees: either <strong>both succeed (commit)</strong> or <strong>both are undone (rollback)</strong>.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard"><h3>begin()</h3><p>Start a unit of work. &ldquo;I&apos;m about to do some DB operations.&rdquo;</p></div>
+      <div class="ccard"><h3>commit()</h3><p>Save everything permanently. &ldquo;All operations succeeded &mdash; make it permanent.&rdquo;</p></div>
+      <div class="ccard"><h3>rollback()</h3><p>Undo everything since begin(). &ldquo;Something went wrong &mdash; undo all changes.&rdquo;</p></div>
+      <div class="ccard"><h3>flush()</h3><p>Send pending SQL to DB now (but don&apos;t commit yet). JPA syncs the persistence context with the DB without ending the transaction.</p></div>
+    </div>
+    <div class="code-block"><span class="kw">try</span> {
+    em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();
+    em.<span class="fn">persist</span>(emp1);
+    em.<span class="fn">persist</span>(emp2);
+    em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();   <span class="cmt">// Both saved or nothing</span>
+} <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+    em.<span class="fn">getTransaction</span>().<span class="fn">rollback</span>();  <span class="cmt">// Undo everything on error</span>
+}</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 13. INTERVIEW Q&A -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">13 &mdash; Interview Prep</div>
+    <h2>Top Interview Questions with Answers</h2>
+    <p class="tagline">&ldquo;Questions you will definitely be asked&rdquo;</p>
+    <div class="qa-block"><div class="qa-q">What is ORM and why do we use it?</div><div class="qa-a">ORM (Object-Relational Mapping) is a technique that converts data between Java objects and database tables automatically. We use it to avoid writing repetitive JDBC boilerplate, eliminate type mismatch problems, and write queries in Java terms instead of raw SQL strings.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between JPA and Hibernate?</div><div class="qa-a">JPA is a specification (a set of rules/interfaces). Hibernate is an implementation of those rules. JPA defines what methods should exist (like persist, merge, find). Hibernate actually implements those methods. Using JPA API keeps your code portable &mdash; if you want, you can switch from Hibernate to EclipseLink without changing your code.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between EntityManagerFactory and EntityManager?</div><div class="qa-a">EntityManagerFactory (EMF) is created once at startup, is thread-safe, and manages the connection pool. EntityManager (EM) is created per-request/transaction, is NOT thread-safe, and manages one persistence context (a unit of work). EMF is expensive to create; EM is cheap. Always close EM after use to avoid memory leaks.</div></div>
+    <div class="qa-block"><div class="qa-q">What are the 4 states of a JPA entity?</div><div class="qa-a">1) New/Transient &mdash; created with new, JPA unaware. 2) Managed &mdash; JPA is tracking it, changes auto-saved on commit. 3) Detached &mdash; JPA stopped tracking (EM closed), changes NOT auto-saved. 4) Removed &mdash; marked for deletion, DELETE SQL runs on commit.</div></div>
+    <div class="qa-block"><div class="qa-q">What is dirty checking in JPA?</div><div class="qa-a">Dirty checking is JPA&apos;s automatic change detection. When you load a managed entity with find(), JPA takes a snapshot. On transaction commit, JPA compares the current state with the snapshot. If any fields changed (entity is "dirty"), JPA automatically generates an UPDATE SQL. No manual em.update() call is needed.</div></div>
+    <div class="qa-block"><div class="qa-q">When do you use merge() vs persist()?</div><div class="qa-a">Use persist() to save a brand new entity (state: New &rarr; Managed). Use merge() to reattach a detached entity and save its changes. merge() returns a new managed copy &mdash; always use the return value, not the original detached object.</div></div>
+    <div class="qa-block"><div class="qa-q">What is JPQL and how is it different from SQL?</div><div class="qa-a">JPQL (Java Persistence Query Language) uses Java class names and field names instead of database table and column names. SQL says "SELECT * FROM employee", JPQL says "SELECT e FROM Employee e". Hibernate converts JPQL to the appropriate SQL dialect for your database at runtime.</div></div>
+    <div class="qa-block"><div class="qa-q">What is a Persistence Context?</div><div class="qa-a">A Persistence Context is the in-memory first-level cache managed by EntityManager. It keeps track of all managed entities during a transaction. If you call find() twice for the same ID in the same transaction, only one SQL query is made &mdash; the second call returns the cached object. It&apos;s cleared when the EntityManager is closed.</div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 14. MEMORY SHEET -->
+  <section class="concept-section" id="memory">
+    <div class="section-label">14 &mdash; Quick Revision</div>
+    <h2>&#9889; Memory Cheat Sheet</h2>
+    <p class="tagline">&ldquo;Last-minute revision before your interview&rdquo;</p>
+    <div class="memory-grid">
+      <div class="memory-card"><div class="mc-label">persist()</div><div class="mc-val">New &rarr; Managed<br>INSERT on commit</div></div>
+      <div class="memory-card"><div class="mc-label">find()</div><div class="mc-val">SELECT by @Id<br>Returns null if missing</div></div>
+      <div class="memory-card"><div class="mc-label">JPQL</div><div class="mc-val">Uses class/field names<br>Not table/column names</div></div>
+      <div class="memory-card"><div class="mc-label">Dirty Check</div><div class="mc-val">Auto UPDATE<br>Managed entities only</div></div>
+      <div class="memory-card"><div class="mc-label">merge()</div><div class="mc-val">Detached &rarr; Managed copy<br>Use the RETURN VALUE</div></div>
+      <div class="memory-card"><div class="mc-label">remove()</div><div class="mc-val">Need MANAGED entity first<br>DELETE on commit</div></div>
+      <div class="memory-card"><div class="mc-label">EMF</div><div class="mc-val">Created ONCE<br>Thread-safe &#9989;</div></div>
+      <div class="memory-card"><div class="mc-label">EM</div><div class="mc-val">Per request/transaction<br>NOT thread-safe &#10060;</div></div>
+      <div class="memory-card"><div class="mc-label">JPA vs Hibernate</div><div class="mc-val">JPA = Spec (rules)<br>Hibernate = Implementation</div></div>
+    </div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

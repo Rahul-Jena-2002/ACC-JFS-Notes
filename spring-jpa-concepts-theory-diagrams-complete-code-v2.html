@@ -31,6 +31,13 @@
   </div>
 </header>
 
+<div class="content-switcher" id="contentSwitcher" role="tablist" aria-label="Study mode">
+  <span class="switch-indicator" aria-hidden="true"></span>
+  <button class="switch-btn active" id="studyTab" type="button" role="tab" aria-selected="true" aria-controls="studyPanel">Study Guide</button>
+  <button class="switch-btn" id="interviewTab" type="button" role="tab" aria-selected="false" aria-controls="interviewPanel">Interview Guide</button>
+</div>
+
+<div class="content-panel active" id="studyPanel" role="tabpanel" aria-labelledby="studyTab">
 <main>
 
 <!-- =========================================================================
@@ -38,7 +45,7 @@
      ========================================================================= -->
 <section class="section" id="architecture">
   <span class="badge">01 — BIG PICTURE</span>
-  <h2>Transaction Architecture & Mental Model</h2>
+  <h2>Transaction Architecture &amp; Mental Model</h2>
   <div class="callout">
     <strong>Core Mental Model:</strong> A transaction is a safety boundary around a business operation.
     Either all changes commit together, or the transaction rolls back according to defined rules.
@@ -50,7 +57,7 @@
     delegating the actual start, commit, and rollback lifecycles to <code>PlatformTransactionManager</code> (such as <code>JpaTransactionManager</code>).
   </p>
 
-  <div class="diagram">
+  <div class="diagram" style="max-width: 820px; margin: 20px auto;">
     <div class="mermaid">
 sequenceDiagram
     autonumber
@@ -73,19 +80,126 @@ sequenceDiagram
     </div>
   </div>
 
+  <!-- ELABORATE LOCAL VS GLOBAL SECTION -->
+  <h3 style="margin-top: 32px; color: var(--purple, #d2a8ff);">🏛️ Local Transaction vs Global Transaction (JTA) — In Depth</h3>
+  <p class="lead">
+    Understanding when your application needs a simple database transaction versus a distributed multi-resource coordinator is a classic Senior / Architect interview topic.
+  </p>
+
   <div class="grid-2">
-    <div class="topic">
-      <h4>Local Transaction</h4>
-      <p>Operates against <strong>one single transactional database resource</strong>. Managed via <code>JpaTransactionManager</code>. Simple, performant, and standard for 95% of web apps.</p>
+    <div class="topic" style="border-left: 3px solid #64ffb4;">
+      <h4 style="color: #64ffb4;">1. Local Transaction (Single Resource)</h4>
+      <p>A Local Transaction operates against <strong>one single transactional resource</strong> (typically 1 relational database connection).</p>
+      <ul>
+        <li><strong>Under the hood:</strong> Delegates directly to the underlying connection driver (calls <code>connection.setAutoCommit(false)</code> and <code>connection.commit()</code>).</li>
+        <li><strong>Spring Manager:</strong> <code>JpaTransactionManager</code> or <code>DataSourceTransactionManager</code>.</li>
+        <li><strong>When to use:</strong> 95%+ of standard web applications where all data modifications occur in one MySQL/PostgreSQL database.</li>
+        <li><strong>Pros:</strong> Maximum speed, minimal latency, zero network coordination overhead.</li>
+        <li><strong>Limitation:</strong> Cannot guarantee atomic rollbacks if your code also writes to a second database or sends a message to RabbitMQ/Kafka.</li>
+      </ul>
     </div>
-    <div class="topic">
-      <h4>Global Transaction (JTA)</h4>
-      <p>Coordinates <strong>multiple distributed resources</strong> (e.g. Oracle DB + PostgreSQL DB + JMS/RabbitMQ) via two-phase commit (2PC) and <code>JtaTransactionManager</code>.</p>
+
+    <div class="topic" style="border-left: 3px solid #79c0ff;">
+      <h4 style="color: #79c0ff;">2. Global / Distributed Transaction (JTA / XA)</h4>
+      <p>A Global Transaction coordinates an atomic unit of work across <strong>two or more independent distributed resources</strong> (e.g. MySQL DB + Oracle DB + ActiveMQ / JMS queue).</p>
+      <ul>
+        <li><strong>Under the hood:</strong> Managed by an external Transaction Coordinator using the <strong>XA standard</strong> and the <strong>Two-Phase Commit (2PC)</strong> protocol.</li>
+        <li><strong>Spring Manager:</strong> <code>JtaTransactionManager</code> delegating to an XA coordinator (like Atomikos, Bitronix, Narayana, or J2EE app servers like WildFly/WebLogic).</li>
+        <li><strong>When to use:</strong> Banking/financial systems where debiting Database A, crediting Database B, and publishing an audit event must all succeed or fail together.</li>
+        <li><strong>Cons:</strong> Heavy performance cost, locks tables across the network during 2PC, complex configuration.</li>
+      </ul>
     </div>
   </div>
 
+  <div class="callout" style="background: rgba(121, 192, 255, 0.05); border-left: 4px solid #79c0ff; margin: 24px 0;">
+    <strong>🏖️ Real-World Analogy (Group Trip Booking):</strong>
+    <br><br>
+    <strong>Local Transaction:</strong> You walk into a hotel front desk, swipe your card, and get your room key. One vendor, one transaction, instant success or fail.
+    <br><br>
+    <strong>Global Transaction (2PC):</strong> A travel coordinator books a group tour involving 3 vendors: <em>Airline (Resource 1)</em>, <em>Hotel (Resource 2)</em>, and <em>Charter Bus (Resource 3)</em>.
+    <br>
+    • <strong>Phase 1 (Prepare / Vote):</strong> The coordinator calls all 3: "Can you hold 50 seats/rooms for Saturday?". All 3 lock resources and vote <em>"YES, READY"</em>.
+    <br>
+    • <strong>Phase 2 (Commit or Abort):</strong> Since all 3 agreed, coordinator calls everyone: <em>"CONFIRM AND CHARGE"</em>. If the airline had said "Sorry, only 20 seats left", the coordinator immediately orders the hotel and bus to <em>CANCEL HOLDS (Rollback)</em>.
+  </div>
+
+  <h4>How Two-Phase Commit (2PC) Works Internally</h4>
+  <div class="diagram" style="max-width: 820px; margin: 20px auto;">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant App as Service Method
+    participant Coord as JTA Coordinator (Atomikos)
+    participant DB1 as Database 1 (MySQL XA)
+    participant DB2 as Database 2 (Oracle XA)
+    participant JMS as Queue (ActiveMQ XA)
+
+    App->>Coord: 1. Begin Global Transaction
+    Coord-->>App: Global Transaction Active
+    App->>DB1: Write Order Record
+    App->>DB2: Deduct Inventory
+    App->>JMS: Queue Payment Event
+    App->>Coord: 2. Commit Request
+
+    Note over Coord,JMS: PHASE 1: PREPARE (Voting Phase)
+    Coord->>DB1: XA PREPARE?
+    DB1-->>Coord: VOTE_COMMIT (Ready)
+    Coord->>DB2: XA PREPARE?
+    DB2-->>Coord: VOTE_COMMIT (Ready)
+    Coord->>JMS: XA PREPARE?
+    JMS-->>Coord: VOTE_COMMIT (Ready)
+
+    Note over Coord,JMS: PHASE 2: COMMIT (Execution Phase)
+    Coord->>DB1: XA COMMIT
+    Coord->>DB2: XA COMMIT
+    Coord->>JMS: XA COMMIT
+    Coord-->>App: Global Transaction Committed Successfully
+    </div>
+  </div>
+
+  <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--border);">
+        <th style="padding: 10px; text-align: left; color: var(--purple, #d2a8ff);">Feature</th>
+        <th style="padding: 10px; text-align: left; color: #64ffb4;">Local Transaction</th>
+        <th style="padding: 10px; text-align: left; color: #79c0ff;">Global Transaction (JTA / 2PC)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 10px;"><strong>Resource Scope</strong></td>
+        <td style="padding: 10px;">Single Database / Single Connection</td>
+        <td style="padding: 10px;">Multiple Databases, JMS queues, ERPs</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 10px;"><strong>Spring Manager</strong></td>
+        <td style="padding: 10px;"><code>JpaTransactionManager</code></td>
+        <td style="padding: 10px;"><code>JtaTransactionManager</code></td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 10px;"><strong>Protocol</strong></td>
+        <td style="padding: 10px;">Native JDBC <code>commit()</code> / <code>rollback()</code></td>
+        <td style="padding: 10px;">XA Two-Phase Commit (2PC)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 10px;"><strong>Latency &amp; Throughput</strong></td>
+        <td style="padding: 10px;">Ultra high speed (&lt; 1ms)</td>
+        <td style="padding: 10px;">High latency (network round-trips &amp; locks)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 10px;"><strong>Modern Alternative</strong></td>
+        <td style="padding: 10px;">Standard for monolithic / modular apps</td>
+        <td style="padding: 10px;">Replaced in Microservices by <strong>SAGA Pattern</strong> &amp; <strong>Transactional Outbox</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>💡 Microservices Interview Pro-Tip:</strong> Why is JTA rarely used in cloud microservices? Because 2PC requires distributed table locks across networks, creating severe bottlenecks and single points of failure. Modern cloud systems favor <em>Eventual Consistency</em> using <strong>Saga Orchestration</strong> (compensating actions) or the <strong>Transactional Outbox Pattern</strong> via Kafka/Debezium.
+  </div>
+
   <div class="memory">
-    <strong>Key Rule:</strong> Transaction = Business Unit of Work + Boundary + Commit/Rollback.
+    <strong>Key Rule:</strong> Local = 1 Database (JpaTransactionManager). Global = Multi-resource 2PC (JtaTransactionManager).
   </div>
 </section>
 
@@ -515,13 +629,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 }</code></pre>
 </section>
+</main>
+</div> <!-- /studyPanel -->
 
 <!-- =========================================================================
-     07 — 40 SCENARIO-BASED INTERVIEW QUESTIONS & TRAPS
+     INTERVIEW PANEL (SEGMENTED SWITCHER TAB)
      ========================================================================= -->
+<div class="content-panel" id="interviewPanel" role="tabpanel" aria-labelledby="interviewTab">
+<main>
+
 <section class="section" id="scenarios">
-  <span class="badge">07 — INTERVIEW TRAPS</span>
-  <h2>Scenario-Based Interview Questions & Traps</h2>
+  <span class="badge">07 — INTERVIEW TRAPS &amp; SCENARIOS</span>
+  <h2>Scenario-Based Interview Questions &amp; Traps</h2>
   <div class="callout">
     <strong>Interview Reasoning Formula:</strong>
     Identify Transaction Boundary → Propagation Mode → Exception Outcome → Rollback Rule → Final DB State.
@@ -580,10 +699,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 </section>
 
 </main>
+</div> <!-- /interviewPanel -->
 
 <footer>
   <div class="container">
-    Spring Learning Hub Â· Tokyo Night Edition Â· Single CSS/JS Architecture Â· Offline Ready
+    Spring Learning Hub · Tokyo Night Edition · Single CSS/JS Architecture · Offline Ready
   </div>
 </footer>
 

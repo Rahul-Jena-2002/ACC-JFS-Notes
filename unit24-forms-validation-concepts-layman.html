@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit 24: Spring MVC Forms, Validation &amp; Exception Handling — Layman Concepts Guide</title>
+  <meta name="description" content="Spring MVC Forms, @Valid, BindingResult, custom validators, @ExceptionHandler, @ControllerAdvice explained in plain English for interview prep." />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag" style="color:var(--warning); background:rgba(255,166,87,.1); border-color:rgba(255,166,87,.25);">Unit 24 &middot; Forms &amp; Validation</span>
+    </div>
+    <h1>Spring MVC Forms &amp; Validation &mdash; <span class="accent">Layman Concepts</span></h1>
+    <p class="hero-subtitle">Understand how Spring form tags bind data to Java objects, what @Valid and BindingResult actually do, how to create custom validators, and how @ExceptionHandler and @ControllerAdvice handle errors globally &mdash; all in plain English.</p>
+    <div class="hero-badges">
+      <span class="hbadge orange">Spring Form Taglib</span>
+      <span class="hbadge green">@ModelAttribute Binding</span>
+      <span class="hbadge blue">@Valid &amp; BindingResult</span>
+      <span class="hbadge red">Custom Validators</span>
+      <span class="hbadge">@ExceptionHandler</span>
+      <span class="hbadge">@ControllerAdvice</span>
+      <span class="hbadge">Interview Q&amp;A</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">JSP Form</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">@ModelAttribute Object</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">@Valid</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">BindingResult</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Service / Error View</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#form-taglib">1. Spring Form Taglib</a>
+    <a href="#model-attribute">2. @ModelAttribute</a>
+    <a href="#static-ui">3. Static Form Tags</a>
+    <a href="#dynamic-ui">4. Dynamic Form Tags</a>
+    <a href="#validation-why">5. Why Validate?</a>
+    <a href="#bean-val">6. Bean Validation Annotations</a>
+    <a href="#valid-binding">7. @Valid &amp; BindingResult</a>
+    <a href="#custom-val">8. Custom Validator</a>
+    <a href="#exception">9. @ExceptionHandler</a>
+    <a href="#advice">10. @ControllerAdvice</a>
+    <a href="#interview">11. Interview Q&amp;A</a>
+    <a href="#memory">12. Memory Sheet</a>
+  </nav>
+
+  <!-- 1. SPRING FORM TAGLIB -->
+  <section class="concept-section" id="form-taglib">
+    <div class="section-label">01 &mdash; Spring Form Tags</div>
+    <h2>Spring MVC Form Taglib &mdash; Why Not Plain HTML Forms?</h2>
+    <p class="tagline">&ldquo;Spring&apos;s form tags do magic that plain HTML cannot&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#129513; Smart Form Analogy</div>
+      <p>Regular HTML forms are &ldquo;blind&rdquo; &mdash; they just send raw text. Spring MVC form tags are &ldquo;intelligent&rdquo; &mdash; they know about your Java objects. They automatically <strong>populate form fields</strong> with existing Java object values (great for edit forms), and they automatically <strong>bind submitted values</strong> back to the Java object. They also know how to show validation error messages next to the right fields.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Plain HTML form (basic)</h3>
+        <div class="code-block" style="font-size:.82rem;"><span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="str">"/save"</span> <span class="attr">method</span>=<span class="str">"post"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">name</span>=<span class="str">"employeeName"</span><span class="tag">/&gt;</span>
+  <span class="cmt">&lt;!-- No auto-population, no binding, no error display --&gt;</span>
+<span class="tag">&lt;/form&gt;</span></div>
+      </div>
+      <div class="ccard">
+        <h3>Spring MVC form tag (smart)</h3>
+        <div class="code-block" style="font-size:.82rem;"><span class="cmt">&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %&gt;</span>
+<span class="tag">&lt;form:form</span> <span class="attr">action</span>=<span class="str">"/save"</span> <span class="attr">method</span>=<span class="str">"post"</span> <span class="attr">modelAttribute</span>=<span class="str">"employee"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;form:input</span> <span class="attr">path</span>=<span class="str">"employeeName"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;form:errors</span> <span class="attr">path</span>=<span class="str">"employeeName"</span><span class="tag">/&gt;</span>
+  <span class="cmt">&lt;!-- Auto-populates from Employee object, shows validation errors --&gt;</span>
+<span class="tag">&lt;/form:form&gt;</span></div>
+      </div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>The key attribute is <code>modelAttribute</code></strong>. This tells the form which Java object in the Model to bind to. Every form field uses <code>path</code> to specify which field of that object to bind to. The attribute name must match what the controller puts in the Model.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. @MODELATTRIBUTE -->
+  <section class="concept-section" id="model-attribute">
+    <div class="section-label">02 &mdash; Data Binding</div>
+    <h2>@ModelAttribute &mdash; Automatic Form-to-Object Binding</h2>
+    <p class="tagline">&ldquo;Spring fills your Java object from the form automatically&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#129522; Stamp Machine Analogy</div>
+      <p>Imagine a form with 10 fields. Without @ModelAttribute, you&apos;d write <code>request.getParameter("name")</code> for each field, then manually set each value on the object. @ModelAttribute is like a <strong>stamp machine</strong> &mdash; it reads all form fields, matches them to object fields by name, and fills the entire object automatically in one step.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>@ModelAttribute on method parameter</h3>
+        <p>When used on a parameter in a controller method, Spring automatically creates the object, reads all HTTP request parameters, and sets matching fields (by name).</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="cmt">// Form field name="employeeName" → emp.setEmployeeName()</span>
+<span class="ann">@PostMapping</span>(<span class="str">"/save"</span>)
+<span class="kw">public</span> <span class="cls">String</span> <span class="fn">save</span>(<span class="ann">@ModelAttribute</span> <span class="cls">Employee</span> emp) {
+    <span class="cmt">// emp is already populated from form fields!</span>
+    service.<span class="fn">save</span>(emp);
+    <span class="kw">return</span> <span class="str">"success"</span>;
+}</div>
+      </div>
+      <div class="ccard">
+        <h3>@ModelAttribute on a method (pre-populating model)</h3>
+        <p>When used on a method in the controller class, that method runs BEFORE every handler method in the class. Used to pre-load common data like dropdown options.</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="ann">@ModelAttribute</span>(<span class="str">"countries"</span>)
+<span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">String</span>&gt; <span class="fn">loadCountries</span>() {
+    <span class="kw">return</span> <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"India"</span>, <span class="str">"USA"</span>, <span class="str">"UK"</span>);
+    <span class="cmt">// model.get("countries") is available in every view</span>
+}</div>
+      </div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; The modelAttribute and @ModelAttribute Connection</div>
+      <p>The <code>modelAttribute="employee"</code> on <code>&lt;form:form&gt;</code> must match the attribute name put in the Model by the controller for the GET request. If the controller does <code>model.addAttribute("employee", new Employee())</code>, then modelAttribute must be <code>"employee"</code>. Case-sensitive!</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. STATIC UI COMPONENTS -->
+  <section class="concept-section" id="static-ui">
+    <div class="section-label">03 &mdash; Static Form Tags</div>
+    <h2>Static UI Components &mdash; Text, Password, Textarea, Checkbox, Radio</h2>
+    <p class="tagline">&ldquo;Form fields where the options don&apos;t change&rdquo;</p>
+    <table class="concept-table">
+      <thead><tr><th>Tag</th><th>HTML Equivalent</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;form:input path="name"/&gt;</code></td><td><code>&lt;input type="text"&gt;</code></td><td>Text input fields</td></tr>
+        <tr><td><code>&lt;form:password path="pwd"/&gt;</code></td><td><code>&lt;input type="password"&gt;</code></td><td>Password field (never pre-filled)</td></tr>
+        <tr><td><code>&lt;form:textarea path="address"/&gt;</code></td><td><code>&lt;textarea&gt;</code></td><td>Multi-line text</td></tr>
+        <tr><td><code>&lt;form:checkbox path="agree"/&gt;</code></td><td><code>&lt;input type="checkbox"&gt;</code></td><td>Single boolean checkbox</td></tr>
+        <tr><td><code>&lt;form:radiobutton path="gender" value="M"/&gt;</code></td><td><code>&lt;input type="radio"&gt;</code></td><td>Single radio button option</td></tr>
+        <tr><td><code>&lt;form:errors path="name"/&gt;</code></td><td>No HTML equivalent</td><td>Displays validation error for the field</td></tr>
+      </tbody>
+    </table>
+    <div class="key-box"><p>&#128273; <strong>path attribute</strong> = Java object field name. Spring reads the field value to pre-fill the control (GET request), and writes the submitted value back to the field (POST request). This is two-way binding.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. DYNAMIC UI COMPONENTS -->
+  <section class="concept-section" id="dynamic-ui">
+    <div class="section-label">04 &mdash; Dynamic Form Tags</div>
+    <h2>Dynamic UI Components &mdash; Select, Checkboxes, RadioButtons</h2>
+    <p class="tagline">&ldquo;Form fields where the options come from a Java Collection&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128247; Dynamic vs Static Analogy</div>
+      <p>Static: You hardcode the options in JSP. Dynamic: The options come from a Java List, Map, or Array loaded by the controller (e.g., list of countries from a database). Spring&apos;s dynamic form tags automatically render all items in the collection as HTML options.</p>
+    </div>
+    <div class="code-block"><span class="cmt">&lt;!-- Controller: puts a list in model --&gt;</span>
+model.<span class="fn">addAttribute</span>(<span class="str">"countries"</span>, <span class="cls">Arrays</span>.<span class="fn">asList</span>(<span class="str">"India"</span>, <span class="str">"USA"</span>, <span class="str">"UK"</span>));
+
+<span class="cmt">&lt;!-- JSP: renders a dropdown from that list --&gt;</span>
+<span class="tag">&lt;form:select</span> <span class="attr">path</span>=<span class="str">"country"</span> <span class="attr">items</span>=<span class="str">"${countries}"</span><span class="tag">/&gt;</span>
+
+<span class="cmt">&lt;!-- Renders multiple checkboxes from a list --&gt;</span>
+<span class="tag">&lt;form:checkboxes</span> <span class="attr">path</span>=<span class="str">"hobbies"</span> <span class="attr">items</span>=<span class="str">"${hobbyList}"</span><span class="tag">/&gt;</span>
+
+<span class="cmt">&lt;!-- Renders multiple radio buttons from a list --&gt;</span>
+<span class="tag">&lt;form:radiobuttons</span> <span class="attr">path</span>=<span class="str">"gender"</span> <span class="attr">items</span>=<span class="str">"${genderOptions}"</span><span class="tag">/&gt;</span></div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Items attribute with a Map</h3>
+        <p>When items is a Map, the Map KEY becomes the option VALUE sent to server, and the Map VALUE becomes the visible text shown to user. Perfect for coded dropdowns (e.g., "IN" &rarr; "India").</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">String</span>&gt; countries = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+countries.<span class="fn">put</span>(<span class="str">"IN"</span>, <span class="str">"India"</span>);   <span class="cmt">// key=value sent, val=label shown</span>
+countries.<span class="fn">put</span>(<span class="str">"US"</span>, <span class="str">"United States"</span>);</div>
+      </div>
+      <div class="ccard">
+        <h3>checkboxes (plural) vs checkbox</h3>
+        <p><code>&lt;form:checkbox&gt;</code> = single checkbox bound to a boolean field.<br><code>&lt;form:checkboxes&gt;</code> = multiple checkboxes generated from a collection, bound to a List field. Submitted values are collected into a List automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. WHY VALIDATE -->
+  <section class="concept-section" id="validation-why">
+    <div class="section-label">05 &mdash; Why Validation?</div>
+    <h2>Why Do We Need Server-Side Validation?</h2>
+    <p class="tagline">&ldquo;Client-side validation is not enough&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128101; Border Security Analogy</div>
+      <p>Client-side validation (JavaScript in browser) is like airport security at departure. Important, but a determined person can bypass it (just disable JavaScript). <strong>Server-side validation</strong> is like immigration at the destination airport &mdash; it&apos;s the real checkpoint. Even if someone bypasses the browser check and sends a raw POST request with garbage data, server-side validation catches it.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Client-side only (Bad)</h3>
+        <ul>
+          <li>Can be bypassed by disabling JavaScript</li>
+          <li>Can be bypassed by sending raw HTTP requests (Postman, curl)</li>
+          <li>Cannot access database to check business rules</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>Server-side validation (Essential)</h3>
+        <ul>
+          <li>Cannot be bypassed &mdash; always runs on server</li>
+          <li>Can access database, session, application context</li>
+          <li>Can enforce complex business rules (e.g., username must be unique)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. BEAN VALIDATION ANNOTATIONS -->
+  <section class="concept-section" id="bean-val">
+    <div class="section-label">06 &mdash; Bean Validation</div>
+    <h2>Bean Validation Annotations on Your Entity/DTO</h2>
+    <p class="tagline">&ldquo;Declare validation rules directly on your Java fields&rdquo;</p>
+    <div class="code-block"><span class="ann">@NotNull</span>(message = <span class="str">"Name cannot be null"</span>)
+<span class="ann">@NotEmpty</span>(message = <span class="str">"Name cannot be empty"</span>)
+<span class="ann">@Size</span>(min = <span class="num">2</span>, max = <span class="num">50</span>, message = <span class="str">"Name must be 2-50 characters"</span>)
+<span class="kw">private</span> <span class="cls">String</span> employeeName;
+
+<span class="ann">@Min</span>(value = <span class="num">18</span>, message = <span class="str">"Age must be at least 18"</span>)
+<span class="ann">@Max</span>(value = <span class="num">65</span>, message = <span class="str">"Age must not exceed 65"</span>)
+<span class="kw">private int</span> age;
+
+<span class="ann">@Email</span>(message = <span class="str">"Must be a valid email"</span>)
+<span class="kw">private</span> <span class="cls">String</span> email;
+
+<span class="ann">@Pattern</span>(regexp = <span class="str">"[A-Z]{3}[0-9]{3}"</span>, message = <span class="str">"Must be like ABC123"</span>)
+<span class="kw">private</span> <span class="cls">String</span> employeeCode;
+
+<span class="ann">@Past</span>(message = <span class="str">"Joining date must be in the past"</span>)
+<span class="kw">private</span> <span class="cls">Date</span> joiningDate;</div>
+    <table class="concept-table">
+      <thead><tr><th>Annotation</th><th>What it checks</th><th>Applies to</th></tr></thead>
+      <tbody>
+        <tr><td><code>@NotNull</code></td><td>Value is not null</td><td>Any type</td></tr>
+        <tr><td><code>@NotEmpty</code></td><td>Not null AND not empty string/collection</td><td>String, Collection</td></tr>
+        <tr><td><code>@NotBlank</code></td><td>Not null AND not whitespace-only</td><td>String</td></tr>
+        <tr><td><code>@Size(min,max)</code></td><td>Length within range</td><td>String, Collection</td></tr>
+        <tr><td><code>@Min(value)</code></td><td>Number &ge; value</td><td>int, long, etc.</td></tr>
+        <tr><td><code>@Max(value)</code></td><td>Number &le; value</td><td>int, long, etc.</td></tr>
+        <tr><td><code>@Email</code></td><td>Valid email format</td><td>String</td></tr>
+        <tr><td><code>@Pattern(regexp)</code></td><td>Matches regex pattern</td><td>String</td></tr>
+        <tr><td><code>@Past</code></td><td>Date is in the past</td><td>Date, LocalDate</td></tr>
+        <tr><td><code>@Future</code></td><td>Date is in the future</td><td>Date, LocalDate</td></tr>
+      </tbody>
+    </table>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; @NotEmpty vs @NotBlank vs @NotNull</div>
+      <p><code>@NotNull</code>: Passes for "" (empty string). <code>@NotEmpty</code>: Fails for null AND "". <code>@NotBlank</code>: Fails for null, "", AND "   " (spaces only). For form fields, <strong>@NotBlank</strong> is usually what you want for String fields.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7. @VALID & BINDINGRESULT -->
+  <section class="concept-section" id="valid-binding">
+    <div class="section-label">07 &mdash; Triggering Validation</div>
+    <h2>@Valid and BindingResult &mdash; How Validation Is Triggered</h2>
+    <p class="tagline">&ldquo;The two annotations that make validation actually work&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#9989; Customs &amp; Report Analogy</div>
+      <p><code>@Valid</code> is like telling customs: &ldquo;Please inspect this luggage.&rdquo; The inspection (validation) runs. <code>BindingResult</code> is like the <strong>customs report</strong> &mdash; it collects all violations found. You then check the report: if there are violations, send the passenger back. If clean, let them through.</p>
+    </div>
+    <div class="code-block"><span class="ann">@PostMapping</span>(<span class="str">"/saveEmployee"</span>)
+<span class="kw">public</span> <span class="cls">String</span> <span class="fn">saveEmployee</span>(
+        <span class="ann">@Valid</span> <span class="ann">@ModelAttribute</span> <span class="cls">Employee</span> employee,  <span class="cmt">// @Valid triggers validation</span>
+        <span class="cls">BindingResult</span> result,                          <span class="cmt">// collects errors (must be immediately after!)</span>
+        <span class="cls">Model</span> model) {
+
+    <span class="kw">if</span> (result.<span class="fn">hasErrors</span>()) {
+        <span class="cmt">// Validation failed! Redisplay form with error messages</span>
+        <span class="kw">return</span> <span class="str">"employeeForm"</span>;  <span class="cmt">// &lt;form:errors&gt; in JSP will show errors</span>
+    }
+
+    <span class="cmt">// Validation passed! Proceed with business logic</span>
+    service.<span class="fn">saveEmployee</span>(employee);
+    <span class="kw">return</span> <span class="str">"success"</span>;
+}</div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Critical Rule: BindingResult must be IMMEDIATELY after the @Valid object</div>
+      <p>If any other parameter appears between the <code>@Valid @ModelAttribute</code> parameter and <code>BindingResult</code>, Spring throws a <code>BindException</code> and the method never executes. Always keep them adjacent: <code>@Valid Employee emp, BindingResult result</code>.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>What BindingResult provides</h3>
+        <ul>
+          <li><code>result.hasErrors()</code> &mdash; true if any validation failed</li>
+          <li><code>result.getFieldErrors()</code> &mdash; List of all field-level errors</li>
+          <li><code>result.getFieldError("fieldName")</code> &mdash; Error for a specific field</li>
+          <li><code>result.getErrorCount()</code> &mdash; Total number of errors</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>Showing errors in JSP</h3>
+        <div class="code-block" style="font-size:.82rem;"><span class="tag">&lt;form:input</span> <span class="attr">path</span>=<span class="str">"employeeName"</span><span class="tag">/&gt;</span>
+<span class="cmt">&lt;!-- Shows validation error for employeeName field --&gt;</span>
+<span class="tag">&lt;form:errors</span> <span class="attr">path</span>=<span class="str">"employeeName"</span>
+              <span class="attr">cssClass</span>=<span class="str">"error-msg"</span><span class="tag">/&gt;</span>
+
+<span class="cmt">&lt;!-- Show all errors at once --&gt;</span>
+<span class="tag">&lt;form:errors</span> <span class="attr">path</span>=<span class="str">"*"</span><span class="tag">/&gt;</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8. CUSTOM VALIDATOR -->
+  <section class="concept-section" id="custom-val">
+    <div class="section-label">08 &mdash; Custom Validators</div>
+    <h2>Custom Validation &mdash; Two Approaches</h2>
+    <p class="tagline">&ldquo;When built-in annotations aren&apos;t enough&rdquo;</p>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Approach 1: Spring Validator Interface</h3>
+        <p>Implement <code>org.springframework.validation.Validator</code>. Write validation logic in Java code. Register it in the controller and call it manually (or with @InitBinder).</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">EmployeeValidator</span> <span class="kw">implements</span> <span class="cls">Validator</span> {
+
+    <span class="kw">public boolean</span> <span class="fn">supports</span>(<span class="cls">Class</span>&lt;?&gt; cls) {
+        <span class="kw">return</span> <span class="cls">Employee</span>.<span class="kw">class</span>.<span class="fn">equals</span>(cls);
+    }
+
+    <span class="kw">public void</span> <span class="fn">validate</span>(<span class="cls">Object</span> target, <span class="cls">Errors</span> errors) {
+        <span class="cls">Employee</span> emp = (<span class="cls">Employee</span>) target;
+        <span class="kw">if</span> (emp.<span class="fn">getSalary</span>() &lt; <span class="num">10000</span>) {
+            errors.<span class="fn">rejectValue</span>(<span class="str">"salary"</span>, <span class="str">"min.salary"</span>,
+                <span class="str">"Salary must be at least 10000"</span>);
+        }
+    }
+}</div>
+      </div>
+      <div class="ccard">
+        <h3>Approach 2: Custom Constraint Annotation</h3>
+        <p>Create your own annotation (like @NotBlank or @Email) backed by a ConstraintValidator class. More reusable &mdash; you can apply it to any field in any class.</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="cmt">// 1. Create the annotation</span>
+<span class="ann">@Target</span>({<span class="cls">ElementType</span>.FIELD})
+<span class="ann">@Retention</span>(<span class="cls">RetentionPolicy</span>.RUNTIME)
+<span class="ann">@Constraint</span>(validatedBy = <span class="cls">SalaryValidator</span>.<span class="kw">class</span>)
+<span class="kw">public</span> @<span class="kw">interface</span> <span class="cls">ValidSalary</span> {
+    <span class="cls">String</span> <span class="fn">message</span>() <span class="kw">default</span> <span class="str">"Invalid salary"</span>;
+    <span class="cls">Class</span>[] <span class="fn">groups</span>() <span class="kw">default</span> {};
+    <span class="cls">Class</span>[] <span class="fn">payload</span>() <span class="kw">default</span> {};
+}
+
+<span class="cmt">// 2. Create the validator class</span>
+<span class="kw">public class</span> <span class="cls">SalaryValidator</span>
+    <span class="kw">implements</span> <span class="cls">ConstraintValidator</span>&lt;<span class="cls">ValidSalary</span>, <span class="cls">Double</span>&gt; {
+    <span class="kw">public boolean</span> <span class="fn">isValid</span>(<span class="cls">Double</span> salary, <span class="cls">ConstraintValidatorContext</span> ctx) {
+        <span class="kw">return</span> salary != <span class="kw">null</span> &amp;&amp; salary &gt;= <span class="num">10000</span>;
+    }
+}
+
+<span class="cmt">// 3. Use it just like built-in annotations:</span>
+<span class="ann">@ValidSalary</span>
+<span class="kw">private</span> <span class="cls">Double</span> salary;</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 9. @EXCEPTIONHANDLER -->
+  <section class="concept-section" id="exception">
+    <div class="section-label">09 &mdash; Exception Handling</div>
+    <h2>@ExceptionHandler &mdash; Handling Errors in the Controller</h2>
+    <p class="tagline">&ldquo;Catch exceptions and show friendly error pages instead of stack traces&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#129374; Safety Net Analogy</div>
+      <p>Without exception handling, when an error occurs the user sees an ugly Java stack trace. @ExceptionHandler is like a <strong>safety net</strong> below your controller. When any exception is thrown and not caught, it falls through to the @ExceptionHandler method, which gracefully shows a user-friendly error page.</p>
+    </div>
+    <div class="code-block"><span class="ann">@Controller</span>
+<span class="kw">public class</span> <span class="cls">EmployeeController</span> {
+
+    <span class="ann">@GetMapping</span>(<span class="str">"/employee/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getEmployee</span>(<span class="ann">@PathVariable</span> <span class="kw">int</span> id, <span class="cls">Model</span> model) {
+        <span class="cls">Employee</span> emp = service.<span class="fn">findById</span>(id);  <span class="cmt">// may throw EmployeeNotFoundException</span>
+        model.<span class="fn">addAttribute</span>(<span class="str">"employee"</span>, emp);
+        <span class="kw">return</span> <span class="str">"employeeDetail"</span>;
+    }
+
+    <span class="cmt">// This method catches EmployeeNotFoundException from ANY method in THIS controller</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">EmployeeNotFoundException</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">handleNotFound</span>(<span class="cls">EmployeeNotFoundException</span> ex, <span class="cls">Model</span> model) {
+        model.<span class="fn">addAttribute</span>(<span class="str">"message"</span>, ex.<span class="fn">getMessage</span>());
+        <span class="kw">return</span> <span class="str">"error404"</span>;    <span class="cmt">// show a friendly error page</span>
+    }
+}</div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Limitation of @ExceptionHandler inside a Controller</div>
+      <p>@ExceptionHandler inside a controller class only handles exceptions thrown by <strong>that controller</strong>. If the same exception occurs in a different controller, it won&apos;t be caught. That&apos;s why <code>@ControllerAdvice</code> was created &mdash; for global exception handling.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 10. @CONTROLLERADVICE -->
+  <section class="concept-section" id="advice">
+    <div class="section-label">10 &mdash; Global Exception Handling</div>
+    <h2>@ControllerAdvice &mdash; Global Exception Handling for All Controllers</h2>
+    <p class="tagline">&ldquo;One class to handle exceptions from ALL controllers&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127970; Company HR Analogy</div>
+      <p>@ExceptionHandler inside a controller = each department handles its own problems. @ControllerAdvice = the <strong>HR department</strong> that handles problems from ALL departments. Any unhandled exception from any controller flows to @ControllerAdvice methods. One place to define all error handling logic.</p>
+    </div>
+    <div class="code-block"><span class="ann">@ControllerAdvice</span>             <span class="cmt">// Applies to ALL controllers in the application</span>
+<span class="kw">public class</span> <span class="cls">GlobalExceptionHandler</span> {
+
+    <span class="cmt">// Handles EmployeeNotFoundException from any controller</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">EmployeeNotFoundException</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="cls">ModelAndView</span> <span class="fn">handleNotFound</span>(<span class="cls">EmployeeNotFoundException</span> ex) {
+        <span class="cls">ModelAndView</span> mav = <span class="kw">new</span> <span class="cls">ModelAndView</span>(<span class="str">"error/notFound"</span>);
+        mav.<span class="fn">addObject</span>(<span class="str">"message"</span>, ex.<span class="fn">getMessage</span>());
+        <span class="kw">return</span> mav;
+    }
+
+    <span class="cmt">// Generic fallback handler for any other exception</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">Exception</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="cls">ModelAndView</span> <span class="fn">handleGeneral</span>(<span class="cls">Exception</span> ex) {
+        <span class="cls">ModelAndView</span> mav = <span class="kw">new</span> <span class="cls">ModelAndView</span>(<span class="str">"error/general"</span>);
+        mav.<span class="fn">addObject</span>(<span class="str">"error"</span>, <span class="str">"An unexpected error occurred"</span>);
+        <span class="kw">return</span> mav;
+    }
+}</div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>What @ControllerAdvice can contain</h3>
+        <ul>
+          <li><code>@ExceptionHandler</code> methods &mdash; Global exception handlers</li>
+          <li><code>@InitBinder</code> methods &mdash; Custom data binding for all controllers</li>
+          <li><code>@ModelAttribute</code> methods &mdash; Data added to every model in every controller</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>Scoping @ControllerAdvice</h3>
+        <p>By default, @ControllerAdvice applies to ALL controllers. You can restrict it:</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="cmt">// Only for controllers in this package</span>
+<span class="ann">@ControllerAdvice</span>(<span class="str">"com.acc.controller"</span>)
+
+<span class="cmt">// Only for specific controllers</span>
+<span class="ann">@ControllerAdvice</span>(assignableTypes = {<span class="cls">EmpController</span>.<span class="kw">class</span>})</div>
+      </div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Best practice:</strong> Always have one @ControllerAdvice with a generic <code>@ExceptionHandler(Exception.class)</code> as a last resort. This prevents users from ever seeing raw stack traces. More specific exception handlers are checked first, then the generic one is the fallback.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 11. INTERVIEW Q&A -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">11 &mdash; Interview Prep</div>
+    <h2>Top Interview Questions with Answers</h2>
+    <p class="tagline">&ldquo;Questions about forms, validation, and exception handling&rdquo;</p>
+    <div class="qa-block"><div class="qa-q">Why use Spring MVC form tags instead of plain HTML form tags?</div><div class="qa-a">Spring form tags (form:form, form:input, etc.) support two-way data binding. They automatically populate form fields from a bound Java object (great for edit forms) and automatically bind submitted values back to the object. They also display field-specific validation error messages via form:errors. Plain HTML forms cannot do any of this automatically.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the modelAttribute attribute on form:form?</div><div class="qa-a">It specifies the name of the Model attribute (Java object) that the form is bound to. The path attributes on each form field refer to fields of this bound object. If you set modelAttribute="employee", Spring will pre-populate fields from model.getAttribute("employee") and bind submitted values back to it.</div></div>
+    <div class="qa-block"><div class="qa-q">How does @Valid and BindingResult work?</div><div class="qa-a">@Valid on the @ModelAttribute parameter triggers Bean Validation (runs all @NotNull, @Size, etc. constraints on the object). BindingResult, placed immediately after the @Valid parameter, collects all validation errors. You check result.hasErrors() — if true, return the form view (errors are shown via form:errors). If false, proceed with business logic.</div></div>
+    <div class="qa-block"><div class="qa-q">What happens if BindingResult is not placed immediately after the @Valid parameter?</div><div class="qa-a">Spring throws a BindException and the controller method never executes. BindingResult MUST be the very next parameter after the @Valid @ModelAttribute parameter. No other parameter can be between them.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between @ExceptionHandler and @ControllerAdvice?</div><div class="qa-a">@ExceptionHandler in a controller handles exceptions only from THAT controller. @ControllerAdvice is a class-level annotation that applies @ExceptionHandler methods globally to ALL controllers. Use @ControllerAdvice for application-wide error handling to avoid repeating exception handling in every controller.</div></div>
+    <div class="qa-block"><div class="qa-q">How do you create a custom validation annotation?</div><div class="qa-a">1) Create an annotation with @Constraint(validatedBy = YourValidator.class). 2) Create YourValidator implementing ConstraintValidator&lt;YourAnnotation, FieldType&gt; with an isValid() method. 3) Apply your annotation to any field. Spring auto-discovers and runs it when @Valid is triggered.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between @NotNull, @NotEmpty, and @NotBlank?</div><div class="qa-a">@NotNull: fails only if value is null. @NotEmpty: fails if null OR empty string/collection. @NotBlank: fails if null, empty string, or whitespace-only string. For form text fields, @NotBlank is usually the right choice since users can submit spaces.</div></div>
+    <div class="qa-block"><div class="qa-q">What does form:errors do?</div><div class="qa-a">form:errors displays validation error messages from BindingResult for a specific field (path="fieldName") or all fields (path="*"). When @Valid fails and you return to the form view, Spring automatically transfers the errors from BindingResult to the model, and form:errors reads them and renders the error messages next to the appropriate form fields.</div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 12. MEMORY SHEET -->
+  <section class="concept-section" id="memory">
+    <div class="section-label">12 &mdash; Quick Revision</div>
+    <h2>&#9889; Memory Cheat Sheet</h2>
+    <p class="tagline">&ldquo;Last-minute revision before your interview&rdquo;</p>
+    <div class="memory-grid">
+      <div class="memory-card"><div class="mc-label">form:form modelAttribute</div><div class="mc-val">Binds form to Java object<br>in Model</div></div>
+      <div class="memory-card"><div class="mc-label">form:input path</div><div class="mc-val">Two-way bind to<br>Java field name</div></div>
+      <div class="memory-card"><div class="mc-label">@ModelAttribute param</div><div class="mc-val">Auto-fill Java object<br>from form fields</div></div>
+      <div class="memory-card"><div class="mc-label">@Valid</div><div class="mc-val">Triggers Bean Validation<br>on the next object</div></div>
+      <div class="memory-card"><div class="mc-label">BindingResult</div><div class="mc-val">Collects errors<br>Must be AFTER @Valid object</div></div>
+      <div class="memory-card"><div class="mc-label">@NotBlank</div><div class="mc-val">Best for String fields<br>Rejects spaces too</div></div>
+      <div class="memory-card"><div class="mc-label">@ExceptionHandler</div><div class="mc-val">Per-controller only<br>exception catching</div></div>
+      <div class="memory-card"><div class="mc-label">@ControllerAdvice</div><div class="mc-val">Global exception handler<br>all controllers</div></div>
+      <div class="memory-card"><div class="mc-label">Custom annotation validator</div><div class="mc-val">Annotation + ConstraintValidator<br>isValid() method</div></div>
+    </div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

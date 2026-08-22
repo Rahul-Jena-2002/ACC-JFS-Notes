@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit 20: Transactions &amp; Custom Repositories — Layman Concepts Guide</title>
+  <meta name="description" content="Spring Transactions, @Transactional, Propagation, Rollback, and Custom Repositories explained in plain English for beginners and interview prep." />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag" style="color:var(--blue); background:rgba(121,192,255,.1); border-color:rgba(121,192,255,.25);">Unit 20 &middot; Transactions &amp; Custom Repos</span>
+    </div>
+    <h1>Spring Transactions &mdash; <span class="accent">Layman Concepts</span></h1>
+    <p class="hero-subtitle">Understand <em>why</em> transactions exist, what @Transactional actually does behind the scenes, all 7 propagation modes with real analogies, rollback rules, and Spring Data JPA custom repos &mdash; all in plain English.</p>
+    <div class="hero-badges">
+      <span class="hbadge blue">ACID Explained Simply</span>
+      <span class="hbadge purple">@Transactional Proxy Magic</span>
+      <span class="hbadge green">7 Propagation Modes</span>
+      <span class="hbadge orange">Rollback Rules</span>
+      <span class="hbadge">Spring Data JPA</span>
+      <span class="hbadge">Custom Repository</span>
+      <span class="hbadge">Interview Q&amp;A</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">Controller</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Proxy Intercepts</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">begin()</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Service Method</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">commit() / rollback()</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#why-tx">1. Why Transactions?</a>
+    <a href="#acid">2. ACID</a>
+    <a href="#proxy">3. How @Transactional Works</a>
+    <a href="#propagation">4. Propagation Modes</a>
+    <a href="#isolation">5. Isolation Levels</a>
+    <a href="#rollback">6. Rollback Rules</a>
+    <a href="#local-global">7. Local vs Global</a>
+    <a href="#spring-data">8. Spring Data JPA</a>
+    <a href="#custom-repo">9. Custom Repositories</a>
+    <a href="#interview">10. Interview Q&amp;A</a>
+    <a href="#memory">11. Memory Sheet</a>
+  </nav>
+
+  <!-- 1. WHY TRANSACTIONS -->
+  <section class="concept-section" id="why-tx">
+    <div class="section-label">01 &mdash; The Problem</div>
+    <h2>Why Do We Need Transactions?</h2>
+    <p class="tagline">&ldquo;The bank transfer problem&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127974; Bank Transfer Analogy</div>
+      <p>Imagine transferring &#8377;10,000 from your account to a friend. Step 1: Debit your account. Step 2: Credit your friend. Now imagine the app crashes after Step 1 but before Step 2. Your money is gone but your friend never got it! <strong>A transaction fixes this</strong>: either BOTH steps succeed, or BOTH are undone. No half-done state.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Without Transaction</h3>
+        <p>Each DB operation is independent. If your code crashes midway, you get a <strong>partial, corrupted state</strong> in the database. This is catastrophic for financial, medical, or any critical data.</p>
+      </div>
+      <div class="ccard">
+        <h3>With Transaction</h3>
+        <p>All operations are grouped. On success &rarr; <strong>commit</strong> (save everything). On failure &rarr; <strong>rollback</strong> (undo everything). Database always stays in a consistent state.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. ACID -->
+  <section class="concept-section" id="acid">
+    <div class="section-label">02 &mdash; ACID Properties</div>
+    <h2>ACID &mdash; What Every Transaction Must Guarantee</h2>
+    <p class="tagline">&ldquo;The 4 golden rules of database transactions&rdquo;</p>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>A &mdash; Atomicity</h3>
+        <p>&ldquo;All or nothing.&rdquo; Either every operation in the transaction succeeds, or none of them do. Like an atom &mdash; indivisible. If one step fails, the entire transaction rolls back.</p>
+        <p><strong>Bank example:</strong> Debit AND Credit both happen, or neither does.</p>
+      </div>
+      <div class="ccard">
+        <h3>C &mdash; Consistency</h3>
+        <p>&ldquo;Data is always valid.&rdquo; A transaction takes the database from one valid state to another valid state. No transaction should leave data in an inconsistent/illegal state.</p>
+        <p><strong>Example:</strong> Total money before and after a transfer must be the same.</p>
+      </div>
+      <div class="ccard">
+        <h3>I &mdash; Isolation</h3>
+        <p>&ldquo;Transactions don&apos;t see each other&apos;s incomplete work.&rdquo; Concurrent transactions behave as if they are running one-by-one. You don&apos;t read uncommitted data from another running transaction.</p>
+        <p><strong>Example:</strong> Two people booking the last seat simultaneously &mdash; only one succeeds.</p>
+      </div>
+      <div class="ccard">
+        <h3>D &mdash; Durability</h3>
+        <p>&ldquo;Once committed, it stays.&rdquo; After a transaction commits, the data is permanently saved &mdash; even if the server crashes immediately after. It&apos;s written to disk.</p>
+        <p><strong>Example:</strong> If your payment confirmation appeared, it&apos;s saved even if the server dies next second.</p>
+      </div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Memory trick:</strong> ACID = <strong>A</strong>ll or nothing, <strong>C</strong>onsistency guaranteed, <strong>I</strong>solated from others, <strong>D</strong>urable once committed.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. HOW @TRANSACTIONAL WORKS -->
+  <section class="concept-section" id="proxy">
+    <div class="section-label">03 &mdash; @Transactional Internals</div>
+    <h2>How @Transactional Actually Works (The Proxy Magic)</h2>
+    <p class="tagline">&ldquo;You put one annotation and Spring does all the heavy lifting&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128272; Bodyguard / Proxy Analogy</div>
+      <p>Imagine a <strong>bodyguard wrapping around your service</strong>. When you call a @Transactional method, you never reach the method directly &mdash; the bodyguard (Spring Proxy) intercepts the call. The bodyguard says &ldquo;I&apos;ll start a transaction before your method runs and commit/rollback after it finishes.&rdquo; Your method never needs to know about transactions.</p>
+    </div>
+    <p>Here is what Spring does step-by-step when you call a @Transactional method:</p>
+    <div class="ccard">
+      <h3>Step-by-step proxy flow:</h3>
+      <ul>
+        <li><strong>Step 1:</strong> You call <code>employeeService.addEmployee(dto)</code></li>
+        <li><strong>Step 2:</strong> The call goes to Spring&apos;s <strong>CGLIB Proxy</strong>, not the real service yet</li>
+        <li><strong>Step 3:</strong> The Proxy asks <code>JpaTransactionManager</code> to <strong>begin a transaction</strong></li>
+        <li><strong>Step 4:</strong> The Proxy calls the <strong>actual service method</strong></li>
+        <li><strong>Step 5a (Success):</strong> Method returns normally &rarr; Proxy calls <strong>commit()</strong></li>
+        <li><strong>Step 5b (Exception):</strong> RuntimeException thrown &rarr; Proxy calls <strong>rollback()</strong></li>
+      </ul>
+    </div>
+    <div class="code-block"><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">EmployeeServiceImpl</span> <span class="kw">implements</span> <span class="cls">EmployeeService</span> {
+
+    <span class="ann">@Transactional</span>  <span class="cmt">// Spring wraps this method in a transaction automatically</span>
+    <span class="kw">public</span> <span class="cls">Integer</span> <span class="fn">addEmployee</span>(<span class="cls">EmployeeDTO</span> dto) {
+        <span class="cmt">// No begin/commit/rollback code needed here!</span>
+        <span class="kw">return</span> employeeDAO.<span class="fn">addEmployee</span>(dto);
+    }
+}</div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; The Self-Invocation Trap</div>
+      <p>If method A inside the same class calls method B (also @Transactional), the <strong>proxy is bypassed</strong>! The call goes directly to B without starting a new transaction. This is the most common @Transactional bug. Fix: move B to a different Spring bean, or use <code>ApplicationContext</code> to get the proxied version.</p>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; @Transactional on private methods</div>
+      <p><strong>@Transactional on private methods does nothing!</strong> Spring&apos;s proxy can only intercept <code>public</code> methods. If you put @Transactional on a private or protected method, it is silently ignored.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. PROPAGATION -->
+  <section class="concept-section" id="propagation">
+    <div class="section-label">04 &mdash; Propagation Modes</div>
+    <h2>7 Transaction Propagation Modes Explained Simply</h2>
+    <p class="tagline">&ldquo;What should happen to the transaction when one method calls another?&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127968; House Construction Analogy</div>
+      <p>Imagine building a house (the outer transaction). You call a plumber (inner method). <strong>Propagation</strong> decides: Does the plumber join your house project? Start their own independent project? Refuse to work unless they&apos;re part of a project? Each propagation mode answers this differently.</p>
+    </div>
+    <div class="grid-3">
+      <div class="prop-card">
+        <div class="prop-name">REQUIRED (Default)</div>
+        <div class="prop-exists">If tx exists: JOIN it</div>
+        <div class="prop-none">If no tx: CREATE new</div>
+        <p>The safe default. Method A calls Method B &mdash; B joins A&apos;s transaction. If B fails, A&apos;s transaction also rolls back.</p>
+        <p><strong>Use for:</strong> Most business methods.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">REQUIRES_NEW</div>
+        <div class="prop-exists">If tx exists: SUSPEND it, start fresh</div>
+        <div class="prop-none">If no tx: CREATE new</div>
+        <p>Completely independent transaction. Even if A rolls back, B&apos;s transaction commits separately. Perfect for audit logs.</p>
+        <p><strong>Use for:</strong> Audit logging, email tracking, operations that must always commit.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">MANDATORY</div>
+        <div class="prop-exists">If tx exists: JOIN it</div>
+        <div class="prop-none">If no tx: THROW Exception</div>
+        <p>Method DEMANDS to be called inside a transaction. If there&apos;s no active transaction, it throws <code>IllegalTransactionStateException</code>.</p>
+        <p><strong>Use for:</strong> Internal helper methods that must never run alone.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">NEVER</div>
+        <div class="prop-exists">If tx exists: THROW Exception</div>
+        <div class="prop-none">If no tx: Run normally</div>
+        <p>Method REFUSES to run inside a transaction. Throws exception if one exists.</p>
+        <p><strong>Use for:</strong> Methods that must not acquire DB locks (e.g., reporting methods).</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">NOT_SUPPORTED</div>
+        <div class="prop-exists">If tx exists: SUSPEND it</div>
+        <div class="prop-none">If no tx: Run normally (non-tx)</div>
+        <p>Suspends existing transaction and runs without a transaction. More lenient than NEVER.</p>
+        <p><strong>Use for:</strong> Long external REST API calls that should not hold a DB transaction open.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">SUPPORTS</div>
+        <div class="prop-exists">If tx exists: JOIN it</div>
+        <div class="prop-none">If no tx: Run non-transactionally</div>
+        <p>Flexible &mdash; works with or without a transaction. Like a freelancer who joins the project if invited, but also works independently.</p>
+        <p><strong>Use for:</strong> Read-only utility queries.</p>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">NESTED</div>
+        <div class="prop-exists">If tx exists: Create a SAVEPOINT (nested)</div>
+        <div class="prop-none">If no tx: CREATE new</div>
+        <p>Creates a JDBC savepoint inside the existing transaction. If B fails, only B&apos;s work rolls back (to the savepoint). A can still continue and commit.</p>
+        <p><strong>Use for:</strong> Partial rollback without failing the whole transaction.</p>
+      </div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Quick exam answer:</strong> If asked "what is the default propagation?" &mdash; it&apos;s <strong>REQUIRED</strong>. If asked "which propagation ignores outer transaction failures?" &mdash; it&apos;s <strong>REQUIRES_NEW</strong>.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. ISOLATION LEVELS -->
+  <section class="concept-section" id="isolation">
+    <div class="section-label">05 &mdash; Isolation Levels</div>
+    <h2>Isolation Levels &mdash; How Much Can Transactions See Each Other?</h2>
+    <p class="tagline">&ldquo;How much &apos;sneaking a peek&apos; is allowed between concurrent transactions?&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128209; Exam Paper Analogy</div>
+      <p>Imagine two students writing exams in the same room. Isolation level determines how much they can see each other&apos;s work. <strong>READ UNCOMMITTED</strong> = they can copy each other&apos;s unfinished answers. <strong>SERIALIZABLE</strong> = totally separated rooms, no peeking at all.</p>
+    </div>
+    <table class="concept-table">
+      <thead><tr><th>Level</th><th>Can Read Uncommitted?</th><th>Dirty Read?</th><th>Non-Repeatable Read?</th><th>Phantom Read?</th></tr></thead>
+      <tbody>
+        <tr><td><code>READ_UNCOMMITTED</code></td><td>Yes</td><td>&#9989; Possible</td><td>&#9989; Possible</td><td>&#9989; Possible</td></tr>
+        <tr><td><code>READ_COMMITTED</code></td><td>No</td><td>&#10060; Prevented</td><td>&#9989; Possible</td><td>&#9989; Possible</td></tr>
+        <tr><td><code>REPEATABLE_READ</code></td><td>No</td><td>&#10060; Prevented</td><td>&#10060; Prevented</td><td>&#9989; Possible</td></tr>
+        <tr><td><code>SERIALIZABLE</code></td><td>No</td><td>&#10060; Prevented</td><td>&#10060; Prevented</td><td>&#10060; Prevented</td></tr>
+      </tbody>
+    </table>
+    <div class="grid-3">
+      <div class="ccard"><h3>Dirty Read</h3><p>Reading data that another uncommitted transaction has modified. If that transaction rolls back, you read data that never officially existed. Like reading a cheque that was then cancelled.</p></div>
+      <div class="ccard"><h3>Non-Repeatable Read</h3><p>You read a row, another transaction changes it and commits, you read the same row again and get different data. Like reading a menu, someone changes prices, you read again and prices changed.</p></div>
+      <div class="ccard"><h3>Phantom Read</h3><p>You run the same query twice, but the second time returns MORE rows because another transaction inserted new rows and committed. Like counting seats, someone adds more chairs.</p></div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Default isolation level</strong> in Spring is <code>DEFAULT</code> &mdash; meaning it uses whatever the underlying database default is. MySQL InnoDB default = <code>REPEATABLE_READ</code>.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. ROLLBACK RULES -->
+  <section class="concept-section" id="rollback">
+    <div class="section-label">06 &mdash; Rollback Rules</div>
+    <h2>Rollback Rules &mdash; What Triggers a Rollback?</h2>
+    <p class="tagline">&ldquo;Spring only rolls back automatically for certain exceptions&rdquo;</p>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; The Most Common Interview Gotcha</div>
+      <p>By default, Spring <strong>ONLY rolls back on unchecked exceptions</strong> (RuntimeException and Error). For <strong>checked exceptions</strong> (like IOException, SQLException, or any class that extends Exception directly), <strong>Spring COMMITS the transaction</strong> even if the exception is thrown, unless you explicitly tell it not to with <code>rollbackFor</code>!</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Unchecked Exception &rarr; Auto Rollback</h3>
+        <div class="code-block" style="font-size:.82rem;"><span class="ann">@Transactional</span>  <span class="cmt">// Default rollback rule</span>
+<span class="kw">public void</span> <span class="fn">addEmployee</span>(<span class="cls">EmployeeDTO</span> dto) {
+    dao.<span class="fn">save</span>(dto);
+    <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(<span class="str">"oops"</span>);
+    <span class="cmt">// ROLLBACK happens automatically!</span>
+}</div>
+      </div>
+      <div class="ccard">
+        <h3>Checked Exception &rarr; NO Rollback (by default!)</h3>
+        <div class="code-block" style="font-size:.82rem;"><span class="ann">@Transactional</span>  <span class="cmt">// Still commits by default!</span>
+<span class="kw">public void</span> <span class="fn">addEmployee</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+    dao.<span class="fn">save</span>(dto);
+    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">"checked!"</span>);
+    <span class="cmt">// COMMIT happens! Change is SAVED despite exception!</span>
+}</div>
+      </div>
+    </div>
+    <div class="ccard">
+      <h3>Fix: Use rollbackFor to force rollback on checked exceptions</h3>
+      <div class="code-block" style="font-size:.82rem;"><span class="ann">@Transactional</span>(rollbackFor = <span class="cls">Exception</span>.<span class="kw">class</span>)
+<span class="kw">public void</span> <span class="fn">addEmployee</span>() <span class="kw">throws</span> <span class="cls">Exception</span> {
+    dao.<span class="fn">save</span>(dto);
+    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">"checked!"</span>);
+    <span class="cmt">// NOW it rolls back!</span>
+}</div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; The Swallowed Exception Trap</div>
+      <p>If you catch an exception inside your @Transactional method with try-catch and do NOT rethrow it, Spring&apos;s proxy sees a normal return and <strong>commits the transaction</strong> &mdash; even though something went wrong. Always rethrow or use <code>TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()</code> to mark for rollback manually.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7. LOCAL VS GLOBAL -->
+  <section class="concept-section" id="local-global">
+    <div class="section-label">07 &mdash; Local vs Global</div>
+    <h2>Local Transaction vs Global Transaction (JTA)</h2>
+    <p class="tagline">&ldquo;One database vs many databases in one transaction&rdquo;</p>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Local Transaction (JpaTransactionManager)</h3>
+        <p>Manages a transaction against <strong>one single database</strong>. Used in 95% of web apps. Simple, performant, and configured with Spring&apos;s <code>JpaTransactionManager</code>.</p>
+        <p><strong>Example:</strong> Your employee app uses one MySQL database.</p>
+      </div>
+      <div class="ccard">
+        <h3>Global Transaction (JTA / JtaTransactionManager)</h3>
+        <p>Coordinates a transaction across <strong>multiple different resources</strong> (e.g., two different databases + a JMS message queue). Uses a two-phase commit (2PC) protocol. Complex, needs a JTA provider like Atomikos.</p>
+        <p><strong>Example:</strong> A payment app that writes to an Oracle DB AND sends a message to RabbitMQ atomically.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8. SPRING DATA JPA -->
+  <section class="concept-section" id="spring-data">
+    <div class="section-label">08 &mdash; Spring Data JPA</div>
+    <h2>What is Spring Data JPA? (vs Plain JPA)</h2>
+    <p class="tagline">&ldquo;Even less code &mdash; Spring writes the DAO for you&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#129302; Auto-generated code analogy</div>
+      <p>Plain JPA: You write all DAO methods yourself (findById, save, deleteById, etc.) using EntityManager. <strong>Spring Data JPA</strong> is like having a robot write all those methods for you. You just define an <strong>interface</strong>, extend <code>JpaRepository</code>, and Spring generates the implementation automatically at runtime. You write zero implementation code.</p>
+    </div>
+    <div class="code-block"><span class="cmt">// Plain JPA DAO — you write ALL of this manually:</span>
+<span class="kw">public</span> <span class="cls">Employee</span> <span class="fn">findById</span>(<span class="kw">int</span> id) {
+    <span class="kw">return</span> em.<span class="fn">find</span>(<span class="cls">Employee</span>.<span class="kw">class</span>, id);
+}
+<span class="kw">public void</span> <span class="fn">save</span>(<span class="cls">Employee</span> e) {
+    em.<span class="fn">getTransaction</span>().<span class="fn">begin</span>();
+    em.<span class="fn">persist</span>(e);
+    em.<span class="fn">getTransaction</span>().<span class="fn">commit</span>();
+}
+<span class="cmt">// ... 5 more methods for CRUD ...</span>
+
+<span class="cmt">// Spring Data JPA — just this interface, no implementation needed!</span>
+<span class="kw">public interface</span> <span class="cls">EmployeeRepository</span> <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">Employee</span>, <span class="cls">Integer</span>&gt; {
+    <span class="cmt">// save, findById, findAll, deleteById, count, existsById — ALL FREE!</span>
+}</div>
+    <p>What <code>JpaRepository</code> gives you for free:</p>
+    <ul>
+      <li><code>save(entity)</code> &mdash; Insert or Update (if ID exists, it merges)</li>
+      <li><code>findById(id)</code> &mdash; Returns <code>Optional&lt;Employee&gt;</code></li>
+      <li><code>findAll()</code> &mdash; All records</li>
+      <li><code>deleteById(id)</code> &mdash; Delete by primary key</li>
+      <li><code>count()</code> &mdash; Total records</li>
+      <li><code>existsById(id)</code> &mdash; Check if exists</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 9. CUSTOM REPOSITORIES -->
+  <section class="concept-section" id="custom-repo">
+    <div class="section-label">09 &mdash; Custom Repositories</div>
+    <h2>Custom Repositories &mdash; When Free Methods Are Not Enough</h2>
+    <p class="tagline">&ldquo;Three ways to add your own queries&rdquo;</p>
+    <div class="grid-3">
+      <div class="ccard">
+        <h3>1. Derived Query Methods</h3>
+        <p>Name your method following Spring Data JPA naming conventions, and Spring generates the query automatically from the method name.</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="cmt">// Spring reads the name and generates:</span>
+<span class="cmt">// SELECT * FROM employee WHERE role = ?</span>
+<span class="cls">List</span>&lt;<span class="cls">Employee</span>&gt; <span class="fn">findByRole</span>(<span class="cls">String</span> role);
+
+<span class="cmt">// SELECT * WHERE salary > ? AND role = ?</span>
+<span class="cls">List</span>&lt;<span class="cls">Employee</span>&gt; <span class="fn">findBySalaryGreaterThanAndRole</span>(
+    <span class="kw">double</span> sal, <span class="cls">String</span> role);</div>
+        <p><strong>Best for:</strong> Simple queries with 1-3 conditions.</p>
+      </div>
+      <div class="ccard">
+        <h3>2. @Query Annotation</h3>
+        <p>Write your own JPQL or native SQL query directly on the method. Useful for complex queries that can&apos;t be expressed in method names.</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="ann">@Query</span>(<span class="str">"SELECT e FROM Employee e WHERE e.salary &gt; :minSal"</span>)
+<span class="cls">List</span>&lt;<span class="cls">Employee</span>&gt; <span class="fn">findHighEarners</span>(
+    <span class="ann">@Param</span>(<span class="str">"minSal"</span>) <span class="kw">double</span> minSal);
+
+<span class="cmt">// Native SQL</span>
+<span class="ann">@Query</span>(value = <span class="str">"SELECT * FROM employee WHERE YEAR(joining_date) = :yr"</span>,
+       nativeQuery = <span class="kw">true</span>)
+<span class="cls">List</span>&lt;<span class="cls">Employee</span>&gt; <span class="fn">findByJoinYear</span>(<span class="ann">@Param</span>(<span class="str">"yr"</span>) <span class="kw">int</span> yr);</div>
+        <p><strong>Best for:</strong> Complex queries, aggregations, native SQL.</p>
+      </div>
+      <div class="ccard">
+        <h3>3. Custom Implementation</h3>
+        <p>Create a separate interface + implementation class for methods that need full EntityManager access or very complex logic. Spring Data JPA auto-discovers and merges it.</p>
+        <div class="code-block" style="font-size:.82rem;"><span class="kw">interface</span> <span class="cls">EmployeeCustomRepo</span> {
+    <span class="cls">List</span>&lt;<span class="cls">Employee</span>&gt; <span class="fn">findByDynamicCriteria</span>(...);
+}
+
+<span class="kw">class</span> <span class="cls">EmployeeCustomRepoImpl</span> <span class="kw">implements</span> <span class="cls">EmployeeCustomRepo</span> {
+    <span class="ann">@PersistenceContext</span>
+    <span class="kw">private</span> <span class="cls">EntityManager</span> em;
+    <span class="cmt">// full EntityManager access here</span>
+}</div>
+        <p><strong>Best for:</strong> Dynamic queries, Criteria API, full control.</p>
+      </div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Custom Impl Naming Rule</div>
+      <p>The implementation class for a custom repo interface MUST be named <code>[InterfaceName]Impl</code>. Spring Data JPA looks for this naming convention automatically. If you name it anything else, Spring won&apos;t find it and you&apos;ll get an error.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 10. INTERVIEW Q&A -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">10 &mdash; Interview Prep</div>
+    <h2>Top Interview Questions with Answers</h2>
+    <p class="tagline">&ldquo;The questions interviewers love to ask about transactions&rdquo;</p>
+    <div class="qa-block"><div class="qa-q">What is a transaction and why is it needed?</div><div class="qa-a">A transaction is a group of database operations that must all succeed or all fail together. It ensures data consistency. Without transactions, a crash midway through a multi-step operation leaves the database in a corrupted partial state.</div></div>
+    <div class="qa-block"><div class="qa-q">What does @Transactional actually do?</div><div class="qa-a">Spring creates a proxy around your class. When a @Transactional method is called, the proxy intercepts the call, starts a transaction, invokes your method, then commits on success or rolls back on RuntimeException. Your method code contains no transaction management code.</div></div>
+    <div class="qa-block"><div class="qa-q">When does Spring roll back a transaction automatically?</div><div class="qa-a">Only on unchecked exceptions (RuntimeException and its subclasses, and Error). For checked exceptions (Exception, IOException, SQLException), Spring commits by default. Use rollbackFor = Exception.class to force rollback on checked exceptions.</div></div>
+    <div class="qa-block"><div class="qa-q">What is transaction propagation? What is the default?</div><div class="qa-a">Propagation decides what happens to a transaction when one transactional method calls another. The default is REQUIRED: if a transaction exists, join it; if not, create a new one. REQUIRES_NEW always creates an independent transaction regardless.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between REQUIRES_NEW and NESTED?</div><div class="qa-a">REQUIRES_NEW completely suspends the outer transaction and creates a fully independent transaction. If the outer rolls back, REQUIRES_NEW&apos;s commit is unaffected. NESTED creates a savepoint inside the outer transaction. If nested rolls back, only its work is undone (to the savepoint). If the OUTER rolls back, NESTED&apos;s work also rolls back.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the self-invocation problem with @Transactional?</div><div class="qa-a">If method A in the same class calls method B (also @Transactional), the Spring proxy is bypassed because A was already called directly, not through the proxy. Result: B&apos;s @Transactional annotation is ignored. Fix: restructure so B is in a different Spring bean, which ensures B is called through its proxy.</div></div>
+    <div class="qa-block"><div class="qa-q">What is Spring Data JPA and how does it differ from plain JPA?</div><div class="qa-a">Plain JPA requires you to write all DAO implementations manually using EntityManager. Spring Data JPA lets you define a repository interface extending JpaRepository and Spring auto-generates the implementation. It provides save, findById, findAll, delete, and supports derived query methods from method names.</div></div>
+    <div class="qa-block"><div class="qa-q">What are the 4 isolation levels?</div><div class="qa-a">READ_UNCOMMITTED (allows dirty reads), READ_COMMITTED (prevents dirty reads), REPEATABLE_READ (prevents non-repeatable reads too), SERIALIZABLE (prevents everything including phantom reads, but slowest). MySQL InnoDB default is REPEATABLE_READ.</div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 11. MEMORY SHEET -->
+  <section class="concept-section" id="memory">
+    <div class="section-label">11 &mdash; Quick Revision</div>
+    <h2>&#9889; Memory Cheat Sheet</h2>
+    <p class="tagline">&ldquo;Last-minute revision before your interview&rdquo;</p>
+    <div class="memory-grid">
+      <div class="memory-card"><div class="mc-label">ACID</div><div class="mc-val">Atomicity, Consistency,<br>Isolation, Durability</div></div>
+      <div class="memory-card"><div class="mc-label">Default Propagation</div><div class="mc-val">REQUIRED<br>(join or create)</div></div>
+      <div class="memory-card"><div class="mc-label">Auto Rollback</div><div class="mc-val">Only RuntimeException<br>NOT checked exceptions</div></div>
+      <div class="memory-card"><div class="mc-label">@Transactional works via</div><div class="mc-val">CGLIB Proxy<br>(public methods only)</div></div>
+      <div class="memory-card"><div class="mc-label">REQUIRES_NEW</div><div class="mc-val">Independent tx<br>For audit logs</div></div>
+      <div class="memory-card"><div class="mc-label">NESTED</div><div class="mc-val">Savepoint inside outer tx<br>Partial rollback only</div></div>
+      <div class="memory-card"><div class="mc-label">Spring Data JPA</div><div class="mc-val">Interface + JpaRepository<br>= free CRUD methods</div></div>
+      <div class="memory-card"><div class="mc-label">Derived Query</div><div class="mc-val">findByRoleAndSalary<br>Spring auto-generates SQL</div></div>
+      <div class="memory-card"><div class="mc-label">Self-invocation bug</div><div class="mc-val">@Transactional ignored<br>when called within same class</div></div>
+    </div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

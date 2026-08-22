@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit 23: Spring MVC Architecture — Layman Concepts Guide</title>
+  <meta name="description" content="Spring MVC architecture, DispatcherServlet, Controllers, ViewResolver, WebApplicationContext explained in plain English for beginners and interview prep." />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag" style="color:var(--purple); background:rgba(210,168,255,.1); border-color:rgba(210,168,255,.25);">Unit 23 &middot; Spring MVC Architecture</span>
+    </div>
+    <h1>Spring MVC &mdash; <span class="accent">Layman Concepts</span></h1>
+    <p class="hero-subtitle">Understand what MVC really means, how a web request actually travels through Spring, what DispatcherServlet is, why ViewResolver exists, and the difference between the two application contexts &mdash; all explained with zero jargon.</p>
+    <div class="hero-badges">
+      <span class="hbadge purple">MVC Pattern Explained</span>
+      <span class="hbadge blue">DispatcherServlet Deep Dive</span>
+      <span class="hbadge orange">Full Request Lifecycle</span>
+      <span class="hbadge green">Context Hierarchy</span>
+      <span class="hbadge">XML vs Java Config</span>
+      <span class="hbadge">Interview Q&amp;A</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">Browser</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">DispatcherServlet</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Controller</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Service &rarr; DAO</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">ViewResolver</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">JSP &rarr; Browser</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#what-mvc">1. What is MVC?</a>
+    <a href="#dispatcher">2. DispatcherServlet</a>
+    <a href="#lifecycle">3. Request Lifecycle</a>
+    <a href="#controller">4. @Controller</a>
+    <a href="#handler-mapping">5. Handler Mapping</a>
+    <a href="#view-resolver">6. ViewResolver</a>
+    <a href="#contexts">7. Context Hierarchy</a>
+    <a href="#xml-config">8. XML Config</a>
+    <a href="#java-config">9. Java Config</a>
+    <a href="#model">10. Model &amp; ModelAndView</a>
+    <a href="#interview">11. Interview Q&amp;A</a>
+    <a href="#memory">12. Memory Sheet</a>
+  </nav>
+
+  <!-- 1. WHAT IS MVC -->
+  <section class="concept-section" id="what-mvc">
+    <div class="section-label">01 &mdash; The MVC Pattern</div>
+    <h2>What is MVC? (Model-View-Controller)</h2>
+    <p class="tagline">&ldquo;Separating concerns so your code doesn&apos;t become a mess&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127869; Restaurant Analogy</div>
+      <p><strong>Customer</strong> (Browser) orders food &rarr; <strong>Waiter/Controller</strong> takes the order and coordinates &rarr; <strong>Chef/Service</strong> prepares the food using business rules &rarr; <strong>Store Room/DAO</strong> fetches the actual ingredients (data) &rarr; <strong>Plate/View</strong> is how the food is presented back to the customer.</p>
+    </div>
+    <div class="grid-3">
+      <div class="ccard">
+        <h3>Model</h3>
+        <p>Holds the <strong>data</strong>. In Spring MVC, the Model is a Map-like container that stores data to pass from Controller to View. It also refers to your Java domain objects (LoginBean, Employee, etc.).</p>
+        <p><strong>Example:</strong> <code>model.addAttribute("user", userObj)</code></p>
+      </div>
+      <div class="ccard">
+        <h3>View</h3>
+        <p>Presents the data to the user. In classic Spring MVC, views are <strong>JSP files</strong>. The view receives data from the Model and renders HTML. The Controller decides which view to show &mdash; it never writes HTML itself.</p>
+        <p><strong>Example:</strong> <code>welcome.jsp</code> displays the user&apos;s name from the model.</p>
+      </div>
+      <div class="ccard">
+        <h3>Controller</h3>
+        <p>The <strong>coordinator</strong>. It receives HTTP requests, calls the Service layer to process business logic, puts results into the Model, and returns the name of the View to render. It&apos;s the traffic director.</p>
+        <p><strong>Example:</strong> <code>@Controller LoginController</code></p>
+      </div>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Why MVC?</strong> Without MVC, one class would handle HTTP parsing, business logic, data access, AND HTML rendering &mdash; impossible to maintain. MVC divides responsibility so teams can work in parallel and code stays clean.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. DISPATCHER SERVLET -->
+  <section class="concept-section" id="dispatcher">
+    <div class="section-label">02 &mdash; The Front Controller</div>
+    <h2>DispatcherServlet &mdash; The Entry Point of Every Request</h2>
+    <p class="tagline">&ldquo;The one servlet that controls everything&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128278; Airport Control Tower Analogy</div>
+      <p>DispatcherServlet is like an <strong>Airport Control Tower</strong>. Every plane (HTTP request) must communicate with the control tower first. The tower knows which runway (controller method) to direct each plane to, coordinates the landing, and directs the plane to the correct gate (view). No request bypasses the control tower.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>What DispatcherServlet Does</h3>
+        <ul>
+          <li>Acts as the <strong>single entry point</strong> for all HTTP requests</li>
+          <li>Receives request, delegates to <code>HandlerMapping</code> to find the right controller method</li>
+          <li>Calls the controller method</li>
+          <li>Receives the <code>ModelAndView</code> returned by the controller</li>
+          <li>Delegates to <code>ViewResolver</code> to find the actual view file</li>
+          <li>Renders the view and sends response back</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>web.xml Configuration</h3>
+        <div class="code-block" style="font-size:.8rem;"><span class="tag">&lt;servlet&gt;</span>
+  <span class="tag">&lt;servlet-name&gt;</span>mvc<span class="tag">&lt;/servlet-name&gt;</span>
+  <span class="tag">&lt;servlet-class&gt;</span>
+    org.springframework.web.servlet.DispatcherServlet
+  <span class="tag">&lt;/servlet-class&gt;</span>
+<span class="tag">&lt;/servlet&gt;</span>
+
+<span class="tag">&lt;servlet-mapping&gt;</span>
+  <span class="tag">&lt;servlet-name&gt;</span>mvc<span class="tag">&lt;/servlet-name&gt;</span>
+  <span class="tag">&lt;url-pattern&gt;</span>/<span class="tag">&lt;/url-pattern&gt;</span>  <span class="cmt">&lt;!-- all requests --&gt;</span>
+<span class="tag">&lt;/servlet-mapping&gt;</span></div>
+        <p><strong>url-pattern /</strong> means DispatcherServlet handles ALL incoming requests.</p>
+      </div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Common Confusion</div>
+      <p>DispatcherServlet is NOT the controller. It&apos;s the <strong>front controller</strong> &mdash; a design pattern where one class receives all requests and delegates them appropriately. Your <code>@Controller</code> classes are the actual controllers.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. REQUEST LIFECYCLE -->
+  <section class="concept-section" id="lifecycle">
+    <div class="section-label">03 &mdash; Request Flow</div>
+    <h2>Complete Request Lifecycle Step-by-Step</h2>
+    <p class="tagline">&ldquo;What happens from the moment you press Enter in the browser?&rdquo;</p>
+    <ul class="step-list">
+      <li><div class="step-num">1</div><div class="step-content"><strong>Browser sends HTTP request</strong><p>User types URL or submits a form. Browser sends GET or POST request to the server.</p></div></li>
+      <li><div class="step-num">2</div><div class="step-content"><strong>DispatcherServlet receives it</strong><p>Since url-pattern is /, all requests go to DispatcherServlet first. It is the single entry point.</p></div></li>
+      <li><div class="step-num">3</div><div class="step-content"><strong>HandlerMapping finds the controller</strong><p>DispatcherServlet asks HandlerMapping: "Which controller method handles /login?" HandlerMapping scans @RequestMapping annotations and returns the correct method reference.</p></div></li>
+      <li><div class="step-num">4</div><div class="step-content"><strong>HandlerAdapter calls the controller method</strong><p>HandlerAdapter calls the controller method with the correct arguments (HttpServletRequest, Model, @PathVariable, @RequestParam etc.), handling all the messy parameter binding.</p></div></li>
+      <li><div class="step-num">5</div><div class="step-content"><strong>Controller executes business logic</strong><p>Controller calls Service &rarr; Service calls DAO &rarr; DAO queries DB. Results come back up the chain. Controller adds data to the Model and returns a View name string.</p></div></li>
+      <li><div class="step-num">6</div><div class="step-content"><strong>ViewResolver resolves the view name</strong><p>DispatcherServlet passes the view name (e.g., "welcome") to ViewResolver. ViewResolver converts it to the full file path: <code>/WEB-INF/views/welcome.jsp</code></p></div></li>
+      <li><div class="step-num">7</div><div class="step-content"><strong>JSP renders HTML</strong><p>The JSP file accesses Model attributes and generates HTML. The HTML response is sent back to the browser.</p></div></li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. @CONTROLLER -->
+  <section class="concept-section" id="controller">
+    <div class="section-label">04 &mdash; @Controller</div>
+    <h2>@Controller and @RequestMapping Explained</h2>
+    <p class="tagline">&ldquo;How a Java method becomes a web URL handler&rdquo;</p>
+    <div class="code-block"><span class="ann">@Controller</span>                      <span class="cmt">// This class handles HTTP requests</span>
+<span class="kw">public class</span> <span class="cls">LoginController</span> {
+
+    <span class="ann">@RequestMapping</span>(value = <span class="str">"/login"</span>, method = <span class="cls">RequestMethod</span>.GET)
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">showLoginForm</span>(<span class="cls">Model</span> model) {
+        model.<span class="fn">addAttribute</span>(<span class="str">"message"</span>, <span class="str">"Please log in"</span>);
+        <span class="kw">return</span> <span class="str">"login"</span>;   <span class="cmt">// View name: /WEB-INF/views/login.jsp</span>
+    }
+
+    <span class="ann">@RequestMapping</span>(value = <span class="str">"/login"</span>, method = <span class="cls">RequestMethod</span>.POST)
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">processLogin</span>(<span class="ann">@RequestParam</span> <span class="cls">String</span> username,
+                                    <span class="ann">@RequestParam</span> <span class="cls">String</span> password,
+                                    <span class="cls">Model</span> model) {
+        <span class="kmt">boolean</span> ok = loginService.<span class="fn">validate</span>(username, password);
+        <span class="kw">if</span> (ok) <span class="kw">return</span> <span class="str">"welcome"</span>;
+        model.<span class="fn">addAttribute</span>(<span class="str">"error"</span>, <span class="str">"Invalid credentials"</span>);
+        <span class="kw">return</span> <span class="str">"login"</span>;
+    }
+}</div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>@RequestMapping</h3>
+        <p>Maps a URL path + HTTP method to a Java method. Can be on the class level (base path) and method level (sub path). <code>@GetMapping</code> and <code>@PostMapping</code> are shortcut annotations for common cases.</p>
+      </div>
+      <div class="ccard">
+        <h3>Return values from controller</h3>
+        <ul>
+          <li><code>String</code> &mdash; View name to render</li>
+          <li><code>ModelAndView</code> &mdash; Combined model + view name</li>
+          <li><code>"redirect:/url"</code> &mdash; Redirect to another URL (browser changes URL bar)</li>
+          <li><code>"forward:/url"</code> &mdash; Internal forward (browser URL doesn&apos;t change)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; redirect vs forward</div>
+      <p><strong>redirect:</strong> Server tells browser "go to this new URL". Browser makes a SECOND request. URL in address bar changes. Good for POST-Redirect-GET pattern to prevent form resubmission on refresh.<br><strong>forward:</strong> Server internally forwards the request to another URL. Browser sees the same URL. Only one request.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. HANDLER MAPPING -->
+  <section class="concept-section" id="handler-mapping">
+    <div class="section-label">05 &mdash; Handler Mapping</div>
+    <h2>HandlerMapping &mdash; The URL-to-Method Router</h2>
+    <p class="tagline">&ldquo;How Spring knows which controller method handles which URL&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128222; Telephone Directory Analogy</div>
+      <p>HandlerMapping is like a telephone directory. When DispatcherServlet gets a request for <code>/login</code>, it asks HandlerMapping: "Who handles /login?" HandlerMapping looks up its directory (all @RequestMapping annotations) and returns: "That&apos;s <code>LoginController.showLoginForm()</code> for GET requests."</p>
+    </div>
+    <div class="ccard">
+      <h3>RequestMappingHandlerMapping (Default)</h3>
+      <p>The most common HandlerMapping. It scans all @Controller classes at startup, reads @RequestMapping, @GetMapping, @PostMapping annotations, and builds an internal map of URL patterns to controller methods. When a request arrives, it looks up the URL in this map in milliseconds.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. VIEW RESOLVER -->
+  <section class="concept-section" id="view-resolver">
+    <div class="section-label">06 &mdash; ViewResolver</div>
+    <h2>ViewResolver &mdash; Turning View Names into Actual Files</h2>
+    <p class="tagline">&ldquo;Why do we return just &apos;login&apos; and not the full path?&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#128337; Abbreviation Expander Analogy</div>
+      <p>Returning <code>"login"</code> from a controller is like giving a short code. ViewResolver is the translator that expands it. It has a <strong>prefix</strong> (<code>/WEB-INF/views/</code>) and a <strong>suffix</strong> (<code>.jsp</code>), so it converts <code>"login"</code> into <code>/WEB-INF/views/login.jsp</code>.</p>
+    </div>
+    <div class="code-block"><span class="cmt">&lt;!-- In XML config --&gt;</span>
+<span class="tag">&lt;bean</span> <span class="attr">class</span>=<span class="str">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;property</span> <span class="attr">name</span>=<span class="str">"prefix"</span> <span class="attr">value</span>=<span class="str">"/WEB-INF/views/"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;property</span> <span class="attr">name</span>=<span class="str">"suffix"</span> <span class="attr">value</span>=<span class="str">".jsp"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/bean&gt;</span>
+
+<span class="cmt">// In Java config</span>
+<span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="cls">InternalResourceViewResolver</span> <span class="fn">viewResolver</span>() {
+    <span class="cls">InternalResourceViewResolver</span> vr = <span class="kw">new</span> <span class="cls">InternalResourceViewResolver</span>();
+    vr.<span class="fn">setPrefix</span>(<span class="str">"/WEB-INF/views/"</span>);
+    vr.<span class="fn">setSuffix</span>(<span class="str">".jsp"</span>);
+    <span class="kw">return</span> vr;
+}</div>
+    <p><strong>Why put JSPs under /WEB-INF/?</strong> Files under <code>/WEB-INF/</code> cannot be accessed directly by the browser (it gets a 404). Only the server (via ViewResolver) can access them. This forces all requests to go through the Controller first &mdash; securing your views.</p>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p>Why are JSPs placed in <code>/WEB-INF/views/</code>? Answer: So browsers cannot access JSP files directly, bypassing security and controller logic. Every view must go through the DispatcherServlet &rarr; Controller &rarr; ViewResolver chain.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7. CONTEXT HIERARCHY -->
+  <section class="concept-section" id="contexts">
+    <div class="section-label">07 &mdash; Context Hierarchy</div>
+    <h2>Two Application Contexts &mdash; Root vs Servlet</h2>
+    <p class="tagline">&ldquo;Why are there two Spring containers?&rdquo;</p>
+    <div class="analogy-box">
+      <div class="analogy-label">&#127968; Company Hierarchy Analogy</div>
+      <p>Think of a company: <strong>Root Context</strong> = Head Office (has shared company-wide resources: HR, Finance, Shared DB). <strong>Servlet (Web) Context</strong> = Branch Office (has web-specific staff: Controllers, ViewResolver). Branch can use Head Office resources, but Head Office doesn&apos;t know about branch-specific web stuff.</p>
+    </div>
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>Root Application Context</h3>
+        <p>Created by <code>ContextLoaderListener</code>. Contains <strong>shared beans</strong>: Services, DAOs, DataSource, JPA config, Transaction management. Any web component can access these beans.</p>
+        <p><strong>Config file:</strong> <code>applicationContext.xml</code></p>
+        <p><strong>Beans inside:</strong> @Service, @Repository, DataSource, EntityManagerFactory, @Transactional setup</p>
+      </div>
+      <div class="ccard">
+        <h3>Servlet (Web) Application Context</h3>
+        <p>Created by <code>DispatcherServlet</code>. Contains <strong>web-specific beans</strong>: Controllers, ViewResolver, HandlerMapping, HandlerAdapter. It can access Root context beans (parent-child relationship).</p>
+        <p><strong>Config file:</strong> <code>[servlet-name]-servlet.xml</code> (e.g., <code>mvc-servlet.xml</code>)</p>
+        <p><strong>Beans inside:</strong> @Controller, ViewResolver, interceptors</p>
+      </div>
+    </div>
+    <div class="trap-box">
+      <div class="trap-label">&#128680; Interview Trap</div>
+      <p>Can a Service bean in Root context access a Controller bean in Servlet context? <strong>NO!</strong> Parent (Root) cannot access children (Servlet context). But a Controller in Servlet context CAN access Service beans from Root context. It&apos;s a one-way relationship: child sees parent, parent does NOT see child.</p>
+    </div>
+    <div class="key-box"><p>&#128273; <strong>Why two contexts?</strong> Multiple DispatcherServlets can share the Root context. Each Servlet has its own isolated web context. This allows you to have different web layers (APIs, admin panel) sharing the same service/DAO layer.</p></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8. XML CONFIG -->
+  <section class="concept-section" id="xml-config">
+    <div class="section-label">08 &mdash; XML Configuration</div>
+    <h2>XML-Based Spring MVC Setup Explained</h2>
+    <p class="tagline">&ldquo;The classic way to configure Spring MVC&rdquo;</p>
+    <div class="code-block"><span class="cmt">&lt;!-- applicationContext.xml (Root) --&gt;</span>
+<span class="tag">&lt;context:component-scan</span> <span class="attr">base-package</span>=<span class="str">"com.acc.service, com.acc.dao"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;tx:annotation-driven/&gt;</span>
+
+<span class="cmt">&lt;!-- mvc-servlet.xml (Web/Servlet) --&gt;</span>
+<span class="tag">&lt;mvc:annotation-driven/&gt;</span>  <span class="cmt">&lt;!-- enables @RequestMapping, @Valid, etc --&gt;</span>
+<span class="tag">&lt;context:component-scan</span> <span class="attr">base-package</span>=<span class="str">"com.acc.controller"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;bean</span> <span class="attr">class</span>=<span class="str">"...InternalResourceViewResolver"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;property</span> <span class="attr">name</span>=<span class="str">"prefix"</span> <span class="attr">value</span>=<span class="str">"/WEB-INF/views/"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;property</span> <span class="attr">name</span>=<span class="str">"suffix"</span> <span class="attr">value</span>=<span class="str">".jsp"</span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/bean&gt;</span></div>
+    <p><strong>What does <code>&lt;mvc:annotation-driven/&gt;</code> do?</strong> It registers <code>RequestMappingHandlerMapping</code>, <code>RequestMappingHandlerAdapter</code>, and message converters &mdash; everything needed to process @RequestMapping, @PathVariable, @RequestParam, @Valid, etc. Without this, most MVC annotations would be ignored.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 9. JAVA CONFIG -->
+  <section class="concept-section" id="java-config">
+    <div class="section-label">09 &mdash; Java Configuration</div>
+    <h2>Java-Based Config &mdash; No More XML</h2>
+    <p class="tagline">&ldquo;Same setup, but in pure Java code&rdquo;</p>
+    <div class="code-block"><span class="ann">@Configuration</span>
+<span class="ann">@EnableWebMvc</span>                         <span class="cmt">// equivalent of &lt;mvc:annotation-driven/&gt;</span>
+<span class="ann">@ComponentScan</span>(<span class="str">"com.acc.controller"</span>)
+<span class="kw">public class</span> <span class="cls">WebConfig</span> <span class="kw">implements</span> <span class="cls">WebMvcConfigurer</span> {
+
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="cls">InternalResourceViewResolver</span> <span class="fn">viewResolver</span>() {
+        <span class="cls">InternalResourceViewResolver</span> vr = <span class="kw">new</span> <span class="cls">InternalResourceViewResolver</span>();
+        vr.<span class="fn">setPrefix</span>(<span class="str">"/WEB-INF/views/"</span>);
+        vr.<span class="fn">setSuffix</span>(<span class="str">".jsp"</span>);
+        <span class="kw">return</span> vr;
+    }
+}
+
+<span class="cmt">// Replace web.xml with Java initializer:</span>
+<span class="kw">public class</span> <span class="cls">MyWebAppInitializer</span> <span class="kw">extends</span> <span class="cls">AbstractAnnotationConfigDispatcherServletInitializer</span> {
+    <span class="kw">protected</span> <span class="cls">Class</span>[] <span class="fn">getRootConfigClasses</span>() { <span class="kw">return new</span> <span class="cls">Class</span>[] {<span class="cls">RootConfig</span>.<span class="kw">class</span>}; }
+    <span class="kw">protected</span> <span class="cls">Class</span>[] <span class="fn">getServletConfigClasses</span>() { <span class="kw">return new</span> <span class="cls">Class</span>[] {<span class="cls">WebConfig</span>.<span class="kw">class</span>}; }
+    <span class="kw">protected</span> <span class="cls">String</span>[] <span class="fn">getServletMappings</span>() { <span class="kw">return new</span> <span class="cls">String</span>[] {<span class="str">"/"</span>}; }
+}</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 10. MODEL & MODELANDVIEW -->
+  <section class="concept-section" id="model">
+    <div class="section-label">10 &mdash; Passing Data to Views</div>
+    <h2>Model, ModelAndView, @ModelAttribute</h2>
+    <p class="tagline">&ldquo;How data gets from Java to the JSP page&rdquo;</p>
+    <div class="grid-3">
+      <div class="ccard">
+        <h3>Model</h3>
+        <p>A container (like a Map) you add data to in your controller. Spring passes it to the view automatically.</p>
+        <div class="code-block" style="font-size:.8rem;"><span class="kw">public</span> <span class="cls">String</span> <span class="fn">show</span>(<span class="cls">Model</span> model) {
+    model.<span class="fn">addAttribute</span>(<span class="str">"name"</span>, <span class="str">"Rahul"</span>);
+    <span class="kw">return</span> <span class="str">"welcome"</span>;
+}
+<span class="cmt">// In JSP: ${name} prints "Rahul"</span></div>
+      </div>
+      <div class="ccard">
+        <h3>ModelAndView</h3>
+        <p>Combines model data AND view name in one object. Less common with modern annotations but appears in older code.</p>
+        <div class="code-block" style="font-size:.8rem;"><span class="cls">ModelAndView</span> mav = <span class="kw">new</span> <span class="cls">ModelAndView</span>();
+mav.<span class="fn">setViewName</span>(<span class="str">"welcome"</span>);
+mav.<span class="fn">addObject</span>(<span class="str">"name"</span>, <span class="str">"Rahul"</span>);
+<span class="kw">return</span> mav;</div>
+      </div>
+      <div class="ccard">
+        <h3>@ModelAttribute</h3>
+        <p>Two uses: (1) On a method parameter &mdash; binds form data to a Java object automatically. (2) On a method &mdash; pre-populates model data before any controller method in the class runs.</p>
+        <div class="code-block" style="font-size:.8rem;"><span class="kw">public</span> <span class="cls">String</span> <span class="fn">save</span>(
+    <span class="ann">@ModelAttribute</span> <span class="cls">Employee</span> emp) {
+  <span class="cmt">// emp is bound from form fields</span>
+}</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 11. INTERVIEW Q&A -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">11 &mdash; Interview Prep</div>
+    <h2>Top Interview Questions with Answers</h2>
+    <p class="tagline">&ldquo;Spring MVC questions that always appear in interviews&rdquo;</p>
+    <div class="qa-block"><div class="qa-q">What is DispatcherServlet and what is its role?</div><div class="qa-a">DispatcherServlet is the front controller in Spring MVC. It is the single entry point for all HTTP requests. It delegates to HandlerMapping to find the right controller, then to HandlerAdapter to call it, and finally to ViewResolver to render the response. It coordinates the entire request-response cycle.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between @Controller and @RestController?</div><div class="qa-a">@Controller is used for traditional MVC controllers that return view names (JSP pages). The return value goes through ViewResolver. @RestController = @Controller + @ResponseBody, meaning the return value is written directly to the HTTP response body (JSON/XML) — no ViewResolver involved. Used for REST APIs.</div></div>
+    <div class="qa-block"><div class="qa-q">What is HandlerMapping?</div><div class="qa-a">HandlerMapping maps incoming HTTP requests to the appropriate controller method. The default implementation (RequestMappingHandlerMapping) scans all @Controller classes at startup, reads @RequestMapping annotations, and builds a URL-to-method lookup table used for every request.</div></div>
+    <div class="qa-block"><div class="qa-q">What is InternalResourceViewResolver? What is prefix and suffix?</div><div class="qa-a">InternalResourceViewResolver converts logical view names (returned by controllers as strings) to actual JSP file paths. Prefix is the directory path (e.g., /WEB-INF/views/) and suffix is the file extension (e.g., .jsp). So returning "login" becomes /WEB-INF/views/login.jsp.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between Root Application Context and Servlet Application Context?</div><div class="qa-a">Root context is created by ContextLoaderListener and contains shared backend beans (Services, DAOs, DataSource, transactions). Servlet context is created by DispatcherServlet and contains web beans (Controllers, ViewResolver). Servlet context inherits from Root context (can access Root beans). Root context cannot see Servlet context beans. This allows multiple DispatcherServlets to share the same backend.</div></div>
+    <div class="qa-block"><div class="qa-q">What is the difference between redirect and forward?</div><div class="qa-a">redirect: sends 302 response to browser, browser makes a NEW request to the new URL, URL in address bar changes, original request data is lost. forward: server-side forward, browser makes only ONE request, URL in address bar doesn't change, same request/response objects are passed to the forwarded resource. Use redirect after POST (PRG pattern) to prevent duplicate form submissions.</div></div>
+    <div class="qa-block"><div class="qa-q">Why should JSP files be placed under /WEB-INF/?</div><div class="qa-a">Files under /WEB-INF/ are not directly accessible by browsers. A browser request for a URL inside /WEB-INF/ returns a 404. This forces all access to go through the DispatcherServlet and Controller, ensuring proper security, validation, and business logic is applied before any view is rendered.</div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 12. MEMORY SHEET -->
+  <section class="concept-section" id="memory">
+    <div class="section-label">12 &mdash; Quick Revision</div>
+    <h2>&#9889; Memory Cheat Sheet</h2>
+    <p class="tagline">&ldquo;Last-minute revision before your interview&rdquo;</p>
+    <div class="memory-grid">
+      <div class="memory-card"><div class="mc-label">DispatcherServlet</div><div class="mc-val">Front Controller<br>Single entry point</div></div>
+      <div class="memory-card"><div class="mc-label">HandlerMapping</div><div class="mc-val">URL &rarr; Controller method<br>RequestMappingHandlerMapping</div></div>
+      <div class="memory-card"><div class="mc-label">ViewResolver</div><div class="mc-val">"login" &rarr;<br>/WEB-INF/views/login.jsp</div></div>
+      <div class="memory-card"><div class="mc-label">Root Context</div><div class="mc-val">ContextLoaderListener<br>Services, DAOs, Transactions</div></div>
+      <div class="memory-card"><div class="mc-label">Servlet Context</div><div class="mc-val">DispatcherServlet<br>Controllers, ViewResolver</div></div>
+      <div class="memory-card"><div class="mc-label">redirect:</div><div class="mc-val">Browser makes 2nd request<br>URL changes</div></div>
+      <div class="memory-card"><div class="mc-label">forward:</div><div class="mc-val">Server-side, 1 request<br>URL stays same</div></div>
+      <div class="memory-card"><div class="mc-label">/WEB-INF/ JSPs</div><div class="mc-val">Not browser-accessible<br>Forces security</div></div>
+      <div class="memory-card"><div class="mc-label">@ModelAttribute</div><div class="mc-val">Binds form fields<br>to Java object</div></div>
+    </div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

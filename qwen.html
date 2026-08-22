@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JPA CRUD — Simple Guide & Interview Prep</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        /* Tokyo Night harmonious styling for Interview & ELI5 elements */
+        .interview-answer {
+            background: rgba(100, 255, 180, 0.05);
+            border: 1px solid rgba(100, 255, 180, 0.2);
+            border-left: 4px solid var(--success, #64ffb4);
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .interview-answer strong {
+            color: #64ffb4;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .interview-answer p {
+            color: var(--text);
+            margin: 0.25rem 0;
+        }
+
+        .eli5-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(121, 192, 255, 0.25) !important;
+            border-radius: 12px;
+        }
+
+        .eli5-card h3 {
+            color: #79c0ff;
+        }
+
+        .cheat-sheet {
+            background: rgba(210, 168, 255, 0.06);
+            border: 1px solid rgba(210, 168, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .cheat-sheet h3 {
+            margin-top: 0;
+            color: #d2a8ff;
+            font-size: 1.05rem;
+        }
+
+        .cheat-sheet p {
+            color: var(--text);
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        details {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border, #222);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 12px 0;
+            transition: all 0.2s ease;
+        }
+
+        details summary {
+            cursor: pointer;
+            color: var(--text-bright, #fff);
+            font-weight: 600;
+        }
+
+        details[open] summary {
+            margin-bottom: 12px;
+            color: #d2a8ff;
+        }
+
+        details code {
+            background: rgba(121, 192, 255, 0.1);
+            color: #79c0ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="top">
+        <div class="wrap">
+            <a class="home-button" href="index.html">← Home</a>
+            <h1>JPA & Hibernate — Simple Guide & Interview Prep</h1>
+            <div class="subtitle">
+                Learn JPA concepts simply (ELI5), master the Entity Lifecycle, and prepare for
+                real-world interview scenarios with exact answer scripts.
+            </div>
+            <div class="chips">
+                <span class="chip">JPA Concepts</span>
+                <span class="chip">Entity Lifecycle</span>
+                <span class="chip">Dirty Checking</span>
+                <span class="chip">Interview Scenarios</span>
+                <span class="chip">N+1 Problem</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="toc">
+        <div class="toc-inner">
+            <a href="#eli5">Basics (ELI5)</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#lifecycle">Lifecycle</a>
+            <a href="#crud">CRUD & Dirty Checking</a>
+            <a href="#cheatsheet">Cheat Sheet</a>
+            <a href="#scenarios">Top 10 Interview Qs</a>
+            <a href="#code">Full Code</a>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- ========================================== -->
+        <!-- SECTION 00: ELI5                           -->
+        <!-- ========================================== -->
+        <section class="section" id="eli5">
+            <span class="badge">00 — THE BASICS</span>
+            <h2>JPA Explained Simply (ELI5)</h2>
+            <p>Before looking at code, understand the core concepts using simple analogies.</p>
+
+            <div class="grid">
+                <div class="card eli5-card">
+                    <h3>JPA vs Hibernate</h3>
+                    <p><strong>JPA</strong> is just a rulebook (a set of Java interfaces). <strong>Hibernate</strong> is
+                        the actual worker that reads the rulebook and does the heavy lifting with the database.</p>
+                </div>
+                <div class="card eli5-card">
+                    <h3>EntityManager</h3>
+                    <p>Think of it as your <strong>personal assistant</strong>. You tell it to save, find, or delete
+                        things, and it handles the database connection and SQL generation for you.</p>
+                </div>
+                <div class="card eli5-card">
+                    <h3>Persistence Context</h3>
+                    <p>The assistant's <strong>short-term memory</strong> (Cache). It remembers which objects you've
+                        loaded or changed so it doesn't have to bother the database every single second.</p>
+                </div>
+                <div class="card eli5-card">
+                    <h3>Dirty Checking</h3>
+                    <p>The assistant watches your objects. If you change a salary from 50k to 75k, the assistant notices
+                        the object is "dirty" and <strong>automatically</strong> writes an <code>UPDATE</code> SQL when
+                        you commit. You don't need an <code>update()</code> method!</p>
+                </div>
+            </div>
+
+            <div class="warning">
+                <strong>Modern Interview Note:</strong> This guide uses <code>javax.persistence</code> (JPA 2.2 / Java
+                EE).
+                If you are using <strong>Spring Boot 3+</strong> or Jakarta EE 9+, the package has changed to
+                <code>jakarta.persistence</code>. Mentioning this transition in an interview shows you are up-to-date!
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 01: ARCHITECTURE                   -->
+        <!-- ========================================== -->
+        <section class="section" id="architecture">
+            <span class="badge">01 — BIG PICTURE</span>
+            <h2>Layered Architecture Flow</h2>
+
+            <div class="diagram" style="max-width: 820px; margin: 20px auto;">
+                <div class="mermaid">
+                    flowchart LR
+                    UI["1. UI / Presentation"] --> SERVICE["2. Service (Business Logic)"]
+                    SERVICE --> DAO["3. DAO (Data Access)"]
+                    DAO --> EM["4. EntityManager"]
+                    EM --> HIB["5. Hibernate (JPA Provider)"]
+                    HIB --> DB[("6. MySQL Database")]
+                </div>
+            </div>
+
+            <div class="good">
+                <strong>Memory Hook:</strong> UI → Service → DAO → EntityManager → Hibernate → Database.
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 02: LIFECYCLE                      -->
+        <!-- ========================================== -->
+        <section class="section" id="lifecycle">
+            <span class="badge">02 — THE #1 INTERVIEW TOPIC</span>
+            <h2>Entity Lifecycle States</h2>
+            <p>Interviewers <strong>love</strong> asking about entity states. Memorize this diagram.</p>
+
+            <div class="diagram" style="max-width: 860px; margin: 20px auto;">
+                <div class="mermaid">
+                    stateDiagram-v2
+                    [*] --> Transient: new Entity()
+                    Transient --> Managed: persist()
+                    Managed --> Detached: close() / clear()
+                    Detached --> Managed: merge()
+                    Managed --> Removed: remove()
+                    Removed --> [*]: commit()
+
+                    note right of Transient: Just a normal Java object.\nNot tracked by Hibernate.
+                    note right of Managed: Tracked by Persistence Context.\nDirty Checking applies here!
+                    note right of Detached: Was tracked, but EM closed.\nChanges won't auto-save.
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Meaning</th>
+                        <th>Interview Key Point</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Transient</td>
+                        <td>New object (e.g., <code>new Employee()</code>)</td>
+                        <td>Has no database representation yet.</td>
+                    </tr>
+                    <tr>
+                        <td>Managed</td>
+                        <td>Tracked by the current Persistence Context</td>
+                        <td>Any changes to fields are auto-detected (Dirty Checking).</td>
+                    </tr>
+                    <tr>
+                        <td>Detached</td>
+                        <td>Disconnected from the Persistence Context</td>
+                        <td>Must use <code>merge()</code> to bring it back to Managed state.</td>
+                    </tr>
+                    <tr>
+                        <td>Removed</td>
+                        <td>Scheduled for deletion</td>
+                        <td>Deleted from DB on transaction commit.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 03: CRUD & DIRTY CHECKING          -->
+        <!-- ========================================== -->
+        <section class="section" id="crud">
+            <span class="badge">03 — CORE OPERATIONS</span>
+            <h2>CRUD & The Magic of Dirty Checking</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>CREATE (<code>persist</code>)</h3>
+                    <pre><code>em.getTransaction().begin();
+em.persist(newEmployee);
+em.getTransaction().commit();</code></pre>
+                    <p>Turns a <strong>Transient</strong> object into a <strong>Managed</strong> object. SQL INSERT
+                        happens at commit.</p>
+                </div>
+
+                <div class="card">
+                    <h3>READ (<code>find</code>)</h3>
+                    <pre><code>Employee e = em.find(Employee.class, 101);</code></pre>
+                    <p>Queries the DB by Primary Key. The returned object is now <strong>Managed</strong>.</p>
+                </div>
+
+                <div class="card">
+                    <h3>UPDATE (Dirty Checking)</h3>
+                    <pre><code>Employee e = em.find(Employee.class, 101);
+e.setSalary(90000); // No update() method needed!
+// Just commit!</code></pre>
+                    <p>Hibernate compares the object's current state to its snapshot. If different ("dirty"), it
+                        auto-generates an <code>UPDATE</code> SQL.</p>
+                </div>
+
+                <div class="card">
+                    <h3>DELETE (<code>remove</code>)</h3>
+                    <pre><code>Employee e = em.find(Employee.class, 101);
+em.remove(e);</code></pre>
+                    <p><strong>Trap:</strong> You can only call <code>remove()</code> on a <strong>Managed</strong>
+                        entity. That's why we <code>find()</code> it first!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 04: CHEAT SHEET                    -->
+        <!-- ========================================== -->
+        <section class="section" id="cheatsheet">
+            <span class="badge">04 — RAPID FIRE</span>
+            <h2>Interview Cheat Sheet</h2>
+
+            <div class="cheat-sheet">
+                <h3>Difference between <code>persist()</code> and <code>merge()</code>?</h3>
+                <p><strong>persist()</strong> is for brand new objects (Transient → Managed). It throws an error if the
+                    entity already has an ID that exists in the DB.<br>
+                    <strong>merge()</strong> is for updating existing objects or bringing detached objects back. It
+                    copies the state into a new Managed instance.
+                </p>
+            </div>
+
+            <div class="cheat-sheet">
+                <h3>Difference between <code>find()</code> and <code>getReference()</code>?</h3>
+                <p><strong>find()</strong> hits the database immediately and returns the actual entity (or null).<br>
+                    <strong>getReference()</strong> returns a <strong>Proxy</strong> object without hitting the DB. It
+                    only queries the DB when you actually call a getter method. Use this for performance when setting up
+                    relationships.
+                </p>
+            </div>
+
+            <div class="cheat-sheet">
+                <h3><code>EntityManagerFactory</code> vs <code>EntityManager</code>?</h3>
+                <p><strong>EMF</strong> is heavyweight, thread-safe, and created ONCE per application.<br>
+                    <strong>EM</strong> is lightweight, NOT thread-safe, and created per request/transaction.
+                </p>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 05: TOP 10 SCENARIOS               -->
+        <!-- ========================================== -->
+        <section class="section" id="scenarios">
+            <span class="badge">05 — REAL INTERVIEWS</span>
+            <h2>Top 10 Scenario-Based Interview Questions</h2>
+            <p>Don't just memorize definitions. Interviewers will give you a scenario. Here is exactly how to answer
+                them.</p>
+
+            <details open>
+                <summary><strong>Scenario 1:</strong> You call <code>persist()</code> but the database remains empty.
+                    Why?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"In resource-local JPA, write operations require an active transaction. The changes are sitting
+                        in the Persistence Context (Hibernate's memory) but haven't been flushed to the database. I need
+                        to ensure I call <code>em.getTransaction().begin()</code> before persisting, and
+                        <code>commit()</code> afterward."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 2:</strong> I changed an entity's salary, but didn't call
+                    <code>update()</code>. Will it save?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"Yes, as long as the entity is in the <strong>Managed</strong> state. Hibernate uses
+                        <strong>Dirty Checking</strong>. When the transaction commits, Hibernate compares the current
+                        object to its original snapshot, detects the change, and automatically generates the UPDATE
+                        SQL."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 3:</strong> I call <code>merge(employee)</code>, then change the salary on
+                    <code>employee</code>, but it doesn't save.</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"This is a common trap. <code>merge()</code> does <strong>not</strong> make the original object
+                        managed. It copies the state into a <em>new</em> managed instance and returns it. I must capture
+                        the return value: <code>Employee managed = em.merge(detached);</code> and modify
+                        <code>managed</code> instead."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 4:</strong> <code>remove()</code> throws an
+                    <code>IllegalArgumentException</code>. Why?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"The <code>remove()</code> method only works on <strong>Managed</strong> entities associated with
+                        the current Persistence Context. If I pass a Transient or Detached object, it fails. The fix is
+                        to <code>find()</code> the entity first to attach it, then call <code>remove()</code>."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 5:</strong> What is the "N+1 Select Problem" and how do you fix it?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"If I fetch 100 Employees, that's 1 query. If I then loop through them and access their
+                        lazily-loaded Departments, Hibernate fires 100 additional queries. This is the N+1 problem and
+                        it kills performance. I fix it by using <code>JOIN FETCH</code> in my JPQL query or
+                        <code>@EntityGraph</code> to load the related data in a single SQL query."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 6:</strong> I get a <code>LazyInitializationException</code> in my UI layer.
+                    Why?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"This happens when I try to access a lazily-loaded relationship (like
+                        <code>employee.getDepartment()</code>) after the <code>EntityManager</code> has been closed. The
+                        Persistence Context is gone, so Hibernate can't fetch the data. I need to fetch the data while
+                        the transaction is still open, or use <code>JOIN FETCH</code>."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 7:</strong> Should I use one <code>EntityManager</code> for the whole
+                    application?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"No. <code>EntityManager</code> is lightweight, not thread-safe, and holds a cache (Persistence
+                        Context). Keeping one open forever causes memory leaks and stale data. We should use one
+                        <code>EntityManagerFactory</code> for the app, but create and close a new
+                        <code>EntityManager</code> for each request/transaction (EntityManager-per-request pattern)."
+                    </p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 8:</strong> Difference between <code>flush()</code> and <code>commit()</code>?
+                </summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"<code>flush()</code> synchronizes the Persistence Context with the database (sends the SQL), but
+                        doesn't finalize the transaction. The database might roll it back if it's in a transaction.
+                        <code>commit()</code> flushes the changes AND finalizes the database transaction, making the
+                        changes permanent."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 9:</strong> How do you map a Java <code>Date</code> to a SQL Date column?
+                </summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"I use the <code>@Temporal</code> annotation. For example,
+                        <code>@Temporal(TemporalType.DATE)</code> maps it to a SQL DATE (no time), whereas
+                        <code>TIMESTAMP</code> includes both date and time."</p>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Scenario 10:</strong> JPQL vs Native SQL?</summary>
+                <div class="interview-answer">
+                    <strong>What to say:</strong>
+                    <p>"Native SQL queries database tables and columns directly. JPQL queries <strong>Java Entities and
+                            their fields</strong>. JPQL is database-agnostic; Hibernate translates it into the correct
+                        SQL dialect for MySQL, Postgres, etc. automatically."</p>
+                </div>
+            </details>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECTION 06: COMPLETE CODE REFERENCE        -->
+        <!-- ========================================== -->
+        <section class="section" id="code">
+            <span class="badge">06 — REFERENCE</span>
+            <h2>Complete Project Code</h2>
+            <p>Click below to expand the complete runnable Maven project (persistence.xml, Entity, DAO, Service,
+                Tester).</p>
+
+            <details>
+                <summary><strong>Show / Hide Complete Codebase</strong></summary>
+
+                <h3>1. persistence.xml</h3>
+                <pre><code>&lt;persistence-unit name="employeePU"&gt;
+    &lt;provider&gt;org.hibernate.jpa.HibernatePersistenceProvider&lt;/provider&gt;
+    &lt;class&gt;com.example.entity.EmployeeEntity&lt;/class&gt;
+    &lt;properties&gt;
+        &lt;property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/&gt;
+        &lt;property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/employee_db"/&gt;
+        &lt;property name="javax.persistence.jdbc.user" value="root"/&gt;
+        &lt;property name="javax.persistence.jdbc.password" value="root"/&gt;
+        &lt;property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/&gt;
+        &lt;property name="hibernate.show_sql" value="true"/&gt;
+    &lt;/properties&gt;
+&lt;/persistence-unit&gt;</code></pre>
+
+                <h3>2. EmployeeEntity.java</h3>
+                <pre><code>@Entity
+@Table(name = "employee")
+public class EmployeeEntity {
+    @Id
+    @Column(name = "employee_id")
+    private int employeeId;
+
+    @Column(name = "employee_name")
+    private String employeeName;
+
+    private double salary;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "joining_date")
+    private Date joiningDate;
+    // Getters and Setters...
+}</code></pre>
+
+                <h3>3. EmployeeDAOImpl.java (The Core Logic)</h3>
+                <pre><code>public class EmployeeDAOImpl implements EmployeeDAO {
+    
+    // CREATE
+    public void save(EmployeeEntity employee) {
+        EntityManager em = JPAUtility.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(employee); // Transient -> Managed
+            em.getTransaction().commit(); // Flushes to DB
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally { em.close(); }
+    }
+
+    // UPDATE (Using Dirty Checking)
+    public void updateSalary(int id, double newSalary) {
+        EntityManager em = JPAUtility.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            EmployeeEntity e = em.find(EmployeeEntity.class, id);
+            if (e != null) {
+                e.setSalary(newSalary); 
+                // NO em.update() needed! Hibernate tracks the change.
+            }
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally { em.close(); }
+    }
+
+    // DELETE
+    public void delete(int id) {
+        EntityManager em = JPAUtility.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            EmployeeEntity e = em.find(EmployeeEntity.class, id); // Must find first!
+            if (e != null) {
+                em.remove(e); // Must be Managed to remove
+            }
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally { em.close(); }
+    }
+}</code></pre>
+            </details>
+        </section>
+
+    </main>
+
+    <footer>
+        JPA Simple Guide &amp; Interview Prep · Focus on the Entity Lifecycle and Dirty Checking.
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
