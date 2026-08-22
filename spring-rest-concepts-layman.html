@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring REST — Layman Concepts Guide (REST API, JPA Integration, RestTemplate)</title>
+  <meta name="description" content="Spring REST, @RestController, @RequestMapping, JPA integration, RestTemplate, producer-consumer pattern explained in plain English for interview prep." />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* Page-specific tweaks */
+    .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin:20px 0; }
+    .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:20px 0; }
+    .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:20px 0; }
+
+    .ann-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      transition: border-color 0.2s, transform 0.18s;
+    }
+    .ann-card:hover { border-color: var(--border-focus); transform: translateY(-2px); }
+    .ann-card .ann-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--syn-annotation);
+      margin-bottom: 6px;
+    }
+    .ann-card p { font-size: 0.86rem; color: var(--text); margin: 0; }
+    .ann-card .badge-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+    .ann-card .mini-badge {
+      font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+      background: rgba(121,192,255,.1); color: var(--blue); border: 1px solid rgba(121,192,255,.2);
+    }
+
+    .flow-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .flow-num {
+      min-width: 34px; height: 34px;
+      background: rgba(100,255,180,.1);
+      border: 1px solid rgba(100,255,180,.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem;
+      color: var(--green); flex-shrink: 0;
+    }
+    .flow-body strong { color: var(--text-bright); font-size: 0.92rem; }
+    .flow-body p { font-size: 0.84rem; color: var(--muted); margin: 3px 0 0; }
+
+    .method-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 5px; margin-right: 6px;
+      letter-spacing: 0.04em;
+    }
+    .method-get    { background: rgba(100,255,180,.12); color: var(--green); border: 1px solid rgba(100,255,180,.3); }
+    .method-post   { background: rgba(121,192,255,.12); color: var(--blue);  border: 1px solid rgba(121,192,255,.3); }
+    .method-put    { background: rgba(255,166,87,.12);  color: var(--warning); border: 1px solid rgba(255,166,87,.3); }
+    .method-delete { background: rgba(255,107,107,.12); color: var(--danger); border: 1px solid rgba(255,107,107,.3); }
+    .method-patch  { background: rgba(210,168,255,.12); color: var(--purple); border: 1px solid rgba(210,168,255,.3); }
+
+    .arch-layer {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .arch-layer .layer-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .arch-layer .layer-name { font-weight: 700; color: var(--text-bright); font-size: 0.95rem; }
+    .arch-layer .layer-sub  { font-size: 0.82rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .arch-layer.ctrl  { background: rgba(121,192,255,.05); border-color: rgba(121,192,255,.2); }
+    .arch-layer.svc   { background: rgba(100,255,180,.05); border-color: rgba(100,255,180,.2); }
+    .arch-layer.repo  { background: rgba(210,168,255,.05); border-color: rgba(210,168,255,.2); }
+    .arch-layer.db    { background: rgba(255,166,87,.05);  border-color: rgba(255,166,87,.2); }
+    .arch-arrow { text-align: center; color: var(--muted); font-size: 1.2rem; margin: 2px 0; }
+
+    .status-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .status-card .status-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+    }
+    .status-card p { font-size: 0.84rem; color: var(--muted); margin: 0; }
+    .s2xx { border-left: 4px solid var(--green); }
+    .s4xx { border-left: 4px solid var(--warning); }
+    .s5xx { border-left: 4px solid var(--danger); }
+    .s2xx .status-code { color: var(--green); }
+    .s4xx .status-code { color: var(--warning); }
+    .s5xx .status-code { color: var(--danger); }
+
+    .producer-consumer {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    .pc-box {
+      flex: 1;
+      min-width: 200px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      text-align: center;
+    }
+    .pc-box.producer { border-color: rgba(121,192,255,.3); background: rgba(121,192,255,.05); }
+    .pc-box.consumer { border-color: rgba(100,255,180,.3); background: rgba(100,255,180,.05); }
+    .pc-box .pc-icon { font-size: 2rem; margin-bottom: 8px; }
+    .pc-box .pc-title { font-weight: 700; font-size: 1rem; color: var(--text-bright); margin-bottom: 4px; }
+    .pc-box .pc-sub { font-size: 0.82rem; color: var(--muted); }
+    .pc-arrow {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 16px; color: var(--muted); gap: 4px; flex-shrink: 0;
+    }
+    .pc-arrow .pc-line { font-size: 1.6rem; color: var(--purple); }
+    .pc-arrow .pc-label {
+      font-size: 0.7rem; font-weight: 600; color: var(--purple);
+      background: rgba(210,168,255,.1); border: 1px solid rgba(210,168,255,.2);
+      padding: 3px 10px; border-radius: 100px; text-align: center;
+    }
+
+    .concept-section h2 { font-size:clamp(1.35rem,3vw,1.75rem); font-weight:800; color:var(--text-bright); margin-bottom:8px; letter-spacing:-.03em; }
+    .divider { height:1px; background:var(--border); margin:40px 0; }
+
+    code { font-family:'JetBrains Mono',monospace; color:var(--blue); font-size:.88em; background:rgba(121,192,255,.08); padding:1px 5px; border-radius:4px; }
+    strong { color: var(--text-bright); }
+    ul { padding-left:1.3em; margin-bottom:10px; }
+    ul li { color:var(--text); margin-bottom:5px; font-size:.95rem; }
+    ul li strong { color:var(--text-bright); }
+
+    @media (max-width: 600px) {
+      .pc-arrow { width: 100%; flex-direction: row; justify-content: center; }
+      .producer-consumer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag" style="color:var(--blue); background:rgba(121,192,255,.1); border-color:rgba(121,192,255,.25);">Spring REST &middot; API Design &amp; Integration</span>
+    </div>
+    <h1>Spring REST &mdash; <span class="accent" style="color:var(--blue);">Layman Concepts</span></h1>
+    <p class="hero-subtitle">Build real REST APIs from scratch. Understand <em>every</em> annotation, integrate with Spring Data JPA, and wire Producer-Consumer apps with RestTemplate &mdash; all explained in plain English.</p>
+    <div class="hero-badges">
+      <span class="hbadge blue">REST Architecture</span>
+      <span class="hbadge green">All Annotations</span>
+      <span class="hbadge purple">JPA Integration</span>
+      <span class="hbadge orange">RestTemplate</span>
+      <span class="hbadge red">Producer &amp; Consumer</span>
+      <span class="hbadge">HTTP Methods</span>
+      <span class="hbadge">Interview Q&amp;A</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">HTTP Request</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">DispatcherServlet</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">@RestController</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">@Service</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">JPA Repository</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">JSON Response</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#what-is-rest">1. What is REST?</a>
+    <a href="#http-methods">2. HTTP Methods</a>
+    <a href="#annotations">3. Annotations</a>
+    <a href="#restcontroller">4. @RestController</a>
+    <a href="#request-mapping">5. Request Mapping</a>
+    <a href="#response-entity">6. ResponseEntity</a>
+    <a href="#jpa-integration">7. JPA Integration</a>
+    <a href="#architecture">8. Full Architecture</a>
+    <a href="#resttemplate">9. RestTemplate</a>
+    <a href="#producer-consumer">10. Producer-Consumer</a>
+    <a href="#status-codes">11. Status Codes</a>
+    <a href="#interview">12. Interview Q&amp;A</a>
+    <a href="#memory">13. Cheat Sheet</a>
+  </nav>
+
+  <!-- ===== 1. WHAT IS REST ===== -->
+  <section class="concept-section" id="what-is-rest">
+    <div class="section-label">01 &mdash; The Big Picture</div>
+    <h2>What is REST? Why does it exist?</h2>
+    <p class="tagline">&ldquo;REST is just agreeing on HOW two computers talk to each other over the internet&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#127829; Real World Analogy</div>
+      <p>Imagine a restaurant. You (client) sit at a table and order food by telling the <strong>waiter</strong> (REST API) what you want. The waiter goes to the kitchen (backend/database), gets your order, and brings it back. You never go into the kitchen yourself. The <em>menu</em> is the API documentation &mdash; it tells you what you can ask for and how.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="ccard">
+        <h3><span class="icon">&#127760;</span> What REST stands for</h3>
+        <p><strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer &mdash; it's an architectural style (not a protocol or library) for building web services that:</p>
+        <ul>
+          <li>Communicate over <strong>HTTP</strong></li>
+          <li>Exchange data as <strong>JSON or XML</strong></li>
+          <li>Are <strong>stateless</strong> (server remembers nothing between calls)</li>
+          <li>Use standard <strong>URLs + HTTP verbs</strong> to define operations</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3><span class="icon">&#9889;</span> Why not just use regular Spring MVC?</h3>
+        <p>Regular Spring MVC returns <strong>HTML views</strong> (JSP pages) to a browser. REST returns <strong>raw data (JSON)</strong> that any client can consume &mdash; mobile apps, other servers, React frontends, Python scripts. That's the key difference.</p>
+        <div class="analogy-box" style="margin-top:10px;">
+          <div class="analogy-label">Simple Difference</div>
+          <p>Spring MVC → returns <code>String</code> (view name) → renders JSP<br>Spring REST → returns <strong>Java Object</strong> → auto-converts to JSON</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <p><strong>Key REST Constraints:</strong> Stateless (no session), Uniform interface (URLs + HTTP verbs), Client-Server separation, Cacheable responses, Layered system.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 2. HTTP METHODS ===== -->
+  <section class="concept-section" id="http-methods">
+    <div class="section-label">02 &mdash; HTTP Methods</div>
+    <h2>HTTP Methods = CRUD Operations</h2>
+    <p class="tagline">&ldquo;There are only 5 things you can do to data &mdash; REST maps each to an HTTP verb&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#128218; Analogy: Google Docs</div>
+      <p>Think of a shared Google Doc. You can <strong>read</strong> it (GET), <strong>create</strong> a new one (POST), <strong>replace</strong> it entirely (PUT), <strong>update</strong> just one line (PATCH), or <strong>delete</strong> it (DELETE). REST uses the exact same idea for any resource.</p>
+    </div>
+
+    <table class="concept-table">
+      <thead>
+        <tr><th>HTTP Verb</th><th>CRUD Operation</th><th>URL Example</th><th>What it does</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method-badge method-get">GET</span></td>
+          <td>Read</td>
+          <td><code>/customers</code> or <code>/customers/1</code></td>
+          <td>Fetch all customers, or customer with ID 1. <strong>Never changes data.</strong></td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-post">POST</span></td>
+          <td>Create</td>
+          <td><code>/customers</code></td>
+          <td>Create a new customer. Send data in <strong>request body</strong> as JSON.</td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-put">PUT</span></td>
+          <td>Update (full)</td>
+          <td><code>/customers/1</code></td>
+          <td>Replace customer 1 entirely with new data. Send <strong>complete object</strong>.</td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-patch">PATCH</span></td>
+          <td>Update (partial)</td>
+          <td><code>/customers/1</code></td>
+          <td>Update only the fields you send. Email only? Just send email.</td>
+        </tr>
+        <tr>
+          <td><span class="method-badge method-delete">DELETE</span></td>
+          <td>Delete</td>
+          <td><code>/customers/1</code></td>
+          <td>Delete customer 1. Usually no body in request.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-box">
+      <p><strong>Idempotent methods:</strong> GET, PUT, DELETE can be called multiple times with same result. POST is NOT idempotent &mdash; calling it twice creates two records.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 3. ALL ANNOTATIONS ===== -->
+  <section class="concept-section" id="annotations">
+    <div class="section-label">03 &mdash; The Annotations Toolkit</div>
+    <h2>Every REST Annotation Explained</h2>
+    <p class="tagline">&ldquo;Annotations are just instructions you paste on your code to tell Spring what to do&rdquo;</p>
+
+    <h3 style="color:var(--text-bright); font-size:1.1rem; margin:20px 0 12px;">&#127921; Class-Level Annotations</h3>
+    <div class="grid-2">
+      <div class="ann-card">
+        <div class="ann-name">@RestController</div>
+        <p>Marks this class as a REST endpoint. It's a shortcut for <code>@Controller + @ResponseBody</code>. Every method return value is automatically converted to JSON.</p>
+        <div class="badge-row"><span class="mini-badge">Class-level</span><span class="mini-badge">Required</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@Controller</div>
+        <p>Marks a class as Spring MVC controller (returns view names). For REST, prefer <code>@RestController</code> instead. Use @Controller only when returning HTML views.</p>
+        <div class="badge-row"><span class="mini-badge">Class-level</span><span class="mini-badge">MVC</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@RequestMapping("/api/v1")</div>
+        <p>Defines the base URL prefix for all methods in this controller. All endpoints inside this controller will start with <code>/api/v1/...</code></p>
+        <div class="badge-row"><span class="mini-badge">Class &amp; Method</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@CrossOrigin</div>
+        <p>Allows requests from different domains (CORS). Without this, a browser on <code>localhost:3000</code> cannot call your API on <code>localhost:8080</code>.</p>
+        <div class="badge-row"><span class="mini-badge">Class-level</span><span class="mini-badge">CORS</span></div>
+      </div>
+    </div>
+
+    <h3 style="color:var(--text-bright); font-size:1.1rem; margin:20px 0 12px;">&#127985; Method-Level Mapping Annotations</h3>
+    <div class="grid-2">
+      <div class="ann-card">
+        <div class="ann-name">@GetMapping("/customers")</div>
+        <p>Maps HTTP GET requests to this method. Used to <strong>read/fetch</strong> data. Shortcut for <code>@RequestMapping(method = RequestMethod.GET)</code>.</p>
+        <div class="badge-row"><span class="mini-badge method-get" style="border-radius:5px;">GET</span><span class="mini-badge">Read</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@PostMapping("/customers")</div>
+        <p>Maps HTTP POST requests. Used to <strong>create</strong> new resources. Request body contains the new object as JSON.</p>
+        <div class="badge-row"><span class="mini-badge method-post" style="border-radius:5px;">POST</span><span class="mini-badge">Create</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@PutMapping("/customers/{id}")</div>
+        <p>Maps HTTP PUT requests. Used to <strong>fully update</strong> an existing resource. Must send complete object in body.</p>
+        <div class="badge-row"><span class="mini-badge method-put" style="border-radius:5px;">PUT</span><span class="mini-badge">Full Update</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@DeleteMapping("/customers/{id}")</div>
+        <p>Maps HTTP DELETE requests. Used to <strong>delete</strong> a resource by its ID from the URL path.</p>
+        <div class="badge-row"><span class="mini-badge method-delete" style="border-radius:5px;">DELETE</span><span class="mini-badge">Remove</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@PatchMapping("/customers/{id}")</div>
+        <p>Maps HTTP PATCH requests. Used to <strong>partially update</strong> a resource. Only the fields you send will be changed.</p>
+        <div class="badge-row"><span class="mini-badge method-patch" style="border-radius:5px;">PATCH</span><span class="mini-badge">Partial Update</span></div>
+      </div>
+    </div>
+
+    <h3 style="color:var(--text-bright); font-size:1.1rem; margin:20px 0 12px;">&#127912; Parameter Extraction Annotations</h3>
+    <div class="grid-2">
+      <div class="ann-card">
+        <div class="ann-name">@PathVariable</div>
+        <p>Extracts a value from the <strong>URL path</strong>. URL: <code>/customers/42</code> → <code>@PathVariable int id</code> gives you <code>42</code>.</p>
+        <div class="badge-row"><span class="mini-badge">URL path</span><span class="mini-badge">Required</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@RequestParam</div>
+        <p>Extracts a value from <strong>query string</strong>. URL: <code>/customers?type=GOLD</code> → <code>@RequestParam String type</code> gives you <code>GOLD</code>.</p>
+        <div class="badge-row"><span class="mini-badge">Query string</span><span class="mini-badge">Optional</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@RequestBody</div>
+        <p>Takes the <strong>JSON from request body</strong> and auto-converts it into a Java object using Jackson. Used in POST/PUT methods to receive data.</p>
+        <div class="badge-row"><span class="mini-badge">Body → Java object</span><span class="mini-badge">POST/PUT</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@RequestHeader</div>
+        <p>Extracts a value from an <strong>HTTP header</strong>. Example: reading an Authorization token from <code>Authorization: Bearer &lt;token&gt;</code> header.</p>
+        <div class="badge-row"><span class="mini-badge">HTTP headers</span><span class="mini-badge">Auth</span></div>
+      </div>
+    </div>
+
+    <h3 style="color:var(--text-bright); font-size:1.1rem; margin:20px 0 12px;">&#128200; Response Annotations</h3>
+    <div class="grid-2">
+      <div class="ann-card">
+        <div class="ann-name">@ResponseBody</div>
+        <p>Tells Spring to write the return value <strong>directly to the HTTP response body</strong> as JSON/XML. Already included in <code>@RestController</code>.</p>
+        <div class="badge-row"><span class="mini-badge">Implicit in @RestController</span></div>
+      </div>
+      <div class="ann-card">
+        <div class="ann-name">@ResponseStatus(HttpStatus.CREATED)</div>
+        <p>Sets the <strong>HTTP status code</strong> of the response. Without this, Spring returns 200 by default. Use <code>CREATED (201)</code> for POST, etc.</p>
+        <div class="badge-row"><span class="mini-badge">HTTP status</span><span class="mini-badge">201/204/404</span></div>
+      </div>
+    </div>
+
+    <div class="trap-box">
+      <div class="trap-label">&#9888; Common Mistake</div>
+      <p><code>@Controller</code> alone does NOT return JSON — it looks for a view (JSP). If you use <code>@Controller</code> and want JSON, you must add <code>@ResponseBody</code> on each method. That's why <code>@RestController</code> = <code>@Controller + @ResponseBody</code> exists — it saves you from forgetting.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 4. RESTCONTROLLER ===== -->
+  <section class="concept-section" id="restcontroller">
+    <div class="section-label">04 &mdash; @RestController Deep Dive</div>
+    <h2>@RestController — The Heart of REST</h2>
+    <p class="tagline">&ldquo;This one annotation turns a plain Java class into a full REST API endpoint&rdquo;</p>
+
+    <div class="code-block"><span class="ann">@RestController</span>                          <span class="cmt">// 1. This is a REST controller (JSON in/out)</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/customers"</span>)          <span class="cmt">// 2. Base URL for all methods below</span>
+<span class="kw">public class</span> <span class="cls">CustomerController</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerService</span> customerService;  <span class="cmt">// Injected service</span>
+
+    <span class="cmt">// GET /api/customers → returns all customers as JSON</span>
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">getAllCustomers</span>() {
+        <span class="kw">return</span> customerService.<span class="fn">findAll</span>();    <span class="cmt">// Spring auto-converts list → JSON array</span>
+    }
+
+    <span class="cmt">// GET /api/customers/5 → returns customer with id=5</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">getById</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">return</span> customerService.<span class="fn">findById</span>(id);
+    }
+
+    <span class="cmt">// GET /api/customers?type=GOLD → filter by type</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/by-type"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">List</span>&lt;<span class="cls">Customer</span>&gt;&gt; <span class="fn">getByType</span>(
+            <span class="ann">@RequestParam</span> <span class="cls">String</span> type) {
+        <span class="cls">List</span>&lt;<span class="cls">Customer</span>&gt; result = customerService.<span class="fn">findByType</span>(type);
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(result);    <span class="cmt">// 200 OK + JSON body</span>
+    }
+
+    <span class="cmt">// POST /api/customers → create new customer</span>
+    <span class="ann">@PostMapping</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">createCustomer</span>(
+            <span class="ann">@RequestBody</span> <span class="cls">Customer</span> customer) {   <span class="cmt">// JSON body → Customer object</span>
+        <span class="cls">Customer</span> saved = customerService.<span class="fn">save</span>(customer);
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">status</span>(<span class="cls">HttpStatus</span>.CREATED).<span class="fn">body</span>(saved); <span class="cmt">// 201</span>
+    }
+
+    <span class="cmt">// PUT /api/customers/5 → full update</span>
+    <span class="ann">@PutMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">updateCustomer</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id,
+                                      <span class="ann">@RequestBody</span> <span class="cls">Customer</span> customer) {
+        customer.<span class="fn">setId</span>(id);
+        <span class="kw">return</span> customerService.<span class="fn">save</span>(customer);
+    }
+
+    <span class="cmt">// DELETE /api/customers/5 → delete</span>
+    <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.NO_CONTENT)   <span class="cmt">// 204 - success, no body</span>
+    <span class="kw">public void</span> <span class="fn">deleteCustomer</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        customerService.<span class="fn">deleteById</span>(id);
+    }
+}</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 5. REQUEST MAPPING ===== -->
+  <section class="concept-section" id="request-mapping">
+    <div class="section-label">05 &mdash; URL Design</div>
+    <h2>Designing URLs the Right Way</h2>
+    <p class="tagline">&ldquo;Good REST URLs read like sentences describing a resource, not an action&rdquo;</p>
+
+    <div class="grid-2">
+      <div class="ccard">
+        <h3><span class="icon">&#10003;</span> Good REST URL Design</h3>
+        <ul>
+          <li><code>/customers</code> &mdash; all customers</li>
+          <li><code>/customers/5</code> &mdash; customer with id 5</li>
+          <li><code>/customers/5/orders</code> &mdash; orders of customer 5</li>
+          <li><code>/products?category=electronics</code> &mdash; filtered</li>
+          <li>Use <strong>nouns</strong>, not verbs in URLs</li>
+          <li>Use <strong>plural</strong> for collections</li>
+          <li>Use <strong>lowercase + hyphens</strong></li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3><span class="icon">&#10005;</span> Bad URL Design (Anti-patterns)</h3>
+        <ul>
+          <li><code>/getCustomer?id=5</code> &mdash; don't use verbs in URL</li>
+          <li><code>/deleteCustomer/5</code> &mdash; HTTP verb already says DELETE</li>
+          <li><code>/Customer</code> &mdash; don't use Pascal Case</li>
+          <li><code>/get_all_orders</code> &mdash; don't use underscores</li>
+          <li><code>/customer</code> &mdash; use plural for collections</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="cmt">// PathVariable vs RequestParam — when to use which?</span>
+
+<span class="cmt">// Use @PathVariable when the value IDENTIFIES a specific resource</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/customers/{id}"</span>)               <span class="cmt">// /customers/42</span>
+<span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">getById</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) { ... }
+
+<span class="cmt">// Use @RequestParam when the value FILTERS or SORTS a collection</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/customers"</span>)                       <span class="cmt">// /customers?type=GOLD&amp;page=0</span>
+<span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">filter</span>(
+    <span class="ann">@RequestParam</span>(<span class="str">"type"</span>) <span class="cls">String</span> type,
+    <span class="ann">@RequestParam</span>(defaultValue = <span class="str">"0"</span>) <span class="kw">int</span> page) { ... }</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 6. RESPONSEENTITY ===== -->
+  <section class="concept-section" id="response-entity">
+    <div class="section-label">06 &mdash; ResponseEntity</div>
+    <h2>ResponseEntity — Full Control Over Your Response</h2>
+    <p class="tagline">&ldquo;ResponseEntity lets you control not just the body, but the status code and headers too&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#128230; Analogy: Sending a Package</div>
+      <p>If you just return a Java object, it's like handing someone a box with no label. <code>ResponseEntity</code> is like packing it properly &mdash; you choose the <strong>box contents</strong> (body), the <strong>shipping label</strong> (headers), and the <strong>delivery status</strong> (HTTP status code).</p>
+    </div>
+
+    <div class="code-block"><span class="cmt">// Without ResponseEntity — limited control</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+<span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">get</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+    <span class="kw">return</span> repo.<span class="fn">findById</span>(id).<span class="fn">orElse</span>(<span class="kw">null</span>);  <span class="cmt">// returns null = 200 OK with null body ❌</span>
+}
+
+<span class="cmt">// With ResponseEntity — proper control</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+<span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">get</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+    <span class="kw">return</span> repo.<span class="fn">findById</span>(id)
+        .<span class="fn">map</span>(c -&gt; <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(c))              <span class="cmt">// Found → 200 OK + body ✅</span>
+        .<span class="fn">orElse</span>(<span class="cls">ResponseEntity</span>.<span class="fn">notFound</span>().<span class="fn">build</span>()); <span class="cmt">// Not found → 404 ✅</span>
+}
+
+<span class="cmt">// POST with 201 Created + Location header</span>
+<span class="ann">@PostMapping</span>
+<span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">create</span>(<span class="ann">@RequestBody</span> <span class="cls">Customer</span> c) {
+    <span class="cls">Customer</span> saved = repo.<span class="fn">save</span>(c);
+    <span class="cls">URI</span> location = <span class="cls">URI</span>.<span class="fn">create</span>(<span class="str">"/api/customers/"</span> + saved.<span class="fn">getId</span>());
+    <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">created</span>(location).<span class="fn">body</span>(saved); <span class="cmt">// 201 Created ✅</span>
+}
+
+<span class="cmt">// Common ResponseEntity shortcuts:</span>
+<span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(body)                   <span class="cmt">// 200 OK</span>
+<span class="cls">ResponseEntity</span>.<span class="fn">created</span>(uri).<span class="fn">body</span>(data)   <span class="cmt">// 201 Created</span>
+<span class="cls">ResponseEntity</span>.<span class="fn">noContent</span>().<span class="fn">build</span>()       <span class="cmt">// 204 No Content</span>
+<span class="cls">ResponseEntity</span>.<span class="fn">notFound</span>().<span class="fn">build</span>()        <span class="cmt">// 404 Not Found</span>
+<span class="cls">ResponseEntity</span>.<span class="fn">badRequest</span>().<span class="fn">body</span>(msg)    <span class="cmt">// 400 Bad Request</span></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 7. JPA INTEGRATION ===== -->
+  <section class="concept-section" id="jpa-integration">
+    <div class="section-label">07 &mdash; Spring Data JPA Integration</div>
+    <h2>Connecting REST to a Database via Spring Data JPA</h2>
+    <p class="tagline">&ldquo;JPA handles the database side, REST handles the web side. Together they build a full backend.&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#127970; Analogy: Hotel System</div>
+      <p>The REST Controller is the <strong>front desk</strong> (handles guest requests). The Service is the <strong>manager</strong> (applies business rules). The JPA Repository is the <strong>filing cabinet</strong> that stores/retrieves booking records from the actual database.</p>
+    </div>
+
+    <h3 style="color:var(--text-bright); font-size:1.05rem; margin:18px 0 12px;">&#9881; Layer by Layer — Full CustomerBean Example</h3>
+
+    <div class="code-block"><span class="cmt">// ─── Layer 1: Entity (The Java ↔ Database mapping) ───</span>
+<span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"customers"</span>)
+<span class="kw">public class</span> <span class="cls">CustomerBean</span> {
+    <span class="ann">@Id</span>
+    <span class="ann">@GeneratedValue</span>(strategy = <span class="cls">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="cls">Long</span> id;
+
+    <span class="ann">@Column</span>(name = <span class="str">"customer_type"</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="cls">String</span> customerType;  <span class="cmt">// e.g. "GOLD", "SILVER", "PLATINUM"</span>
+
+    <span class="kw">private</span> <span class="cls">String</span> name;
+    <span class="kw">private</span> <span class="cls">String</span> email;
+    <span class="cmt">// getters &amp; setters...</span>
+}</div>
+
+    <div class="code-block"><span class="cmt">// ─── Layer 2: DAO Interface (Spring Data JPA) ───</span>
+<span class="kw">public interface</span> <span class="cls">CustomerDAO</span> <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">CustomerBean</span>, <span class="cls">Long</span>&gt; {
+
+    <span class="cmt">// Spring auto-generates: SELECT * FROM customers WHERE customer_type = ?</span>
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType);
+
+    <span class="cmt">// Custom JPQL query for complex needs</span>
+    <span class="ann">@Query</span>(<span class="str">"SELECT c FROM CustomerBean c WHERE c.customerType = :type ORDER BY c.name"</span>)
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByTypeSorted</span>(<span class="ann">@Param</span>(<span class="str">"type"</span>) <span class="cls">String</span> type);
+}</div>
+
+    <div class="code-block"><span class="cmt">// ─── Layer 3: Service Interface ───</span>
+<span class="kw">public interface</span> <span class="cls">CustomerService</span> {
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType);
+    <span class="cls">CustomerBean</span> <span class="fn">save</span>(<span class="cls">CustomerBean</span> customer);
+    <span class="cls">CustomerBean</span> <span class="fn">findById</span>(<span class="cls">Long</span> id);
+    <span class="kw">void</span> <span class="fn">deleteById</span>(<span class="cls">Long</span> id);
+}
+
+<span class="cmt">// ─── Layer 3b: Service Implementation ───</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">CustomerServiceImpl</span> <span class="kw">implements</span> <span class="cls">CustomerService</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerDAO</span> customerDAO;   <span class="cmt">// JPA Repository injected here</span>
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType) {
+        <span class="kw">return</span> customerDAO.<span class="fn">findByCustomerType</span>(customerType);  <span class="cmt">// hits DB</span>
+    }
+
+    <span class="ann">@Override</span>
+    <span class="ann">@Transactional</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span> <span class="fn">save</span>(<span class="cls">CustomerBean</span> customer) {
+        <span class="kw">return</span> customerDAO.<span class="fn">save</span>(customer);
+    }
+}</div>
+
+    <div class="code-block"><span class="cmt">// ─── Layer 4: REST Controller (wires everything together) ───</span>
+<span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/customers"</span>)
+<span class="kw">public class</span> <span class="cls">CustomerController</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerService</span> customerService;
+
+    <span class="cmt">// Assignment: getCustomerByCustomerType</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/by-type"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt;&gt; <span class="fn">getByType</span>(
+            <span class="ann">@RequestParam</span>(<span class="str">"customerType"</span>) <span class="cls">String</span> customerType) {
+
+        <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; customers =
+            customerService.<span class="fn">findByCustomerType</span>(customerType);
+
+        <span class="kw">if</span> (customers.<span class="fn">isEmpty</span>()) {
+            <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">notFound</span>().<span class="fn">build</span>();  <span class="cmt">// 404</span>
+        }
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(customers);            <span class="cmt">// 200 OK + JSON list</span>
+    }
+}</div>
+
+    <div class="trap-box">
+      <div class="trap-label">&#9888; Important: application.properties for JPA + REST</div>
+      <p>You must configure your DB connection for the JPA layer to work:</p>
+    </div>
+
+    <div class="code-block"><span class="cmt"># application.properties</span>
+spring.datasource.url=jdbc:mysql://localhost:3306/customerdb
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update      <span class="cmt"># auto-creates/updates tables</span>
+spring.jpa.show-sql=true                  <span class="cmt"># print SQL to console</span>
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+server.port=8080</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 8. FULL ARCHITECTURE ===== -->
+  <section class="concept-section" id="architecture">
+    <div class="section-label">08 &mdash; Full Architecture</div>
+    <h2>The Full Spring REST + JPA Architecture</h2>
+    <p class="tagline">&ldquo;Every request flows through 4 layers. Each layer has one job.&rdquo;</p>
+
+    <div class="arch-layer ctrl">
+      <div class="layer-icon">&#127760;</div>
+      <div>
+        <div class="layer-name">&#8594; @RestController (CustomerController)</div>
+        <div class="layer-sub">Receives HTTP Request, maps URL+verb, returns JSON response</div>
+      </div>
+    </div>
+    <div class="arch-arrow">&#8595;</div>
+    <div class="arch-layer svc">
+      <div class="layer-icon">&#9881;</div>
+      <div>
+        <div class="layer-name">&#8594; @Service (CustomerServiceImpl)</div>
+        <div class="layer-sub">Business logic, validation, @Transactional, orchestrates DAO calls</div>
+      </div>
+    </div>
+    <div class="arch-arrow">&#8595;</div>
+    <div class="arch-layer repo">
+      <div class="layer-icon">&#128218;</div>
+      <div>
+        <div class="layer-name">&#8594; @Repository / JpaRepository (CustomerDAO)</div>
+        <div class="layer-sub">Spring Data auto-implements CRUD. findBy methods generate SQL automatically.</div>
+      </div>
+    </div>
+    <div class="arch-arrow">&#8595;</div>
+    <div class="arch-layer db">
+      <div class="layer-icon">&#128200;</div>
+      <div>
+        <div class="layer-name">&#8594; Database (MySQL / H2 / PostgreSQL)</div>
+        <div class="layer-sub">Hibernate executes SQL. JPA entities map to table rows.</div>
+      </div>
+    </div>
+
+    <div class="key-box" style="margin-top:20px;">
+      <p><strong>Rule of Thumb:</strong> Controller talks only to Service. Service talks only to DAO. DAO talks only to DB. <em>Never skip a layer</em> — no @Autowired DAO inside a Controller.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 9. RESTTEMPLATE ===== -->
+  <section class="concept-section" id="resttemplate">
+    <div class="section-label">09 &mdash; RestTemplate</div>
+    <h2>RestTemplate — Your Java HTTP Client</h2>
+    <p class="tagline">&ldquo;RestTemplate lets one Spring app call another app's REST API, just like your browser calls websites&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#128222; Analogy: Calling a Restaurant</div>
+      <p>Your app is the customer. The other app's REST API is a restaurant. <strong>RestTemplate</strong> is your phone. You call (make HTTP request), they answer (return JSON), and you get the food (Java object) delivered without leaving your app.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="ccard">
+        <h3>What RestTemplate Does</h3>
+        <ul>
+          <li>Makes <strong>HTTP calls</strong> from Java code to external REST APIs</li>
+          <li>Auto-converts JSON response to <strong>Java objects</strong></li>
+          <li>Auto-converts Java objects to <strong>JSON for request body</strong></li>
+          <li>Handles error responses (4xx, 5xx) with exceptions</li>
+          <li>Supports all HTTP verbs: GET, POST, PUT, DELETE</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>Core RestTemplate Methods</h3>
+        <table class="concept-table" style="margin:0;">
+          <thead><tr><th>Method</th><th>HTTP Verb</th></tr></thead>
+          <tbody>
+            <tr><td><code>getForObject(url, Type.class)</code></td><td><span class="method-badge method-get">GET</span></td></tr>
+            <tr><td><code>getForEntity(url, Type.class)</code></td><td><span class="method-badge method-get">GET</span> + status</td></tr>
+            <tr><td><code>postForObject(url, body, Type.class)</code></td><td><span class="method-badge method-post">POST</span></td></tr>
+            <tr><td><code>put(url, body)</code></td><td><span class="method-badge method-put">PUT</span></td></tr>
+            <tr><td><code>delete(url)</code></td><td><span class="method-badge method-delete">DELETE</span></td></tr>
+            <tr><td><code>exchange(url, method, entity, Type)</code></td><td>Any verb</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="cmt">// ─── Setting up RestTemplate ───</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">AppConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="cls">RestTemplate</span> <span class="fn">restTemplate</span>() {
+        <span class="kw">return new</span> <span class="cls">RestTemplate</span>();   <span class="cmt">// Create once, inject everywhere</span>
+    }
+}
+
+<span class="cmt">// ─── Using RestTemplate in a Consumer app ───</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">CustomerConsumerService</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">RestTemplate</span> restTemplate;
+
+    <span class="kw">private</span> <span class="kw">static final</span> <span class="cls">String</span> BASE_URL = <span class="str">"http://localhost:8080/api/customers"</span>;
+
+    <span class="cmt">// 1. GET — fetch a single customer</span>
+    <span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">getCustomerById</span>(<span class="cls">Long</span> id) {
+        <span class="cls">String</span> url = BASE_URL + <span class="str">"/"</span> + id;
+        <span class="kw">return</span> restTemplate.<span class="fn">getForObject</span>(url, <span class="cls">Customer</span>.class);
+        <span class="cmt">// Makes GET http://localhost:8080/api/customers/1</span>
+        <span class="cmt">// JSON response → Customer Java object (auto-deserialised)</span>
+    }
+
+    <span class="cmt">// 2. GET — fetch a list</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">getByType</span>(<span class="cls">String</span> type) {
+        <span class="cls">String</span> url = BASE_URL + <span class="str">"/by-type?customerType="</span> + type;
+        <span class="cls">Customer</span>[] arr = restTemplate.<span class="fn">getForObject</span>(url, <span class="cls">Customer</span>[].<span class="kw">class</span>);
+        <span class="kw">return</span> <span class="cls">Arrays</span>.<span class="fn">asList</span>(arr);
+    }
+
+    <span class="cmt">// 3. POST — create a new customer</span>
+    <span class="kw">public</span> <span class="cls">Customer</span> <span class="fn">createCustomer</span>(<span class="cls">Customer</span> customer) {
+        <span class="kw">return</span> restTemplate.<span class="fn">postForObject</span>(BASE_URL, customer, <span class="cls">Customer</span>.class);
+        <span class="cmt">// customer object → JSON body, response JSON → Customer object</span>
+    }
+
+    <span class="cmt">// 4. PUT — update an existing customer</span>
+    <span class="kw">public void</span> <span class="fn">updateCustomer</span>(<span class="cls">Long</span> id, <span class="cls">Customer</span> customer) {
+        <span class="cls">String</span> url = BASE_URL + <span class="str">"/"</span> + id;
+        restTemplate.<span class="fn">put</span>(url, customer);  <span class="cmt">// no return value</span>
+    }
+
+    <span class="cmt">// 5. DELETE — delete a customer</span>
+    <span class="kw">public void</span> <span class="fn">deleteCustomer</span>(<span class="cls">Long</span> id) {
+        restTemplate.<span class="fn">delete</span>(BASE_URL + <span class="str">"/"</span> + id);
+    }
+
+    <span class="cmt">// 6. exchange() — most flexible, gives you full ResponseEntity</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Customer</span>&gt; <span class="fn">getWithHeaders</span>(<span class="cls">Long</span> id) {
+        <span class="cls">HttpHeaders</span> headers = <span class="kw">new</span> <span class="cls">HttpHeaders</span>();
+        headers.<span class="fn">set</span>(<span class="str">"Authorization"</span>, <span class="str">"Bearer mytoken"</span>);
+        <span class="cls">HttpEntity</span>&lt;?&gt; entity = <span class="kw">new</span> <span class="cls">HttpEntity</span>&lt;&gt;(headers);
+
+        <span class="kw">return</span> restTemplate.<span class="fn">exchange</span>(
+            BASE_URL + <span class="str">"/"</span> + id,
+            <span class="cls">HttpMethod</span>.GET,
+            entity,
+            <span class="cls">Customer</span>.class
+        );
+    }
+}</div>
+
+    <div class="key-box">
+      <p><strong>getForObject vs getForEntity:</strong> <code>getForObject</code> returns only the body. <code>getForEntity</code> returns body + HTTP status + headers (a full <code>ResponseEntity</code>). Use <code>getForEntity</code> when you care about the status code.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 10. PRODUCER-CONSUMER ===== -->
+  <section class="concept-section" id="producer-consumer">
+    <div class="section-label">10 &mdash; Producer &amp; Consumer Pattern</div>
+    <h2>Producer — Consumer Architecture with RestTemplate</h2>
+    <p class="tagline">&ldquo;Two separate Spring Boot apps. One offers data (Producer). One consumes it (Consumer).&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#128250; Analogy: YouTube</div>
+      <p><strong>YouTube</strong> is the Producer &mdash; it has a REST API that offers videos. Your <strong>phone YouTube app</strong> is the Consumer &mdash; it calls YouTube's REST API to get videos and shows them. Both are separate apps. They talk via HTTP.</p>
+    </div>
+
+    <div class="producer-consumer">
+      <div class="pc-box consumer">
+        <div class="pc-icon">&#128421;</div>
+        <div class="pc-title">Consumer App</div>
+        <div class="pc-sub">Console / another service<br>Uses <strong>RestTemplate</strong><br>to make HTTP calls</div>
+      </div>
+      <div class="pc-arrow">
+        <div class="pc-line">&#8646;</div>
+        <div class="pc-label">RestTemplate<br>HTTP/JSON</div>
+      </div>
+      <div class="pc-box producer">
+        <div class="pc-icon">&#127760;</div>
+        <div class="pc-title">Producer App</div>
+        <div class="pc-sub">Spring Boot REST API<br><strong>@RestController</strong><br>Exposes JSON endpoints</div>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="cmt">// ════════════════════════════════════════════════════════
+// PRODUCER APP (runs on port 8080)
+// ════════════════════════════════════════════════════════</span>
+<span class="ann">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="cls">CustomerProducerApp</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">SpringApplication</span>.<span class="fn">run</span>(<span class="cls">CustomerProducerApp</span>.class, args);
+    }
+}
+
+<span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/customers"</span>)
+<span class="kw">public class</span> <span class="cls">CustomerController</span> {
+    <span class="ann">@Autowired</span> <span class="kw">private</span> <span class="cls">CustomerService</span> service;
+
+    <span class="ann">@GetMapping</span>(<span class="str">"/by-type"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt;&gt; <span class="fn">getByType</span>(
+            <span class="ann">@RequestParam</span> <span class="cls">String</span> customerType) {
+    <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(service.<span class="fn">findByCustomerType</span>(customerType));
+    }
+}</div>
+
+    <div class="code-block"><span class="cmt">// ════════════════════════════════════════════════════════
+// CONSUMER APP (runs on port 9090) — console application
+// ════════════════════════════════════════════════════════</span>
+<span class="ann">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="cls">CustomerConsumerApp</span> <span class="kw">implements</span> <span class="cls">CommandLineRunner</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">RestTemplate</span> restTemplate;
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">SpringApplication</span>.<span class="fn">run</span>(<span class="cls">CustomerConsumerApp</span>.class, args);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>(<span class="cls">String</span>... args) {
+        <span class="cmt">// Call Producer's REST API to get GOLD customers</span>
+        <span class="cls">String</span> url = <span class="str">"http://localhost:8080/api/customers/by-type?customerType=GOLD"</span>;
+        <span class="cls">CustomerBean</span>[] customers = restTemplate.<span class="fn">getForObject</span>(url, <span class="cls">CustomerBean</span>[].<span class="kw">class</span>);
+
+        <span class="kw">for</span> (<span class="cls">CustomerBean</span> c : customers) {
+            <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"Customer: "</span> + c.<span class="fn">getName</span>() + <span class="str">" | Type: "</span> + c.<span class="fn">getCustomerType</span>());
+        }
+    }
+}
+
+<span class="cmt"># Consumer application.properties
+server.port=9090    # Different port from producer!
+# No datasource needed — consumer hits REST, not DB</span></div>
+
+    <div class="key-box">
+      <p><strong>Key Points:</strong> Producer and Consumer are <em>separate Maven/Spring Boot projects</em>. Producer runs on port 8080, Consumer on 9090. Consumer uses RestTemplate to call Producer over HTTP. Producer doesn't know who calls it — it just responds to REST requests.</p>
+    </div>
+
+    <div class="trap-box">
+      <div class="trap-label">&#9888; RestTemplate in newer Spring</div>
+      <p>In Spring 5+, RestTemplate is in maintenance mode. Modern replacement is <code>WebClient</code> (reactive) or <code>RestClient</code> (Spring 6.1+). For assignments and interviews in older codebases, RestTemplate is still valid and commonly tested.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 11. STATUS CODES ===== -->
+  <section class="concept-section" id="status-codes">
+    <div class="section-label">11 &mdash; HTTP Status Codes</div>
+    <h2>HTTP Status Codes You Must Know</h2>
+    <p class="tagline">&ldquo;The server uses these to tell the client what happened&rdquo;</p>
+    <div class="grid-3">
+      <div class="status-card s2xx"><div class="status-code">200 OK</div><p>GET success. Data returned in body.</p></div>
+      <div class="status-card s2xx"><div class="status-code">201 Created</div><p>POST success. New resource created. Include Location header.</p></div>
+      <div class="status-card s2xx"><div class="status-code">204 No Content</div><p>DELETE/PUT success. No body to return.</p></div>
+      <div class="status-card s4xx"><div class="status-code">400 Bad Request</div><p>Client sent invalid data (missing fields, bad JSON, validation failed).</p></div>
+      <div class="status-card s4xx"><div class="status-code">401 Unauthorized</div><p>Not authenticated. Token missing or expired.</p></div>
+      <div class="status-card s4xx"><div class="status-code">403 Forbidden</div><p>Authenticated but not allowed. No permission for this resource.</p></div>
+      <div class="status-card s4xx"><div class="status-code">404 Not Found</div><p>Resource does not exist. Customer with id 999 not found.</p></div>
+      <div class="status-card s4xx"><div class="status-code">409 Conflict</div><p>Duplicate entry. Email already registered.</p></div>
+      <div class="status-card s5xx"><div class="status-code">500 Internal Error</div><p>Server crashed. Unhandled exception in your code.</p></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 12. INTERVIEW Q&A ===== -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">12 &mdash; Interview Q&amp;A</div>
+    <h2>Top Interview Questions</h2>
+    <p class="tagline">&ldquo;The exact questions interviewers ask about Spring REST&rdquo;</p>
+
+    <div class="qa-block"><div class="qa-q">What is the difference between @Controller and @RestController?</div><div class="qa-a">@Controller returns view names (Strings like "login") which Spring resolves to JSP/Thymeleaf templates. @RestController = @Controller + @ResponseBody on every method. Every return value is written directly to the HTTP response body as JSON/XML — no view resolution happens. Use @RestController for REST APIs.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is @PathVariable vs @RequestParam?</div><div class="qa-a">@PathVariable extracts from URL path: GET /customers/42 → @PathVariable Long id = 42. Use to identify a specific resource. @RequestParam extracts from query string: GET /customers?type=GOLD → @RequestParam String type = "GOLD". Use for filters, sorting, pagination.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What does @RequestBody do?</div><div class="qa-a">Tells Spring to read the HTTP request body (JSON) and deserialise it into a Java object using Jackson. Used in POST/PUT methods. Spring reads Content-Type: application/json header and uses the appropriate MessageConverter.</div></div>
+
+    <div class="qa-block"><div class="qa-q">Why use ResponseEntity instead of returning the object directly?</div><div class="qa-a">Returning an object gives 200 always. ResponseEntity lets you control the HTTP status code (201 for created, 404 for missing), add headers like Location, and return different body types based on conditions. Proper REST APIs must return correct status codes.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is RestTemplate and when do you use it?</div><div class="qa-a">RestTemplate is Spring's synchronous HTTP client. Use it in consumer applications that call external REST APIs. It handles JSON serialisation/deserialisation automatically. Core methods: getForObject, getForEntity, postForObject, put, delete, exchange.</div></div>
+
+    <div class="qa-block"><div class="qa-q">Difference between getForObject and getForEntity?</div><div class="qa-a">getForObject returns only the response body deserialised to the specified type. getForEntity returns a ResponseEntity wrapping the body + HTTP status + headers. Use getForEntity when you need to check the status code or read response headers.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is the Producer-Consumer pattern?</div><div class="qa-a">Producer is a Spring Boot app with @RestController that exposes REST endpoints returning JSON. Consumer is another app that uses RestTemplate to call the Producer's REST API. They run as separate processes, communicate over HTTP, and are fully decoupled. No shared code or database between them.</div></div>
+
+    <div class="qa-block"><div class="qa-q">How does Spring REST integrate with JPA?</div><div class="qa-a">@RestController receives HTTP requests and returns Java objects (Jackson converts to JSON automatically). @Service handles business logic and calls @Repository. JpaRepository talks to the database via Hibernate. Spring Boot auto-configures Jackson when you add spring-boot-starter-web, so Java objects ↔ JSON conversion is seamless.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What HTTP status should a DELETE method return?</div><div class="qa-a">204 No Content on success (resource deleted, nothing to return). 404 Not Found if the resource didn't exist. Use @ResponseStatus(HttpStatus.NO_CONTENT) on the method, or return ResponseEntity.noContent().build().</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is @CrossOrigin?</div><div class="qa-a">CORS is a browser security policy blocking JavaScript from calling APIs on a different domain/port. @CrossOrigin tells Spring to include CORS headers in the response, allowing specific origins. Without it, a React app on localhost:3000 cannot call your API on localhost:8080.</div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 13. MEMORY SHEET ===== -->
+  <section class="concept-section" id="memory">
+    <div class="section-label">13 &mdash; Quick Revision</div>
+    <h2>&#9889; Memory Cheat Sheet</h2>
+    <p class="tagline">&ldquo;Everything in 60 seconds before your interview&rdquo;</p>
+    <div class="memory-grid">
+      <div class="memory-card"><div class="mc-label">@RestController</div><div class="mc-val">= @Controller<br>+ @ResponseBody</div></div>
+      <div class="memory-card"><div class="mc-label">@GetMapping</div><div class="mc-val">Read / Fetch data<br>Idempotent ✅</div></div>
+      <div class="memory-card"><div class="mc-label">@PostMapping</div><div class="mc-val">Create new resource<br>NOT idempotent ❌</div></div>
+      <div class="memory-card"><div class="mc-label">@PutMapping</div><div class="mc-val">Full update<br>Send complete object</div></div>
+      <div class="memory-card"><div class="mc-label">@DeleteMapping</div><div class="mc-val">Delete resource<br>Returns 204</div></div>
+      <div class="memory-card"><div class="mc-label">@PathVariable</div><div class="mc-val">/items/{id}<br>Identifies resource</div></div>
+      <div class="memory-card"><div class="mc-label">@RequestParam</div><div class="mc-val">?type=GOLD<br>Filters / sorts</div></div>
+      <div class="memory-card"><div class="mc-label">@RequestBody</div><div class="mc-val">JSON body → Java<br>POST/PUT methods</div></div>
+      <div class="memory-card"><div class="mc-label">ResponseEntity</div><div class="mc-val">Control status code<br>+ headers + body</div></div>
+      <div class="memory-card"><div class="mc-label">RestTemplate</div><div class="mc-val">Java HTTP client<br>Consumer app uses this</div></div>
+      <div class="memory-card"><div class="mc-label">Producer</div><div class="mc-val">@RestController<br>Exposes JSON API</div></div>
+      <div class="memory-card"><div class="mc-label">Consumer</div><div class="mc-val">RestTemplate<br>Calls Producer API</div></div>
+      <div class="memory-card"><div class="mc-label">200/201/204</div><div class="mc-val">OK / Created / No Content<br>GET / POST / DELETE</div></div>
+      <div class="memory-card"><div class="mc-label">REST Layers</div><div class="mc-val">Controller → Service<br>→ Repository → DB</div></div>
+      <div class="memory-card"><div class="mc-label">@CrossOrigin</div><div class="mc-val">Allow other domains<br>to call your API</div></div>
+    </div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
+
