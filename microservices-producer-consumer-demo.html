@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microservices Producer-Consumer — Simple Demo Project</title>
+  <meta name="description" content="A complete Spring Boot microservices Producer-Consumer demo project with step-by-step annotated code for interview prep." />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* ─── Project file tree ─── */
+    .file-tree {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 2;
+    }
+    .file-tree .folder   { color: var(--blue); font-weight: 700; }
+    .file-tree .javafile { color: var(--green); }
+    .file-tree .propfile { color: var(--warning); }
+    .file-tree .xmlfile  { color: var(--purple); }
+    .file-tree .indent1  { padding-left: 20px; }
+    .file-tree .indent2  { padding-left: 40px; }
+    .file-tree .indent3  { padding-left: 60px; }
+    .file-tree .indent4  { padding-left: 80px; }
+    .file-tree .indent5  { padding-left: 100px; }
+
+    /* ─── App split layout ─── */
+    .app-split {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .app-panel {
+      padding: 0;
+    }
+    .app-panel-header {
+      padding: 14px 20px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: .02em;
+    }
+    .app-panel-header.producer-h { background: rgba(121,192,255,.1); color: var(--blue); border-bottom: 1px solid rgba(121,192,255,.2); }
+    .app-panel-header.consumer-h { background: rgba(100,255,180,.08); color: var(--green); border-bottom: 1px solid rgba(100,255,180,.2); border-left: 1px solid var(--border); }
+    .app-panel-body { padding: 16px; border-left: 1px solid var(--border); }
+    .app-panel-body:first-of-type { border-left: none; }
+
+    /* ─── Port badge ─── */
+    .port-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 2px 10px; border-radius: 100px;
+      margin-left: 6px;
+    }
+    .port-prod { background: rgba(121,192,255,.15); color: var(--blue); border: 1px solid rgba(121,192,255,.3); }
+    .port-cons { background: rgba(100,255,180,.12); color: var(--green); border: 1px solid rgba(100,255,180,.3); }
+
+    /* ─── Flow arrow diagram ─── */
+    .ms-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .ms-box {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 22px;
+      text-align: center;
+      min-width: 150px;
+    }
+    .ms-box.prod { border-color: rgba(121,192,255,.35); background: rgba(121,192,255,.05); }
+    .ms-box.cons { border-color: rgba(100,255,180,.35); background: rgba(100,255,180,.05); }
+    .ms-box.db   { border-color: rgba(255,166,87,.35);  background: rgba(255,166,87,.05); }
+    .ms-box .ms-icon { font-size: 1.8rem; margin-bottom: 4px; }
+    .ms-box .ms-title { font-weight: 800; font-size: 0.9rem; color: var(--text-bright); }
+    .ms-box .ms-sub   { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .ms-arrow {
+      padding: 0 12px;
+      color: var(--purple);
+      font-size: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .ms-arrow .ms-label {
+      font-size: 0.68rem;
+      color: var(--purple);
+      background: rgba(210,168,255,.1);
+      border: 1px solid rgba(210,168,255,.2);
+      padding: 2px 8px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    /* ─── Section labels & h2 ─── */
+    .concept-section h2 { font-size:clamp(1.3rem,2.8vw,1.7rem); font-weight:800; color:var(--text-bright); margin-bottom:8px; letter-spacing:-.03em; }
+    .divider { height:1px; background:var(--border); margin:40px 0; }
+    code { font-family:'JetBrains Mono',monospace; color:var(--blue); font-size:.88em; background:rgba(121,192,255,.08); padding:1px 5px; border-radius:4px; }
+    strong { color: var(--text-bright); }
+    ul { padding-left:1.3em; margin-bottom:10px; }
+    ul li { color:var(--text); margin-bottom:5px; font-size:.93rem; }
+    ul li strong { color:var(--text-bright); }
+
+    /* ─── Numbered step ─── */
+    .step-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .step-num {
+      min-width: 38px; height: 38px;
+      background: rgba(100,255,180,.08);
+      border: 1px solid rgba(100,255,180,.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; color: var(--green); flex-shrink: 0;
+    }
+    .step-body h3 { color: var(--text-bright); font-size: 1rem; margin: 0 0 4px; }
+    .step-body p  { color: var(--muted); font-size: 0.88rem; margin: 0; }
+
+    /* file label above code */
+    .file-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 7px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+    .file-label .fl-icon { font-size: 1rem; }
+    .file-label.prod-file { border-color: rgba(121,192,255,.3); color: var(--blue); }
+    .file-label.cons-file { border-color: rgba(100,255,180,.3); color: var(--green); }
+    .file-label.xml-file  { border-color: rgba(210,168,255,.3); color: var(--purple); }
+    .file-label.prop-file { border-color: rgba(255,166,87,.3);  color: var(--warning); }
+
+    .file-label + .code-block {
+      margin-top: 0;
+      border-radius: 0 8px 8px 8px;
+    }
+
+    @media (max-width: 600px) {
+      .ms-flow { flex-direction: column; }
+      .ms-arrow { flex-direction: row; }
+    }
+  </style>
+</head>
+<body id="top">
+
+<header class="concept-hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <a class="home-btn" href="index.html">&#8962; Home</a>
+        <button type="button" id="themeToggle" title="Toggle Theme" style="background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:7px 14px; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <span id="themeIcon">☀</span>
+          <span id="themeText">Theme</span>
+        </button>
+      </div>
+      <span class="chapter-tag" style="color:var(--purple); background:rgba(210,168,255,.1); border-color:rgba(210,168,255,.25);">Microservices &middot; Spring Boot</span>
+    </div>
+    <h1>Microservices <span class="accent" style="color:var(--purple);">Producer &amp; Consumer</span></h1>
+    <p class="hero-subtitle">A complete, runnable two-app Spring Boot project &mdash; <strong>Producer</strong> exposes a REST API, <strong>Consumer</strong> calls it using RestTemplate. Every single file explained line-by-line in comments. Copy, run, learn.</p>
+    <div class="hero-badges">
+      <span class="hbadge purple">2 Spring Boot Apps</span>
+      <span class="hbadge blue">REST API (Producer)</span>
+      <span class="hbadge green">RestTemplate (Consumer)</span>
+      <span class="hbadge orange">Spring Data JPA</span>
+      <span class="hbadge">MySQL Database</span>
+      <span class="hbadge">CommandLineRunner</span>
+    </div>
+    <div class="hero-flow">
+      <span class="step">Consumer App</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">HTTP GET/POST</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Producer API</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">Service Layer</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">JPA Repository</span>
+      <span class="arrow">&rarr;</span>
+      <span class="step">MySQL DB</span>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <nav class="toc-bar" aria-label="Jump to section">
+    <a href="#what-are-microservices">1. What Are Microservices?</a>
+    <a href="#architecture">2. Architecture</a>
+    <a href="#project-structure">3. Project Structure</a>
+    <a href="#producer">4. Producer App</a>
+    <a href="#consumer">5. Consumer App</a>
+    <a href="#how-to-run">6. How to Run</a>
+    <a href="#flow-trace">7. Full Request Trace</a>
+    <a href="#interview">8. Interview Q&amp;A</a>
+  </nav>
+
+  <!-- ===== 1. WHAT ARE MICROSERVICES ===== -->
+  <section class="concept-section" id="what-are-microservices">
+    <div class="section-label">01 &mdash; The Concept</div>
+    <h2>What Are Microservices?</h2>
+    <p class="tagline">&ldquo;Instead of one giant app doing everything, you build many small apps that each do ONE thing well&rdquo;</p>
+
+    <div class="analogy-box">
+      <div class="analogy-label">&#127829; Analogy: Food Court vs One Big Restaurant</div>
+      <p>A traditional app is like one huge restaurant that does pizza, burgers, sushi, and desserts all in one kitchen — if the pizza oven breaks, the entire restaurant is down. Microservices is like a food court — separate independent stalls: Pizza Stall, Burger Stall, Sushi Bar. If the pizza oven breaks, you can still get a burger. They're <strong>independent, deployed separately, and communicate with each other</strong>.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin:20px 0;">
+      <div class="ccard">
+        <h3><span class="icon">&#127968;</span> Monolith (Traditional)</h3>
+        <ul>
+          <li>One huge codebase / one deployable JAR</li>
+          <li>All layers (web, business, DB) in one project</li>
+          <li>One bug can crash the whole app</li>
+          <li>Hard to scale individual features</li>
+          <li>Example: One Spring Boot app with everything</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3><span class="icon">&#127826;</span> Microservices</h3>
+        <ul>
+          <li>Multiple <strong>small, independent</strong> Spring Boot apps</li>
+          <li>Each app has its own database (optionally)</li>
+          <li>They talk to each other via <strong>REST / HTTP</strong></li>
+          <li>Each app can be scaled and deployed independently</li>
+          <li>Example: Producer app + Consumer app</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <p><strong>In this demo:</strong> Producer = Customer Service (owns DB, exposes REST API). Consumer = a client app (calls Producer's API using RestTemplate). This is the simplest possible microservice pattern &mdash; direct HTTP communication.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 2. ARCHITECTURE ===== -->
+  <section class="concept-section" id="architecture">
+    <div class="section-label">02 &mdash; Architecture</div>
+    <h2>System Architecture</h2>
+    <p class="tagline">&ldquo;Two separate JVMs. One database. One HTTP conversation.&rdquo;</p>
+
+    <div class="ms-flow">
+      <div class="ms-box cons">
+        <div class="ms-icon">&#128421;</div>
+        <div class="ms-title">Consumer App</div>
+        <div class="ms-sub">port 9090<br>CommandLineRunner<br>RestTemplate</div>
+      </div>
+      <div class="ms-arrow">
+        <div>&#8594;</div>
+        <div class="ms-label">HTTP GET<br>/api/customers</div>
+      </div>
+      <div class="ms-box prod">
+        <div class="ms-icon">&#127760;</div>
+        <div class="ms-title">Producer App</div>
+        <div class="ms-sub">port 8080<br>@RestController<br>@Service</div>
+      </div>
+      <div class="ms-arrow">
+        <div>&#8594;</div>
+        <div class="ms-label">JPA Query</div>
+      </div>
+      <div class="ms-box db">
+        <div class="ms-icon">&#128200;</div>
+        <div class="ms-title">MySQL DB</div>
+        <div class="ms-sub">customerdb<br>customers table</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px;">
+      <div class="ccard">
+        <h3>&#127760; Producer App <span class="port-badge port-prod">:8080</span></h3>
+        <ul>
+          <li>Owns and manages the <strong>Customer data</strong></li>
+          <li>Has its own MySQL database</li>
+          <li>Exposes REST endpoints that return JSON</li>
+          <li>Layers: Controller → Service → DAO → DB</li>
+          <li>Anyone can call it via HTTP — decoupled</li>
+        </ul>
+      </div>
+      <div class="ccard">
+        <h3>&#128421; Consumer App <span class="port-badge port-cons">:9090</span></h3>
+        <ul>
+          <li><strong>Does NOT</strong> have its own database</li>
+          <li>Uses <code>RestTemplate</code> to call Producer's API</li>
+          <li>Receives JSON, deserializes to Java objects</li>
+          <li>Implements <code>CommandLineRunner</code> — runs on startup</li>
+          <li>Could be a mobile backend, reporting service, etc.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 3. PROJECT STRUCTURE ===== -->
+  <section class="concept-section" id="project-structure">
+    <div class="section-label">03 &mdash; Project Structure</div>
+    <h2>Project File Structure</h2>
+    <p class="tagline">&ldquo;Two separate Maven projects, each with their own pom.xml and main class&rdquo;</p>
+
+    <div class="app-split">
+      <div class="app-panel">
+        <div class="app-panel-header producer-h">&#127760; producer-app <span class="port-badge port-prod">port 8080</span></div>
+        <div class="app-panel-body">
+          <div class="file-tree">
+            <div class="folder">producer-app/</div>
+            <div class="indent1 xmlfile">&#128196; pom.xml</div>
+            <div class="indent1 folder">src/main/java/com/demo/producer/</div>
+            <div class="indent2 javafile">&#9749; ProducerApp.java  ← main class</div>
+            <div class="indent2 folder">bean/</div>
+            <div class="indent3 javafile">&#9749; CustomerBean.java  ← @Entity</div>
+            <div class="indent2 folder">dao/</div>
+            <div class="indent3 javafile">&#9749; CustomerDAO.java  ← JpaRepository</div>
+            <div class="indent2 folder">service/</div>
+            <div class="indent3 javafile">&#9749; CustomerService.java  ← interface</div>
+            <div class="indent3 javafile">&#9749; CustomerServiceImpl.java</div>
+            <div class="indent2 folder">controller/</div>
+            <div class="indent3 javafile">&#9749; CustomerController.java  ← @RestController</div>
+            <div class="indent1 folder">src/main/resources/</div>
+            <div class="indent2 propfile">&#9881; application.properties</div>
+          </div>
+        </div>
+      </div>
+      <div class="app-panel">
+        <div class="app-panel-header consumer-h">&#128421; consumer-app <span class="port-badge port-cons">port 9090</span></div>
+        <div class="app-panel-body">
+          <div class="file-tree">
+            <div class="folder">consumer-app/</div>
+            <div class="indent1 xmlfile">&#128196; pom.xml</div>
+            <div class="indent1 folder">src/main/java/com/demo/consumer/</div>
+            <div class="indent2 javafile">&#9749; ConsumerApp.java  ← main class</div>
+            <div class="indent2 folder">bean/</div>
+            <div class="indent3 javafile">&#9749; CustomerBean.java  ← plain POJO (mirror)</div>
+            <div class="indent2 folder">config/</div>
+            <div class="indent3 javafile">&#9749; AppConfig.java  ← @Bean RestTemplate</div>
+            <div class="indent2 folder">service/</div>
+            <div class="indent3 javafile">&#9749; CustomerConsumerService.java</div>
+            <div class="indent2 folder">runner/</div>
+            <div class="indent3 javafile">&#9749; AppRunner.java  ← CommandLineRunner</div>
+            <div class="indent1 folder">src/main/resources/</div>
+            <div class="indent2 propfile">&#9881; application.properties</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trap-box">
+      <div class="trap-label">&#9888; Important: These are TWO SEPARATE projects</div>
+      <p>Open each folder separately in your IDE as its own Maven project. Run <code>ProducerApp.java</code> first (starts on 8080), then run <code>ConsumerApp.java</code> (starts on 9090 and immediately calls the Producer).</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 4. PRODUCER APP ===== -->
+  <section class="concept-section" id="producer">
+    <div class="section-label">04 &mdash; Producer App Code</div>
+    <h2>&#127760; Producer App <span class="port-badge port-prod" style="font-size:0.8rem;">port 8080</span></h2>
+    <p class="tagline">&ldquo;This app OWNS the data. It has a DB, REST endpoints, and JPA. Other apps call IT.&rdquo;</p>
+
+    <!-- pom.xml -->
+    <div class="file-label xml-file"><span class="fl-icon">&#128196;</span> producer-app/pom.xml</div>
+    <div class="code-block"><span class="cmt">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cmt">&lt;!--
+  pom.xml — Maven build config for the Producer app.
+  This pulls in:
+    - spring-boot-starter-web      → REST + embedded Tomcat (port 8080)
+    - spring-boot-starter-data-jpa → JPA + Hibernate (ORM layer)
+    - mysql-connector-j            → JDBC driver to connect to MySQL
+--&gt;</span>
+&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.demo&lt;/groupId&gt;
+  &lt;artifactId&gt;producer-app&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+
+  &lt;parent&gt;
+    <span class="cmt">&lt;!-- Spring Boot parent handles all version management for you --&gt;</span>
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+  &lt;/parent&gt;
+
+  &lt;dependencies&gt;
+    <span class="cmt">&lt;!-- Web layer: enables @RestController, @GetMapping etc + embeds Tomcat --&gt;</span>
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    <span class="cmt">&lt;!-- JPA layer: enables @Entity, JpaRepository, Hibernate --&gt;</span>
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    <span class="cmt">&lt;!-- MySQL JDBC driver: physical connection to MySQL database --&gt;</span>
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+      &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+      &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;</div>
+
+    <!-- application.properties PRODUCER -->
+    <div class="file-label prop-file"><span class="fl-icon">&#9881;</span> producer-app/src/main/resources/application.properties</div>
+    <div class="code-block"><span class="cmt"># ─────────────────────────────────────────────────
+# Producer App Configuration
+# This app OWNS the database. It runs on port 8080.
+# ─────────────────────────────────────────────────</span>
+
+<span class="cmt"># Port where this REST API listens. Consumer will call: http://localhost:8080/...</span>
+server.port=8080
+
+<span class="cmt"># JDBC URL — tells Hibernate where the MySQL database is.
+# "customerdb" is the schema/database name — create it first in MySQL:
+#   CREATE DATABASE customerdb;</span>
+spring.datasource.url=jdbc:mysql://localhost:3306/customerdb
+
+<span class="cmt"># MySQL root credentials (change to your actual username/password)</span>
+spring.datasource.username=root
+spring.datasource.password=root
+
+<span class="cmt"># MySQL driver class (required for JDBC connection)</span>
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+<span class="cmt"># ddl-auto=update → Hibernate auto-creates or updates the "customers" table
+# on startup based on your @Entity class. For production, use "validate" instead.</span>
+spring.jpa.hibernate.ddl-auto=update
+
+<span class="cmt"># Prints the actual SQL that Hibernate generates — very useful for learning!</span>
+spring.jpa.show-sql=true
+
+<span class="cmt"># Formats the printed SQL so it's readable</span>
+spring.jpa.properties.hibernate.format_sql=true
+
+<span class="cmt"># MySQL dialect tells Hibernate to generate MySQL-compatible SQL syntax</span>
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect</div>
+
+    <!-- ProducerApp.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> ProducerApp.java — Main Class</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer;
+
+<span class="kw">import</span> org.springframework.boot.SpringApplication;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="cmt">/**
+ * @SpringBootApplication is a shortcut for 3 annotations combined:
+ *   1. @Configuration     — this class can define @Bean methods
+ *   2. @EnableAutoConfiguration — Spring Boot auto-configures everything
+ *      (Tomcat, JPA, DataSource) based on what JARs are on the classpath
+ *   3. @ComponentScan     — scans this package + sub-packages for
+ *      @Component, @Service, @Repository, @Controller, @RestController
+ *
+ * When you run main(), Spring Boot:
+ *   1. Starts embedded Tomcat on port 8080
+ *   2. Connects to MySQL using application.properties
+ *   3. Creates/updates the "customers" table via Hibernate
+ *   4. Registers all REST endpoints from CustomerController
+ */</span>
+<span class="ann">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="cls">ProducerApp</span> {
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cmt">// This one line bootstraps the entire Spring container</span>
+        <span class="cls">SpringApplication</span>.<span class="fn">run</span>(<span class="cls">ProducerApp</span>.class, args);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"✅ Producer App started on http://localhost:8080"</span>);
+    }
+}</div>
+
+    <!-- CustomerBean.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> bean/CustomerBean.java — Entity (DB Mapping)</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer.bean;
+
+<span class="kw">import</span> jakarta.persistence.*;
+
+<span class="cmt">/**
+ * @Entity — tells JPA/Hibernate: "This Java class = one row in a database table"
+ * @Table(name="customers") — the actual table name in MySQL.
+ *   If you skip @Table, the table name defaults to the class name ("CustomerBean").
+ *
+ * Hibernate will CREATE TABLE customers (
+ *   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ *   name VARCHAR(255),
+ *   email VARCHAR(255),
+ *   customer_type VARCHAR(255)
+ * );
+ */</span>
+<span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"customers"</span>)
+<span class="kw">public class</span> <span class="cls">CustomerBean</span> {
+
+    <span class="cmt">// @Id — this field is the PRIMARY KEY of the table row
+    // @GeneratedValue(IDENTITY) — MySQL auto-increments this (1, 2, 3, ...)</span>
+    <span class="ann">@Id</span>
+    <span class="ann">@GeneratedValue</span>(strategy = <span class="cls">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="cls">Long</span> id;
+
+    <span class="cmt">// @Column — maps this field to "name" column.
+    // nullable=false means the DB enforces NOT NULL constraint.</span>
+    <span class="ann">@Column</span>(name = <span class="str">"name"</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="cls">String</span> name;
+
+    <span class="cmt">// No @Column = Hibernate uses field name "email" as column name by default</span>
+    <span class="kw">private</span> <span class="cls">String</span> email;
+
+    <span class="cmt">// Customer category: "GOLD", "SILVER", "PLATINUM"
+    // This is what the Consumer will filter by</span>
+    <span class="ann">@Column</span>(name = <span class="str">"customer_type"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> customerType;
+
+    <span class="cmt">// ─── Constructors ───
+    // JPA requires a no-arg constructor (it creates objects by reflection)</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span>() {}
+
+    <span class="kw">public</span> <span class="cls">CustomerBean</span>(<span class="cls">String</span> name, <span class="cls">String</span> email, <span class="cls">String</span> customerType) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.email = email;
+        <span class="kw">this</span>.customerType = customerType;
+    }
+
+    <span class="cmt">// ─── Getters &amp; Setters ───
+    // Jackson (JSON library) uses these to convert: Java object ↔ JSON</span>
+    <span class="kw">public</span> <span class="cls">Long</span>   <span class="fn">getId</span>()           { <span class="kw">return</span> id; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()         { <span class="kw">return</span> name; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getEmail</span>()        { <span class="kw">return</span> email; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getCustomerType</span>() { <span class="kw">return</span> customerType; }
+
+    <span class="kw">public void</span> <span class="fn">setId</span>(<span class="cls">Long</span> id)                     { <span class="kw">this</span>.id = id; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> name)               { <span class="kw">this</span>.name = name; }
+    <span class="kw">public void</span> <span class="fn">setEmail</span>(<span class="cls">String</span> email)             { <span class="kw">this</span>.email = email; }
+    <span class="kw">public void</span> <span class="fn">setCustomerType</span>(<span class="cls">String</span> customerType) { <span class="kw">this</span>.customerType = customerType; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="str">"CustomerBean{id="</span> + id + <span class="str">", name='"</span> + name + <span class="str">"', type='"</span> + customerType + <span class="str">"'}"</span>;
+    }
+}</div>
+
+    <!-- CustomerDAO.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> dao/CustomerDAO.java — Repository (DB Access)</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer.dao;
+
+<span class="kw">import</span> com.demo.producer.bean.CustomerBean;
+<span class="kw">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="kw">import</span> org.springframework.data.jpa.repository.Query;
+<span class="kw">import</span> org.springframework.data.repository.query.Param;
+<span class="kw">import</span> org.springframework.stereotype.Repository;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * @Repository — marks this as a Spring Data DAO (Data Access Object).
+ *
+ * JpaRepository&lt;CustomerBean, Long&gt; means:
+ *   - Entity type = CustomerBean (maps to "customers" table)
+ *   - Primary key type = Long (the "id" field)
+ *
+ * Spring Data JPA auto-implements this interface at runtime.
+ * You get FREE methods without writing any SQL:
+ *   - findAll()           → SELECT * FROM customers
+ *   - findById(id)        → SELECT * FROM customers WHERE id = ?
+ *   - save(entity)        → INSERT or UPDATE
+ *   - deleteById(id)      → DELETE FROM customers WHERE id = ?
+ *   - count()             → SELECT COUNT(*) FROM customers
+ */</span>
+<span class="ann">@Repository</span>
+<span class="kw">public interface</span> <span class="cls">CustomerDAO</span> <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;<span class="cls">CustomerBean</span>, <span class="cls">Long</span>&gt; {
+
+    <span class="cmt">// Spring Data JPA generates the SQL from the method name automatically!
+    // "findBy" + "CustomerType" → WHERE customer_type = ?
+    // Generated SQL: SELECT * FROM customers WHERE customer_type = 'GOLD'</span>
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType);
+
+    <span class="cmt">// You can also write custom JPQL (not SQL — uses Java class/field names)
+    // :type is a named parameter, supplied by @Param("type")</span>
+    <span class="ann">@Query</span>(<span class="str">"SELECT c FROM CustomerBean c WHERE c.customerType = :type ORDER BY c.name ASC"</span>)
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByTypeSorted</span>(<span class="ann">@Param</span>(<span class="str">"type"</span>) <span class="cls">String</span> type);
+}</div>
+
+    <!-- CustomerService.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> service/CustomerService.java — Service Interface</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer.service;
+
+<span class="kw">import</span> com.demo.producer.bean.CustomerBean;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * Why have an interface for the Service?
+ *
+ * 1. LOOSE COUPLING: The Controller depends on this interface, not the
+ *    implementation. Tomorrow you can swap CustomerServiceImpl with
+ *    a different implementation without touching the Controller.
+ *
+ * 2. TESTING: You can mock this interface in unit tests easily.
+ *
+ * 3. SPRING AOP: @Transactional and other Spring proxies work on interfaces.
+ *
+ * Rule: Controllers call Service. Service calls DAO. Never skip layers.
+ */</span>
+<span class="kw">public interface</span> <span class="cls">CustomerService</span> {
+
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">getAllCustomers</span>();
+    <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType);
+    <span class="cls">CustomerBean</span>       <span class="fn">getCustomerById</span>(<span class="cls">Long</span> id);
+    <span class="cls">CustomerBean</span>       <span class="fn">saveCustomer</span>(<span class="cls">CustomerBean</span> customer);
+    <span class="kw">void</span>               <span class="fn">deleteCustomer</span>(<span class="cls">Long</span> id);
+}</div>
+
+    <!-- CustomerServiceImpl.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> service/CustomerServiceImpl.java — Business Logic</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer.service;
+
+<span class="kw">import</span> com.demo.producer.bean.CustomerBean;
+<span class="kw">import</span> com.demo.producer.dao.CustomerDAO;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.stereotype.Service;
+<span class="kw">import</span> org.springframework.transaction.annotation.Transactional;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * @Service — marks this class as a Spring service component.
+ *   - Spring creates ONE instance of this (singleton bean).
+ *   - @ComponentScan picks it up and registers it in the Spring container.
+ *   - It can be @Autowired anywhere.
+ *
+ * This class contains BUSINESS LOGIC.
+ * It sits between the Controller (web layer) and DAO (data layer).
+ *
+ * Examples of business logic:
+ *   - Checking if a customer already exists before saving
+ *   - Validating business rules (e.g., PLATINUM customers must have 5+ years)
+ *   - Calling multiple DAOs and combining results
+ */</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">CustomerServiceImpl</span> <span class="kw">implements</span> <span class="cls">CustomerService</span> {
+
+    <span class="cmt">// @Autowired — Spring automatically injects the CustomerDAO bean here.
+    // Spring sees CustomerDAO is a JpaRepository and auto-creates the
+    // implementation (you don't write any JDBC code).</span>
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerDAO</span> customerDAO;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">getAllCustomers</span>() {
+        <span class="cmt">// findAll() = SELECT * FROM customers</span>
+        <span class="kw">return</span> customerDAO.<span class="fn">findAll</span>();
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">findByCustomerType</span>(<span class="cls">String</span> customerType) {
+        <span class="cmt">// Calls our custom finder method → WHERE customer_type = ?</span>
+        <span class="kw">return</span> customerDAO.<span class="fn">findByCustomerType</span>(customerType);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span> <span class="fn">getCustomerById</span>(<span class="cls">Long</span> id) {
+        <span class="cmt">// findById returns Optional&lt;CustomerBean&gt;.
+        // orElseThrow throws an exception if not found → Spring returns 404.</span>
+        <span class="kw">return</span> customerDAO.<span class="fn">findById</span>(id)
+            .<span class="fn">orElseThrow</span>(() -&gt; <span class="kw">new</span> <span class="cls">RuntimeException</span>(<span class="str">"Customer not found: "</span> + id));
+    }
+
+    <span class="ann">@Override</span>
+    <span class="ann">@Transactional</span>
+    <span class="cmt">// @Transactional — wraps this method in a DB transaction.
+    // If anything goes wrong inside (exception thrown), the DB change is ROLLED BACK.
+    // Spring handles the commit/rollback automatically.</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span> <span class="fn">saveCustomer</span>(<span class="cls">CustomerBean</span> customer) {
+        <span class="cmt">// save() does INSERT if id is null, UPDATE if id already exists</span>
+        <span class="kw">return</span> customerDAO.<span class="fn">save</span>(customer);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="ann">@Transactional</span>
+    <span class="kw">public void</span> <span class="fn">deleteCustomer</span>(<span class="cls">Long</span> id) {
+        <span class="cmt">// DELETE FROM customers WHERE id = ?</span>
+        customerDAO.<span class="fn">deleteById</span>(id);
+    }
+}</div>
+
+    <!-- CustomerController.java -->
+    <div class="file-label prod-file"><span class="fl-icon">&#9749;</span> controller/CustomerController.java — REST Endpoints</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.producer.controller;
+
+<span class="kw">import</span> com.demo.producer.bean.CustomerBean;
+<span class="kw">import</span> com.demo.producer.service.CustomerService;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.http.HttpStatus;
+<span class="kw">import</span> org.springframework.http.ResponseEntity;
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * @RestController = @Controller + @ResponseBody
+ *   - Every method's return value is automatically serialized to JSON
+ *     by Jackson (the JSON library bundled with spring-boot-starter-web)
+ *   - No need to add @ResponseBody on each method individually
+ *
+ * @RequestMapping("/api/customers") — base URL for all methods in this class.
+ *   All endpoints here start with /api/customers/...
+ *
+ * @CrossOrigin — allows requests from other origins (React on :3000,
+ *   Consumer app on :9090, Postman etc.) — prevents CORS errors.
+ */</span>
+<span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/customers"</span>)
+<span class="ann">@CrossOrigin</span>
+<span class="kw">public class</span> <span class="cls">CustomerController</span> {
+
+    <span class="cmt">// Inject the Service layer — Controller NEVER talks to DAO directly</span>
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerService</span> customerService;
+
+    <span class="cmt">// ─── GET /api/customers ─────────────────────────────────────────────
+    // Returns ALL customers as a JSON array.
+    // Example response: [{"id":1,"name":"Alice","email":"...","customerType":"GOLD"}, ...]</span>
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt;&gt; <span class="fn">getAllCustomers</span>() {
+        <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; customers = customerService.<span class="fn">getAllCustomers</span>();
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(customers);   <span class="cmt">// 200 OK + JSON body</span>
+    }
+
+    <span class="cmt">// ─── GET /api/customers/{id} ─────────────────────────────────────────
+    // Returns one customer by primary key.
+    // @PathVariable extracts "5" from /api/customers/5 → Long id = 5</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">getById</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">try</span> {
+            <span class="cls">CustomerBean</span> customer = customerService.<span class="fn">getCustomerById</span>(id);
+            <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(customer);             <span class="cmt">// 200 OK</span>
+        } <span class="kw">catch</span> (<span class="cls">RuntimeException</span> e) {
+            <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">notFound</span>().<span class="fn">build</span>();     <span class="cmt">// 404 Not Found</span>
+        }
+    }
+
+    <span class="cmt">// ─── GET /api/customers/by-type?customerType=GOLD ────────────────────
+    // @RequestParam extracts "GOLD" from the query string ?customerType=GOLD
+    // The Consumer app calls exactly this endpoint!</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/by-type"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt;&gt; <span class="fn">getByType</span>(
+            <span class="ann">@RequestParam</span>(<span class="str">"customerType"</span>) <span class="cls">String</span> customerType) {
+
+        <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; result = customerService.<span class="fn">findByCustomerType</span>(customerType);
+
+        <span class="kw">if</span> (result.<span class="fn">isEmpty</span>()) {
+            <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">noContent</span>().<span class="fn">build</span>(); <span class="cmt">// 204 No Content</span>
+        }
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(result);               <span class="cmt">// 200 OK + JSON array</span>
+    }
+
+    <span class="cmt">// ─── POST /api/customers ─────────────────────────────────────────────
+    // Creates a new customer.
+    // @RequestBody — Spring reads the JSON request body and converts it
+    // to a CustomerBean object using Jackson.
+    // Example request body: {"name":"Bob","email":"bob@mail.com","customerType":"SILVER"}</span>
+    <span class="ann">@PostMapping</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">createCustomer</span>(
+            <span class="ann">@RequestBody</span> <span class="cls">CustomerBean</span> customer) {
+
+        <span class="cls">CustomerBean</span> saved = customerService.<span class="fn">saveCustomer</span>(customer);
+        <span class="cmt">// 201 Created (not 200!) — signals a new resource was created</span>
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">status</span>(<span class="cls">HttpStatus</span>.CREATED).<span class="fn">body</span>(saved);
+    }
+
+    <span class="cmt">// ─── PUT /api/customers/{id} ─────────────────────────────────────────
+    // Full update — replaces all fields of an existing customer.</span>
+    <span class="ann">@PutMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">updateCustomer</span>(
+            <span class="ann">@PathVariable</span> <span class="cls">Long</span> id,
+            <span class="ann">@RequestBody</span> <span class="cls">CustomerBean</span> customer) {
+
+        customer.<span class="fn">setId</span>(id);  <span class="cmt">// ensure we update the right row</span>
+        <span class="cls">CustomerBean</span> updated = customerService.<span class="fn">saveCustomer</span>(customer);
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">ok</span>(updated);  <span class="cmt">// 200 OK</span>
+    }
+
+    <span class="cmt">// ─── DELETE /api/customers/{id} ──────────────────────────────────────
+    // Deletes a customer by id. Returns 204 No Content on success.
+    // @ResponseStatus tells Spring to always return 204 for this method.</span>
+    <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Void</span>&gt; <span class="fn">deleteCustomer</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        customerService.<span class="fn">deleteCustomer</span>(id);
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.<span class="fn">noContent</span>().<span class="fn">build</span>();  <span class="cmt">// 204 No Content</span>
+    }
+}</div>
+
+    <div class="key-box">
+      <p><strong>Test Producer with curl or Postman before running Consumer:</strong><br>
+      <code>GET http://localhost:8080/api/customers</code><br>
+      <code>POST http://localhost:8080/api/customers</code> with body <code>{"name":"Alice","email":"alice@mail.com","customerType":"GOLD"}</code>
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 5. CONSUMER APP ===== -->
+  <section class="concept-section" id="consumer">
+    <div class="section-label">05 &mdash; Consumer App Code</div>
+    <h2>&#128421; Consumer App <span class="port-badge port-cons" style="font-size:0.8rem;">port 9090</span></h2>
+    <p class="tagline">&ldquo;This app has NO database. It calls the Producer's API using RestTemplate and processes the data.&rdquo;</p>
+
+    <!-- pom.xml CONSUMER -->
+    <div class="file-label xml-file"><span class="fl-icon">&#128196;</span> consumer-app/pom.xml</div>
+    <div class="code-block"><span class="cmt">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+  Consumer pom.xml — Much simpler than Producer!
+  We ONLY need:
+    - spring-boot-starter-web → gives us RestTemplate + Jackson (JSON converter)
+  We do NOT need JPA or MySQL because this app has no database.
+--&gt;</span>
+&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.demo&lt;/groupId&gt;
+  &lt;artifactId&gt;consumer-app&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+
+  &lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+  &lt;/parent&gt;
+
+  &lt;dependencies&gt;
+    <span class="cmt">&lt;!--
+      spring-boot-starter-web gives us:
+        - RestTemplate (HTTP client to call Producer)
+        - Jackson (JSON ↔ Java conversion)
+        - Embedded Tomcat (even though we don't serve web pages,
+          Spring Boot needs a web context to run CommandLineRunner properly)
+    --&gt;</span>
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;</div>
+
+    <!-- application.properties CONSUMER -->
+    <div class="file-label prop-file"><span class="fl-icon">&#9881;</span> consumer-app/src/main/resources/application.properties</div>
+    <div class="code-block"><span class="cmt"># ─────────────────────────────────────────────────────
+# Consumer App Configuration
+# NOTICE: No datasource config at all — no DB needed!
+# ─────────────────────────────────────────────────────</span>
+
+<span class="cmt"># Consumer runs on port 9090 — Producer is on 8080, so they don't conflict</span>
+server.port=9090
+
+<span class="cmt"># The base URL of the Producer app.
+# All RestTemplate calls will use this as the starting point.
+# If Producer were deployed to a cloud server, this would be its IP/domain.</span>
+producer.base.url=http://localhost:8080/api/customers
+
+<span class="cmt"># Reduce noisy log output to just show our print statements</span>
+logging.level.root=WARN
+logging.level.com.demo.consumer=INFO</div>
+
+    <!-- AppConfig.java -->
+    <div class="file-label cons-file"><span class="fl-icon">&#9749;</span> config/AppConfig.java — RestTemplate Bean</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.consumer.config;
+
+<span class="kw">import</span> org.springframework.context.annotation.Bean;
+<span class="kw">import</span> org.springframework.context.annotation.Configuration;
+<span class="kw">import</span> org.springframework.web.client.RestTemplate;
+
+<span class="cmt">/**
+ * @Configuration — this class defines Spring beans.
+ * Spring calls @Bean methods once and puts the result in the Spring container.
+ * Any class that needs RestTemplate can then @Autowire it.
+ *
+ * Why define RestTemplate as a @Bean instead of doing "new RestTemplate()"?
+ *
+ * 1. SINGLETON: Spring creates one instance and reuses it everywhere — efficient.
+ * 2. TESTABLE: You can mock or replace it easily in tests.
+ * 3. CONFIGURABLE: You can add interceptors, timeouts, error handlers to the
+ *    bean centrally without touching every class that uses it.
+ *
+ * RestTemplate is Spring's synchronous HTTP client:
+ *   - Makes GET/POST/PUT/DELETE calls to external REST APIs
+ *   - Automatically converts JSON response → Java object (via Jackson)
+ *   - Automatically converts Java object → JSON for request body
+ */</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">AppConfig</span> {
+
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="cls">RestTemplate</span> <span class="fn">restTemplate</span>() {
+        <span class="cmt">// Simple RestTemplate with default settings.
+        // For production you'd add connection timeouts:
+        //   HttpComponentsClientHttpRequestFactory factory = new ...
+        //   factory.setConnectTimeout(5000);
+        //   return new RestTemplate(factory);</span>
+        <span class="kw">return new</span> <span class="cls">RestTemplate</span>();
+    }
+}</div>
+
+    <!-- CustomerBean.java CONSUMER -->
+    <div class="file-label cons-file"><span class="fl-icon">&#9749;</span> bean/CustomerBean.java — Plain POJO (Mirror of Producer)</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.consumer.bean;
+
+<span class="cmt">/**
+ * This is a PLAIN Java class — NO @Entity, NO JPA annotations.
+ * The Consumer has no database, so it doesn't need JPA mapping.
+ *
+ * This class exists ONLY to hold the JSON data that comes back
+ * from the Producer's API. Jackson (the JSON library) needs a POJO
+ * with matching field names to deserialise the JSON into.
+ *
+ * When RestTemplate gets this JSON from Producer:
+ *   {"id":1, "name":"Alice", "email":"alice@mail.com", "customerType":"GOLD"}
+ *
+ * Jackson creates: new CustomerBean(), then calls:
+ *   setId(1L), setName("Alice"), setEmail("alice@mail.com"), setCustomerType("GOLD")
+ *
+ * The field names must MATCH the JSON keys exactly (case-sensitive).
+ */</span>
+<span class="kw">public class</span> <span class="cls">CustomerBean</span> {
+
+    <span class="kw">private</span> <span class="cls">Long</span>   id;
+    <span class="kw">private</span> <span class="cls">String</span> name;
+    <span class="kw">private</span> <span class="cls">String</span> email;
+    <span class="kw">private</span> <span class="cls">String</span> customerType;
+
+    <span class="kw">public</span> <span class="cls">CustomerBean</span>() {}  <span class="cmt">// Required by Jackson for deserialisation</span>
+
+    <span class="kw">public</span> <span class="cls">Long</span>   <span class="fn">getId</span>()           { <span class="kw">return</span> id; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getName</span>()         { <span class="kw">return</span> name; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getEmail</span>()        { <span class="kw">return</span> email; }
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">getCustomerType</span>() { <span class="kw">return</span> customerType; }
+
+    <span class="kw">public void</span> <span class="fn">setId</span>(<span class="cls">Long</span> id)                     { <span class="kw">this</span>.id = id; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(<span class="cls">String</span> name)               { <span class="kw">this</span>.name = name; }
+    <span class="kw">public void</span> <span class="fn">setEmail</span>(<span class="cls">String</span> email)             { <span class="kw">this</span>.email = email; }
+    <span class="kw">public void</span> <span class="fn">setCustomerType</span>(<span class="cls">String</span> t)          { <span class="kw">this</span>.customerType = t; }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="cls">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="str">"CustomerBean{id="</span> + id + <span class="str">", name='"</span> + name +
+               <span class="str">"', email='"</span> + email + <span class="str">"', type='"</span> + customerType + <span class="str">"'}"</span>;
+    }
+}</div>
+
+    <!-- CustomerConsumerService.java -->
+    <div class="file-label cons-file"><span class="fl-icon">&#9749;</span> service/CustomerConsumerService.java — HTTP Calls via RestTemplate</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.consumer.service;
+
+<span class="kw">import</span> com.demo.consumer.bean.CustomerBean;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Value;
+<span class="kw">import</span> org.springframework.http.*;
+<span class="kw">import</span> org.springframework.stereotype.Service;
+<span class="kw">import</span> org.springframework.web.client.RestTemplate;
+<span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * This service makes HTTP calls to the Producer app using RestTemplate.
+ *
+ * @Value("${producer.base.url}") — reads the URL from application.properties.
+ * This is dependency injection for config values. Much better than hardcoding URLs.
+ *
+ * RestTemplate methods used:
+ *   getForObject(url, ResponseType.class)  → GET, returns body directly
+ *   getForEntity(url, ResponseType.class)  → GET, returns ResponseEntity (body+status)
+ *   postForObject(url, requestBody, ResponseType.class) → POST
+ *   put(url, requestBody)                  → PUT (no return value)
+ *   delete(url)                            → DELETE (no return value)
+ *   exchange(url, method, httpEntity, ResponseType.class) → any verb, most control
+ */</span>
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">CustomerConsumerService</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">RestTemplate</span> restTemplate;
+
+    <span class="cmt">// Reads "producer.base.url" from application.properties
+    // Result: baseUrl = "http://localhost:8080/api/customers"</span>
+    <span class="ann">@Value</span>(<span class="str">"${producer.base.url}"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> baseUrl;
+
+    <span class="cmt">// ─── 1. GET ALL CUSTOMERS ─────────────────────────────────────────────
+    // getForObject returns the JSON body directly as a Java array.
+    // Why array (CustomerBean[]) and not List?
+    // Because Java generics are erased at runtime — RestTemplate can't tell
+    // List&lt;CustomerBean&gt; from List&lt;Something&gt;. Arrays don't have this problem.
+    // We convert the array to a List using Arrays.asList() after.</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">getAllCustomers</span>() {
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: GET "</span> + baseUrl);
+
+        <span class="cls">CustomerBean</span>[] arr = restTemplate.<span class="fn">getForObject</span>(baseUrl, <span class="cls">CustomerBean</span>[].<span class="kw">class</span>);
+        <span class="cmt">// restTemplate.getForObject:
+        //   1. Makes HTTP GET request to "http://localhost:8080/api/customers"
+        //   2. Producer returns JSON array: [{"id":1,"name":"Alice",...}, ...]
+        //   3. Jackson converts JSON array → CustomerBean[] Java array
+        //   4. Returns the array to us</span>
+        <span class="kw">return</span> <span class="cls">Arrays</span>.<span class="fn">asList</span>(arr);
+    }
+
+    <span class="cmt">// ─── 2. GET CUSTOMERS BY TYPE ─────────────────────────────────────────
+    // URL: http://localhost:8080/api/customers/by-type?customerType=GOLD</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">getByType</span>(<span class="cls">String</span> type) {
+        <span class="cls">String</span> url = baseUrl + <span class="str">"/by-type?customerType="</span> + type;
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: GET "</span> + url);
+
+        <span class="cls">CustomerBean</span>[] arr = restTemplate.<span class="fn">getForObject</span>(url, <span class="cls">CustomerBean</span>[].<span class="kw">class</span>);
+        <span class="kw">return</span> arr != <span class="kw">null</span> ? <span class="cls">Arrays</span>.<span class="fn">asList</span>(arr) : <span class="cls">List</span>.<span class="fn">of</span>();
+    }
+
+    <span class="cmt">// ─── 3. GET ONE CUSTOMER BY ID ────────────────────────────────────────
+    // getForEntity — like getForObject but also gives you the status code.
+    // Useful when you want to check if response was 200, 404, etc.</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span> <span class="fn">getById</span>(<span class="cls">Long</span> id) {
+        <span class="cls">String</span> url = baseUrl + <span class="str">"/"</span> + id;
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: GET "</span> + url);
+
+        <span class="cls">ResponseEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; response =
+            restTemplate.<span class="fn">getForEntity</span>(url, <span class="cls">CustomerBean</span>.class);
+
+        <span class="cmt">// response.getStatusCode() → HttpStatus.OK (200)
+        // response.getBody()       → the CustomerBean object</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   ↳ Status: "</span> + response.<span class="fn">getStatusCode</span>());
+        <span class="kw">return</span> response.<span class="fn">getBody</span>();
+    }
+
+    <span class="cmt">// ─── 4. CREATE A NEW CUSTOMER (POST) ─────────────────────────────────
+    // postForObject:
+    //   1. Converts our CustomerBean Java object → JSON string using Jackson
+    //   2. Sends HTTP POST with that JSON as the request body
+    //   3. Producer receives it, saves to DB, returns saved object as JSON
+    //   4. Jackson converts response JSON → CustomerBean Java object</span>
+    <span class="kw">public</span> <span class="cls">CustomerBean</span> <span class="fn">createCustomer</span>(<span class="cls">CustomerBean</span> customer) {
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: POST "</span> + baseUrl + <span class="str">" with body: "</span> + customer);
+
+        <span class="cls">CustomerBean</span> saved = restTemplate.<span class="fn">postForObject</span>(baseUrl, customer, <span class="cls">CustomerBean</span>.class);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   ↳ Created: "</span> + saved);
+        <span class="kw">return</span> saved;
+    }
+
+    <span class="cmt">// ─── 5. UPDATE CUSTOMER (PUT) ─────────────────────────────────────────
+    // put() sends a PUT request — no return value.
+    // If you need the updated object back, use exchange() instead.</span>
+    <span class="kw">public void</span> <span class="fn">updateCustomer</span>(<span class="cls">Long</span> id, <span class="cls">CustomerBean</span> customer) {
+        <span class="cls">String</span> url = baseUrl + <span class="str">"/"</span> + id;
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: PUT "</span> + url);
+
+        restTemplate.<span class="fn">put</span>(url, customer);   <span class="cmt">// no response body</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   ↳ Updated customer id="</span> + id);
+    }
+
+    <span class="cmt">// ─── 6. DELETE CUSTOMER ───────────────────────────────────────────────
+    // delete() sends DELETE request — no return value.</span>
+    <span class="kw">public void</span> <span class="fn">deleteCustomer</span>(<span class="cls">Long</span> id) {
+        <span class="cls">String</span> url = baseUrl + <span class="str">"/"</span> + id;
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"📡 Calling: DELETE "</span> + url);
+
+        restTemplate.<span class="fn">delete</span>(url);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   ↳ Deleted customer id="</span> + id);
+    }
+
+    <span class="cmt">// ─── 7. ADVANCED: exchange() ─────────────────────────────────────────
+    // exchange() gives you full control: custom headers, any HTTP method,
+    // full ResponseEntity back. Used when you need:
+    //   - Custom headers (e.g., Authorization: Bearer token)
+    //   - POST and get full ResponseEntity (not just body)</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; <span class="fn">createWithHeaders</span>(<span class="cls">CustomerBean</span> customer) {
+        <span class="cls">HttpHeaders</span> headers = <span class="kw">new</span> <span class="cls">HttpHeaders</span>();
+        headers.<span class="fn">setContentType</span>(<span class="cls">MediaType</span>.APPLICATION_JSON);
+        <span class="cmt">// headers.set("Authorization", "Bearer my-token"); // for secured APIs</span>
+
+        <span class="cls">HttpEntity</span>&lt;<span class="cls">CustomerBean</span>&gt; request = <span class="kw">new</span> <span class="cls">HttpEntity</span>&lt;&gt;(customer, headers);
+
+        <span class="kw">return</span> restTemplate.<span class="fn">exchange</span>(
+            baseUrl,                        <span class="cmt">// URL</span>
+            <span class="cls">HttpMethod</span>.POST,               <span class="cmt">// HTTP verb</span>
+            request,                        <span class="cmt">// body + headers</span>
+            <span class="cls">CustomerBean</span>.class             <span class="cmt">// expected response type</span>
+        );
+        <span class="cmt">// Returns ResponseEntity&lt;CustomerBean&gt; — you can check:
+        //   response.getStatusCode()        → HttpStatus.CREATED (201)
+        //   response.getHeaders()           → all response headers
+        //   response.getBody()              → the saved CustomerBean</span>
+    }
+}</div>
+
+    <!-- AppRunner.java -->
+    <div class="file-label cons-file"><span class="fl-icon">&#9749;</span> runner/AppRunner.java — Runs on Startup</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.consumer.runner;
+
+<span class="kw">import</span> com.demo.consumer.bean.CustomerBean;
+<span class="kw">import</span> com.demo.consumer.service.CustomerConsumerService;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.boot.CommandLineRunner;
+<span class="kw">import</span> org.springframework.stereotype.Component;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">/**
+ * CommandLineRunner — a Spring Boot interface with one method: run(String... args).
+ *
+ * Spring Boot automatically calls run() AFTER the Spring container is fully
+ * initialised (all @Autowired dependencies are injected, all beans are ready).
+ *
+ * This is perfect for:
+ *   - Running startup tasks (like calling a REST API on boot)
+ *   - Batch jobs that run once and exit
+ *   - Console/CLI applications that don't serve HTTP requests
+ *
+ * @Component — registers this class as a Spring bean so Spring picks it up
+ * and calls its run() method automatically.
+ *
+ * HOW TO USE:
+ *   1. Start Producer app first (port 8080)
+ *   2. Insert some test data via Postman:
+ *        POST http://localhost:8080/api/customers
+ *        Body: {"name":"Alice","email":"alice@mail.com","customerType":"GOLD"}
+ *   3. Start Consumer app (port 9090) — it will call Producer and print results
+ */</span>
+<span class="ann">@Component</span>
+<span class="kw">public class</span> <span class="cls">AppRunner</span> <span class="kw">implements</span> <span class="cls">CommandLineRunner</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">CustomerConsumerService</span> consumerService;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>(<span class="cls">String</span>... args) <span class="kw">throws</span> <span class="cls">Exception</span> {
+
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n╔══════════════════════════════════════════╗"</span>);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"║   CONSUMER APP — Calling Producer API    ║"</span>);
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"╚══════════════════════════════════════════╝\n"</span>);
+
+        <span class="cmt">// ─── STEP 1: Create a few test customers via POST ─────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"── Step 1: Creating test customers ──"</span>);
+
+        <span class="cls">CustomerBean</span> c1 = <span class="kw">new</span> <span class="cls">CustomerBean</span>();
+        c1.<span class="fn">setName</span>(<span class="str">"Alice Johnson"</span>);
+        c1.<span class="fn">setEmail</span>(<span class="str">"alice@mail.com"</span>);
+        c1.<span class="fn">setCustomerType</span>(<span class="str">"GOLD"</span>);
+        <span class="cls">CustomerBean</span> saved1 = consumerService.<span class="fn">createCustomer</span>(c1);
+
+        <span class="cls">CustomerBean</span> c2 = <span class="kw">new</span> <span class="cls">CustomerBean</span>();
+        c2.<span class="fn">setName</span>(<span class="str">"Bob Smith"</span>);
+        c2.<span class="fn">setEmail</span>(<span class="str">"bob@mail.com"</span>);
+        c2.<span class="fn">setCustomerType</span>(<span class="str">"SILVER"</span>);
+        <span class="cls">CustomerBean</span> saved2 = consumerService.<span class="fn">createCustomer</span>(c2);
+
+        <span class="cls">CustomerBean</span> c3 = <span class="kw">new</span> <span class="cls">CustomerBean</span>();
+        c3.<span class="fn">setName</span>(<span class="str">"Carol White"</span>);
+        c3.<span class="fn">setEmail</span>(<span class="str">"carol@mail.com"</span>);
+        c3.<span class="fn">setCustomerType</span>(<span class="str">"GOLD"</span>);
+        <span class="cls">CustomerBean</span> saved3 = consumerService.<span class="fn">createCustomer</span>(c3);
+
+        <span class="cmt">// ─── STEP 2: Fetch ALL customers ──────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 2: Fetch ALL customers ──"</span>);
+        <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; all = consumerService.<span class="fn">getAllCustomers</span>();
+        all.<span class="fn">forEach</span>(c -&gt; <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   → "</span> + c));
+
+        <span class="cmt">// ─── STEP 3: Filter by GOLD type ──────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 3: Filter by customerType=GOLD ──"</span>);
+        <span class="cls">List</span>&lt;<span class="cls">CustomerBean</span>&gt; golds = consumerService.<span class="fn">getByType</span>(<span class="str">"GOLD"</span>);
+        golds.<span class="fn">forEach</span>(c -&gt; <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   🥇 "</span> + c.<span class="fn">getName</span>() + <span class="str">" → "</span> + c.<span class="fn">getEmail</span>()));
+
+        <span class="cmt">// ─── STEP 4: Get one by ID ─────────────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 4: Get customer by ID="</span> + saved1.<span class="fn">getId</span>() + <span class="str">" ──"</span>);
+        <span class="cls">CustomerBean</span> fetched = consumerService.<span class="fn">getById</span>(saved1.<span class="fn">getId</span>());
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   → "</span> + fetched);
+
+        <span class="cmt">// ─── STEP 5: Update a customer ────────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 5: Update Bob to PLATINUM ──"</span>);
+        saved2.<span class="fn">setCustomerType</span>(<span class="str">"PLATINUM"</span>);
+        saved2.<span class="fn">setEmail</span>(<span class="str">"bob.updated@mail.com"</span>);
+        consumerService.<span class="fn">updateCustomer</span>(saved2.<span class="fn">getId</span>(), saved2);
+
+        <span class="cmt">// ─── STEP 6: Verify the update ────────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 6: Verify updated Bob ──"</span>);
+        <span class="cls">CustomerBean</span> updatedBob = consumerService.<span class="fn">getById</span>(saved2.<span class="fn">getId</span>());
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   → "</span> + updatedBob);
+
+        <span class="cmt">// ─── STEP 7: Delete a customer ────────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 7: Delete Carol ──"</span>);
+        consumerService.<span class="fn">deleteCustomer</span>(saved3.<span class="fn">getId</span>());
+
+        <span class="cmt">// ─── STEP 8: Final list ───────────────────────────────────────────</span>
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n── Step 8: Final customer list ──"</span>);
+        consumerService.<span class="fn">getAllCustomers</span>()
+            .<span class="fn">forEach</span>(c -&gt; <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"   → "</span> + c));
+
+        <span class="cls">System</span>.out.<span class="fn">println</span>(<span class="str">"\n✅ Consumer App finished. Check Producer logs for SQL."</span>);
+    }
+}</div>
+
+    <!-- ConsumerApp.java -->
+    <div class="file-label cons-file"><span class="fl-icon">&#9749;</span> ConsumerApp.java — Main Class</div>
+    <div class="code-block"><span class="kw">package</span> com.demo.consumer;
+
+<span class="kw">import</span> org.springframework.boot.SpringApplication;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="cmt">/**
+ * Consumer app entry point.
+ *
+ * When this runs:
+ *   1. Spring container starts
+ *   2. All @Autowired dependencies are injected
+ *   3. Spring Boot calls AppRunner.run() automatically (because AppRunner
+ *      implements CommandLineRunner and is a @Component)
+ *   4. AppRunner calls the Producer's REST API using RestTemplate
+ *   5. Results print to the console
+ *   6. App stays running (Tomcat is embedded) — you can shut it down with Ctrl+C
+ *
+ * KEY POINT: You start Producer FIRST (port 8080), THEN Consumer (port 9090).
+ * If Producer isn't running, Consumer will throw a connection refused error.
+ */</span>
+<span class="ann">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="cls">ConsumerApp</span> {
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {
+        <span class="cls">SpringApplication</span>.<span class="fn">run</span>(<span class="cls">ConsumerApp</span>.class, args);
+    }
+}</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 6. HOW TO RUN ===== -->
+  <section class="concept-section" id="how-to-run">
+    <div class="section-label">06 &mdash; Running the Demo</div>
+    <h2>How to Run Step by Step</h2>
+    <p class="tagline">&ldquo;Follow these steps exactly. Order matters — Producer must be alive before Consumer starts.&rdquo;</p>
+
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Create the MySQL database</h3>
+        <p>Open MySQL Workbench or terminal and run: <code>CREATE DATABASE customerdb;</code></p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Import Producer app into IDE</h3>
+        <p>Open <code>producer-app/</code> as a separate Maven project. Update <code>application.properties</code> with your MySQL username and password.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Run ProducerApp.java</h3>
+        <p>Right-click → Run As → Java Application. Wait until you see <code>Tomcat started on port 8080</code> in the console. The <code>customers</code> table is auto-created by Hibernate.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Test Producer with Postman (optional)</h3>
+        <p>Try <code>GET http://localhost:8080/api/customers</code> — should return an empty JSON array <code>[]</code>. This confirms the Producer is running.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Import Consumer app into IDE (separate project)</h3>
+        <p>Open <code>consumer-app/</code> as another Maven project in the same IDE or a new window.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h3>Run ConsumerApp.java</h3>
+        <p>Right-click → Run As → Java Application. Watch the console — you'll see HTTP calls being made and data printed. Check the Producer console to see the SQL statements Hibernate ran.</p>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <h3 style="margin:0 0 8px; color:var(--text-bright);">Expected Consumer Console Output</h3>
+      <div class="code-block" style="margin:0;">╔══════════════════════════════════════════╗
+║   CONSUMER APP — Calling Producer API    ║
+╚══════════════════════════════════════════╝
+
+── Step 1: Creating test customers ──
+📡 Calling: POST http://localhost:8080/api/customers with body: CustomerBean{id=null, name='Alice Johnson', type='GOLD'}
+   ↳ Created: CustomerBean{id=1, name='Alice Johnson', type='GOLD'}
+📡 Calling: POST http://localhost:8080/api/customers with body: CustomerBean{id=null, name='Bob Smith', type='SILVER'}
+   ↳ Created: CustomerBean{id=2, name='Bob Smith', type='SILVER'}
+...
+
+── Step 2: Fetch ALL customers ──
+📡 Calling: GET http://localhost:8080/api/customers
+   → CustomerBean{id=1, name='Alice Johnson', type='GOLD'}
+   → CustomerBean{id=2, name='Bob Smith', type='SILVER'}
+   → CustomerBean{id=3, name='Carol White', type='GOLD'}
+
+── Step 3: Filter by customerType=GOLD ──
+📡 Calling: GET http://localhost:8080/api/customers/by-type?customerType=GOLD
+   🥇 Alice Johnson → alice@mail.com
+   🥇 Carol White → carol@mail.com
+...
+✅ Consumer App finished. Check Producer logs for SQL.</div>
+    </div>
+
+    <div class="trap-box">
+      <div class="trap-label">&#9888; If Consumer throws Connection Refused</div>
+      <p>This means the Producer is not running. Make sure <code>ProducerApp.java</code> is running on port 8080 before you start the Consumer. Also ensure no firewall is blocking localhost connections.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 7. FULL REQUEST TRACE ===== -->
+  <section class="concept-section" id="flow-trace">
+    <div class="section-label">07 &mdash; Request Trace</div>
+    <h2>What Happens When Consumer calls <code>getByType("GOLD")</code></h2>
+    <p class="tagline">&ldquo;Every hop through both apps, step by step&rdquo;</p>
+
+    <div class="state-machine">
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(100,255,180,.08); border-color:rgba(100,255,180,.3);">
+          <div class="sm-name" style="color:var(--green);">1. AppRunner.run()</div>
+          <div class="sm-desc">Consumer App calls <code>consumerService.getByType("GOLD")</code></div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(100,255,180,.08); border-color:rgba(100,255,180,.3);">
+          <div class="sm-name" style="color:var(--green);">2. RestTemplate.getForObject()</div>
+          <div class="sm-desc">Makes HTTP GET to <code>http://localhost:8080/api/customers/by-type?customerType=GOLD</code></div>
+        </div>
+      </div>
+      <div class="sm-arrow" style="color:var(--purple);">&#8595; Network (HTTP over TCP)</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(121,192,255,.06); border-color:rgba(121,192,255,.3);">
+          <div class="sm-name" style="color:var(--blue);">3. Tomcat (Producer :8080)</div>
+          <div class="sm-desc">Receives the HTTP GET request, routes to DispatcherServlet</div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(121,192,255,.06); border-color:rgba(121,192,255,.3);">
+          <div class="sm-name" style="color:var(--blue);">4. CustomerController.getByType()</div>
+          <div class="sm-desc"><code>@RequestParam("customerType")</code> extracts "GOLD" from query string</div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(121,192,255,.06); border-color:rgba(121,192,255,.3);">
+          <div class="sm-name" style="color:var(--blue);">5. CustomerServiceImpl.findByCustomerType("GOLD")</div>
+          <div class="sm-desc">Business layer delegates to DAO</div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(255,166,87,.06); border-color:rgba(255,166,87,.3);">
+          <div class="sm-name" style="color:var(--warning);">6. CustomerDAO.findByCustomerType("GOLD")</div>
+          <div class="sm-desc">Hibernate generates: <code>SELECT * FROM customers WHERE customer_type='GOLD'</code></div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(255,166,87,.06); border-color:rgba(255,166,87,.3);">
+          <div class="sm-name" style="color:var(--warning);">7. MySQL executes query</div>
+          <div class="sm-desc">Returns 2 rows (Alice, Carol) as a ResultSet</div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(121,192,255,.06); border-color:rgba(121,192,255,.3);">
+          <div class="sm-name" style="color:var(--blue);">8. Jackson serialises result</div>
+          <div class="sm-desc">Converts <code>List&lt;CustomerBean&gt;</code> → JSON array string</div>
+        </div>
+      </div>
+      <div class="sm-arrow" style="color:var(--purple);">&#8595; HTTP 200 OK + JSON body</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(100,255,180,.08); border-color:rgba(100,255,180,.3);">
+          <div class="sm-name" style="color:var(--green);">9. RestTemplate receives JSON</div>
+          <div class="sm-desc">Jackson converts JSON array → <code>CustomerBean[]</code> Java array in Consumer</div>
+        </div>
+      </div>
+      <div class="sm-arrow">&#8595;</div>
+      <div class="sm-step">
+        <div class="sm-state" style="background:rgba(100,255,180,.08); border-color:rgba(100,255,180,.3);">
+          <div class="sm-name" style="color:var(--green);">10. AppRunner prints results</div>
+          <div class="sm-desc">🥇 Alice Johnson, 🥇 Carol White printed to console</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===== 8. INTERVIEW Q&A ===== -->
+  <section class="concept-section" id="interview">
+    <div class="section-label">08 &mdash; Interview Q&amp;A</div>
+    <h2>Microservices Interview Questions</h2>
+    <p class="tagline">&ldquo;Questions specifically about microservices architecture&rdquo;</p>
+
+    <div class="qa-block"><div class="qa-q">What is the difference between a Monolith and Microservices?</div><div class="qa-a">A Monolith is one large application — all layers (web, business, database) in one JAR deployed together. If any part crashes, the whole app is down. Microservices break the app into small, independent services. Each service has its own codebase, can use its own database, is deployed independently, and communicates with others via REST/HTTP. In this demo: Producer and Consumer are two separate Spring Boot apps.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is a Producer in microservices?</div><div class="qa-a">The Producer (also called a Provider or Service) is the app that OWNS the data and exposes REST API endpoints. Other apps call it to get or modify data. In our demo: the Producer app owns the customers table in MySQL and exposes /api/customers endpoints. The Producer doesn't know or care who calls it — it just handles HTTP requests and returns JSON.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is a Consumer in microservices?</div><div class="qa-a">The Consumer is an app that calls another service's REST API to use its data. It does NOT have its own database for that data. Instead it fetches data over HTTP from the Producer when needed. In our demo: the Consumer uses RestTemplate to call the Producer's API. The Consumer could be a mobile backend, an analytics service, a report generator, etc.</div></div>
+
+    <div class="qa-block"><div class="qa-q">Why does the Consumer have its own CustomerBean class without @Entity?</div><div class="qa-a">The Consumer has no database, so it doesn't need @Entity (which is a JPA annotation for DB mapping). It needs a plain POJO (Plain Old Java Object) that mirrors the JSON structure returned by the Producer. Jackson (the JSON library) uses this POJO's setter methods to populate it from the JSON response. The field names must match the JSON keys exactly.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What is CommandLineRunner? Why use it in the Consumer?</div><div class="qa-a">CommandLineRunner is a Spring Boot interface with one method: run(String... args). Spring Boot automatically calls run() after the Spring context is fully initialized. It's used for code that should execute once at startup — batch jobs, initialization, CLI tasks. In our Consumer, run() calls the Producer's REST API immediately when the app starts, demonstrating the producer-consumer communication.</div></div>
+
+    <div class="qa-block"><div class="qa-q">How do two microservices share data without a shared database?</div><div class="qa-a">Each service owns its own database (Database per Service pattern). They share data by calling each other's REST APIs. In our demo, the Consumer doesn't access MySQL directly — it asks the Producer "give me GOLD customers" via HTTP, and the Producer queries its DB and returns JSON. This keeps services decoupled: Consumer doesn't need to know what database Producer uses.</div></div>
+
+    <div class="qa-block"><div class="qa-q">What happens if the Producer is down when Consumer calls it?</div><div class="qa-a">RestTemplate throws a ResourceAccessException (wrapping a ConnectException). The Consumer app would crash unless you handle this. In production microservices, you'd use: (1) Circuit Breaker pattern (Resilience4j) to fail gracefully, (2) Retry logic, (3) Fallback response. This is a key challenge of microservices — distributed failure handling.</div></div>
+
+    <div class="qa-block"><div class="qa-q">Why run the Producer on port 8080 and Consumer on 9090?</div><div class="qa-a">Both apps embed Tomcat and would conflict if they used the same port on the same machine. In production, they'd run on different servers/containers (Docker), so port conflicts wouldn't exist. Locally, we change the port in application.properties: server.port=9090 for the Consumer. This simulates running on different machines.</div></div>
+  </section>
+
+  <div class="back-top"><a href="#top">&#8593; Back to top</a></div>
+
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
