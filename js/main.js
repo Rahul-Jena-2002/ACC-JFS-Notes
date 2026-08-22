@@ -203,6 +203,16 @@
   /* ==========================================================================
      3. COLORFUL CODE HIGHLIGHTING & CODE SANDBOX (TOKYO NIGHT)
      ========================================================================== */
+  function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function detectLanguage(codeText, currentClass) {
     if (currentClass) {
       const match = currentClass.match(/language-([a-z0-9_-]+)/i);
@@ -210,67 +220,197 @@
     }
 
     const trimmed = codeText.trim();
-    if (/^<\?xml|^<beans|^<project|^<web-app|^<servlet|^<filter/i.test(trimmed) || /<\/?[a-z0-9_:-]+(\s|>)/i.test(trimmed)) {
+    if (/^<\?xml|^<beans|^<project|^<web-app|^<servlet|^<filter/i.test(trimmed)) {
       return 'xml';
     }
-    if (/^<%@\s*page|^<jsp:|^<!DOCTYPE html/i.test(trimmed)) {
+    if (/^<!DOCTYPE html|^<html|^<body|^<div|^<form|^<table|^<p>|^<span|^<header|^<footer|^<main|^<section|^<nav|^<input|^<button/i.test(trimmed)) {
+      return 'html';
+    }
+    if (/^<%@\s*page|^<jsp:|^<form:|^<spring:/i.test(trimmed)) {
       return 'jsp';
+    }
+    if (/^<\/?[a-z0-9_:-]+(\s|>)/i.test(trimmed)) {
+      return 'html';
     }
     if (/\b(SELECT|INSERT\s+INTO|UPDATE\s+\w+\s+SET|DELETE\s+FROM|CREATE\s+TABLE|ALTER\s+TABLE|DROP\s+TABLE)\b/i.test(trimmed)) {
       return 'sql';
     }
+    if (/^[a-z0-9_.-]+\s*[:=]\s*.+$/m.test(trimmed) && !trimmed.includes('class ') && !trimmed.includes(';') && !trimmed.includes('{') && !trimmed.includes('}')) {
+      return 'properties';
+    }
     if (/\b(package\s+[a-z0-9_.]+|import\s+java|public\s+class|@Entity|@Table|@Id|@Transactional|@Autowired|@Service|@Controller|@RequestMapping|@GetMapping|@PostMapping|@RequestParam|@ResponseBody|public\s+void|private\s+|protected\s+)\b/.test(trimmed)) {
       return 'java';
-    }
-    if (/^[a-z0-9_.-]+\s*[:=]\s*.+$/m.test(trimmed) && !trimmed.includes('class ') && !trimmed.includes(';')) {
-      return 'properties';
     }
     return 'java';
   }
 
+  function highlightTag(tagStr) {
+    // Tokenizes a single tag: <tag attr="val" required />
+    const tagPartsRegex = /(<\/?[a-zA-Z0-9_:-]+)|([a-zA-Z0-9_:-]+)(?:\s*(=)\s*("[^"]*"|'[^']*'|[^\s"'>]+))?|(\/?>)|(\s+)/g;
+    let out = '';
+    let m;
+    while ((m = tagPartsRegex.exec(tagStr)) !== null) {
+      if (m[1]) {
+        out += `<span class="token tag">${escapeHtml(m[1])}</span>`;
+      } else if (m[2]) {
+        out += `<span class="token attr-name">${escapeHtml(m[2])}</span>`;
+        if (m[3]) {
+          out += `<span class="token punctuation">=</span>`;
+        }
+        if (m[4]) {
+          out += `<span class="token string">${escapeHtml(m[4])}</span>`;
+        }
+      } else if (m[5]) {
+        out += `<span class="token tag">${escapeHtml(m[5])}</span>`;
+      } else if (m[6]) {
+        out += m[6];
+      } else {
+        out += escapeHtml(m[0]);
+      }
+    }
+    return out;
+  }
+
+  function highlightXml(code) {
+    const tokenRegex = /(<!--[\s\S]*?-->|<%@?[\s\S]*?%>|<!(?:DOCTYPE|doctype)[^>]*>|<\?xml[^>]*\?>|<\/?[a-zA-Z0-9_:-]+(?:\s+[^"'>]*(?:"[^"]*"|'[^']*')*)*\s*\/?>|&[a-zA-Z0-9#]+;)/g;
+    let result = '';
+    let lastIndex = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(code)) !== null) {
+      if (match.index > lastIndex) {
+        result += escapeHtml(code.slice(lastIndex, match.index));
+      }
+      const token = match[0];
+      if (token.startsWith('<!--')) {
+        result += `<span class="token comment">${escapeHtml(token)}</span>`;
+      } else if (token.startsWith('<%')) {
+        result += `<span class="token annotation">${escapeHtml(token)}</span>`;
+      } else if (token.startsWith('<!') || token.startsWith('<?')) {
+        result += `<span class="token doctype">${escapeHtml(token)}</span>`;
+      } else if (token.startsWith('&') && token.endsWith(';')) {
+        result += `<span class="token entity">${token}</span>`;
+      } else if (token.startsWith('<')) {
+        result += highlightTag(token);
+      } else {
+        result += escapeHtml(token);
+      }
+      lastIndex = tokenRegex.lastIndex;
+    }
+    if (lastIndex < code.length) {
+      result += escapeHtml(code.slice(lastIndex));
+    }
+    return result;
+  }
+
+  function highlightJava(code) {
+    const javaRegex = /(\/\*[\s\S]*?\*\/)|(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(@[a-zA-Z0-9_]+)|(\b(?:abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while|record|sealed|permits|var|yield)\b)|(\b(?:true|false|null)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\())|(\b\d+(?:\.\d+)?(?:[fFdDlL])?\b)|([{}()\[\];,.:+\-*/%=&|!<>~^?]+)/g;
+
+    let result = '';
+    let lastIndex = 0;
+    let match;
+
+    while ((match = javaRegex.exec(code)) !== null) {
+      if (match.index > lastIndex) {
+        result += escapeHtml(code.slice(lastIndex, match.index));
+      }
+      const [full, blockComment, lineComment, str, ann, kw, constVal, typeName, fnName, num, punc] = match;
+      if (blockComment || lineComment) {
+        result += `<span class="token comment">${escapeHtml(blockComment || lineComment)}</span>`;
+      } else if (str) {
+        result += `<span class="token string">${escapeHtml(str)}</span>`;
+      } else if (ann) {
+        result += `<span class="token annotation">${escapeHtml(ann)}</span>`;
+      } else if (kw) {
+        result += `<span class="token keyword">${escapeHtml(kw)}</span>`;
+      } else if (constVal) {
+        result += `<span class="token constant">${escapeHtml(constVal)}</span>`;
+      } else if (typeName) {
+        result += `<span class="token class-name">${escapeHtml(typeName)}</span>`;
+      } else if (fnName) {
+        if (['if', 'for', 'while', 'switch', 'catch', 'synchronized'].includes(fnName)) {
+          result += `<span class="token keyword">${escapeHtml(fnName)}</span>`;
+        } else {
+          result += `<span class="token function">${escapeHtml(fnName)}</span>`;
+        }
+      } else if (num) {
+        result += `<span class="token number">${escapeHtml(num)}</span>`;
+      } else if (punc) {
+        result += `<span class="token punctuation">${escapeHtml(punc)}</span>`;
+      } else {
+        result += escapeHtml(full);
+      }
+      lastIndex = javaRegex.lastIndex;
+    }
+    if (lastIndex < code.length) {
+      result += escapeHtml(code.slice(lastIndex));
+    }
+    return result;
+  }
+
+  function highlightSql(code) {
+    const sqlRegex = /(\/\*[\s\S]*?\*\/)|(--.*)|('(?:''|[^'\\]|\\.)*')|(\b(?:SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|DROP|ALTER|ADD|CONSTRAINT|PRIMARY|KEY|FOREIGN|REFERENCES|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|GROUP|BY|ORDER|ASC|DESC|HAVING|LIMIT|OFFSET|UNION|ALL|AND|OR|NOT|NULL|IS|IN|LIKE|AS|ON|DISTINCT|COUNT|SUM|AVG|MIN|MAX|VARCHAR|VARCHAR2|INT|INTEGER|BIGINT|BOOLEAN|DATE|TIMESTAMP|AUTO_INCREMENT|DEFAULT|CASCADE|CHECK|UNIQUE|INDEX|VIEW|TRIGGER|PROCEDURE|BEGIN|END|COMMIT|ROLLBACK|SAVEPOINT)\b)|(\b\d+(?:\.\d+)?\b)|([(),;=<>!+*/-]+)/gi;
+
+    let result = '';
+    let lastIndex = 0;
+    let match;
+
+    while ((match = sqlRegex.exec(code)) !== null) {
+      if (match.index > lastIndex) {
+        result += escapeHtml(code.slice(lastIndex, match.index));
+      }
+      const [full, blockComment, lineComment, str, kw, num, punc] = match;
+      if (blockComment || lineComment) {
+        result += `<span class="token comment">${escapeHtml(blockComment || lineComment)}</span>`;
+      } else if (str) {
+        result += `<span class="token string">${escapeHtml(str)}</span>`;
+      } else if (kw) {
+        result += `<span class="token sql-keyword">${escapeHtml(kw)}</span>`;
+      } else if (num) {
+        result += `<span class="token number">${escapeHtml(num)}</span>`;
+      } else if (punc) {
+        result += `<span class="token punctuation">${escapeHtml(punc)}</span>`;
+      } else {
+        result += escapeHtml(full);
+      }
+      lastIndex = sqlRegex.lastIndex;
+    }
+    if (lastIndex < code.length) {
+      result += escapeHtml(code.slice(lastIndex));
+    }
+    return result;
+  }
+
+  function highlightProperties(code) {
+    const lines = code.split('\n');
+    return lines.map((line) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('#') || trimmed.startsWith('!')) {
+        return `<span class="token comment">${escapeHtml(line)}</span>`;
+      }
+      const match = line.match(/^(\s*)([a-zA-Z0-9_.-]+)(\s*[:=]\s*)(.*)$/);
+      if (match) {
+        const [, indent, key, delim, val] = match;
+        return `${escapeHtml(indent)}<span class="token attr-name">${escapeHtml(key)}</span><span class="token punctuation">${escapeHtml(delim)}</span><span class="token string">${escapeHtml(val)}</span>`;
+      }
+      return escapeHtml(line);
+    }).join('\n');
+  }
+
   function highlightSnippet(code, lang) {
-    let html = code
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    if (!code) return '';
+    const normLang = (lang || '').toLowerCase();
 
-    if (lang === 'xml' || lang === 'html' || lang === 'jsp') {
-      html = html.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="token comment">$1</span>');
-      html = html.replace(/(&lt;%@?[\s\S]*?%&gt;)/g, '<span class="token annotation">$1</span>');
-      html = html.replace(/(&lt;\/?[a-zA-Z0-9_:-]+)(\s|>|&gt;)/g, '<span class="token tag">$1</span>$2');
-      html = html.replace(/([a-zA-Z0-9_:-]+)=(&quot;.*?&quot;|".*?"|'.*?')/g, '<span class="token attr-name">$1</span>=<span class="token string">$2</span>');
-      return html;
+    if (['xml', 'html', 'jsp', 'svg'].includes(normLang)) {
+      return highlightXml(code);
     }
-
-    if (lang === 'sql') {
-      html = html.replace(/(--.*$)/gm, '<span class="token comment">$1</span>');
-      html = html.replace(/('(?:''|[^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
-      const sqlKeywords = /\b(SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|DROP|ALTER|ADD|CONSTRAINT|PRIMARY|KEY|FOREIGN|REFERENCES|JOIN|LEFT|RIGHT|INNER|OUTER|GROUP|BY|ORDER|ASC|DESC|AND|OR|NOT|NULL|IS|IN|LIKE|AS|ON|DISTINCT|COUNT|SUM|AVG|MIN|MAX|VARCHAR|VARCHAR2|INT|INTEGER|BIGINT|BOOLEAN|DATE|TIMESTAMP)\b/gi;
-      html = html.replace(sqlKeywords, '<span class="token sql-keyword">$1</span>');
-      return html;
+    if (normLang === 'sql') {
+      return highlightSql(code);
     }
-
-    // Java tokens
-    html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="token comment">$1</span>');
-    html = html.replace(/(\/\/.*$)/gm, '<span class="token comment">$1</span>');
-    html = html.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="token string">$1</span>');
-    html = html.replace(/('(?:[^'\\]|\\.)*')/g, '<span class="token string">$1</span>');
-    html = html.replace(/(@[a-zA-Z0-9_]+)/g, '<span class="token annotation">$1</span>');
-
-    const javaKeywords = /\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while|record|sealed|permits|var|yield)\b/g;
-    html = html.replace(javaKeywords, '<span class="token keyword">$1</span>');
-    html = html.replace(/\b(true|false|null)\b/g, '<span class="token constant">$1</span>');
-
-    const javaTypes = /\b(String|Integer|Long|Double|Float|Boolean|Object|List|Set|Map|HashMap|ArrayList|EntityManager|EntityManagerFactory|SessionFactory|Session|Transaction|EntityTransaction|PlatformTransactionManager|TransactionDefinition|TransactionStatus|TransactionTemplate|HttpServletRequest|HttpServletResponse|HttpSession|ModelAndView|Model|ModelMap|ModelAndView|User|Employee|Student|Department|Product|Order|Optional|Class)\b/g;
-    html = html.replace(javaTypes, '<span class="token class-name">$1</span>');
-
-    html = html.replace(/\b([a-zA-Z0-9_]+)\s*(?=\()/g, (match, fnName) => {
-      if (['if', 'for', 'while', 'switch', 'catch'].includes(fnName)) return match;
-      return `<span class="token function">${fnName}</span>`;
-    });
-
-    html = html.replace(/\b([0-9]+(?:\.[0-9]+)?(?:[fFdDlL])?)\b/g, '<span class="token number">$1</span>');
-    return html;
+    if (['properties', 'props', 'ini', 'env'].includes(normLang)) {
+      return highlightProperties(code);
+    }
+    return highlightJava(code);
   }
 
   function setupCodeSandboxes() {
@@ -625,12 +765,6 @@
         paginationControls.appendChild(nextBtn);
       }
     }
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
   }
 
   function setupAddPageModal() {
