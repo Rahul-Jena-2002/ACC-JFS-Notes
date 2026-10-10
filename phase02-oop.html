@@ -3,187 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Object-Oriented Programming & Modern Class Design &bull; ACC Core Java Architecture</title>
+  <title>Object-Oriented Programming & Modern Class Design &bull; Core Java Developer Reference</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
 </head>
 <body>
 
-  <header class="top-header">
-    <div class="header-left">
-      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
-      <a href="index.html" class="brand-link">
-        <div class="brand-logo-icon">&#9749;</div>
-        <span>ACC Architecture</span>
-      </a>
-      <div class="header-breadcrumbs">
-        <span class="sep">/</span>
-        <a href="index.html">Dashboard</a>
-        <span class="sep">/</span>
-        <span>Phase 02 &bull; OOP Architecture</span>
-      </div>
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 02</span>
     </div>
-    <div class="header-right">
-      <div class="header-progress-chip">
-        <svg class="mini-progress-ring" viewBox="0 0 20 20">
-          <circle class="ring-bg" cx="10" cy="10" r="7" stroke-width="2.5" fill="none"></circle>
-          <circle id="headerRingBar" class="ring-bar" cx="10" cy="10" r="7" stroke-width="2.5" fill="none" stroke-dasharray="44" stroke-dashoffset="44"></circle>
-        </svg>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
         <span id="globalProgressCount">0 / 35 (0%)</span>
       </div>
-      <a href="index.html" class="btn-header">Dashboard</a>
-      <a href="phase03-strings-objects.html" class="btn-header primary">Next Phase &rarr;</a>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase03-strings-objects.html" class="btn-header primary">Next: Phase 03 &rarr;</a>
     </div>
   </header>
 
-  <div class="layout-container">
-    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase01-fundamentals.html" class="">
+              <span>01. Fundamentals</span>
+              <span class="sidebar-phase-badge">P01</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase02-oop.html" class="active">
+              <span>02. OOP & Class Design</span>
+              <span class="sidebar-phase-badge">P02</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase03-strings-objects.html" class="">
+              <span>03. Strings & Memory</span>
+              <span class="sidebar-phase-badge">P03</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase04-exceptions.html" class="">
+              <span>04. Exception Handling</span>
+              <span class="sidebar-phase-badge">P04</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 2: Data Structures & Collections</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase05-collections.html" class="">
+              <span>05. Collections Framework</span>
+              <span class="sidebar-phase-badge">P05</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase06-generics.html" class="">
+              <span>06. Generics & PECS</span>
+              <span class="sidebar-phase-badge">P06</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 3: Functional & Modern LTS Features</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase07-functional-streams.html" class="">
+              <span>07. Lambdas & Streams</span>
+              <span class="sidebar-phase-badge">P07</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase10-io-serialization.html" class="">
+              <span>10. File I/O & NIO.2</span>
+              <span class="sidebar-phase-badge">P10</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase08-multithreading.html" class="">
+              <span>08. Multithreading & Loom</span>
+              <span class="sidebar-phase-badge">P08</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase09-jvm-memory.html" class="">
+              <span>09. JVM & GC Tuning</span>
+              <span class="sidebar-phase-badge">P09</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase11-jdbc-persistence.html" class="">
+              <span>11. Enterprise JDBC</span>
+              <span class="sidebar-phase-badge">P11</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase12-design-patterns.html" class="">
+              <span>12. SOLID & Patterns</span>
+              <span class="sidebar-phase-badge">P12</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="projects-stages.html" class="">
+              <span>13. Capstone Projects</span>
+              <span class="sidebar-phase-badge">P13</span>
+            </a>
+          </li>
+        </ul></nav>
 
-    <aside class="sidebar-toc">
-      
-      <div class="sidebar-heading">Phase Milestones</div>
-      <ul class="toc-nav-list">
-  
-        <li class="toc-nav-item">
-          <a href="#concept-1" title="2.1 Classes, Objects, Constructors, this Keyword & Chaining">
-            <span>2.1 Classes, Objects, Constructo...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#1</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="#concept-2" title="2.2 Encapsulation, Inheritance & Why Java Bans Multiple Class Inheritance">
-            <span>2.2 Encapsulation, Inheritance &...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#2</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="#concept-3" title="2.2b Class Relationships: Composition (Strong Has-A) vs Aggregation (Weak Has-A)">
-            <span>2.2b Class Relationships: Compos...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#3</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="#concept-4" title="2.3 Polymorphism, Dynamic Method Dispatch & The Virtual Table (vtable)">
-            <span>2.3 Polymorphism, Dynamic Method...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#4</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="#concept-5" title="2.4 Modern Interfaces: Why Java 8 Added Default Methods & Java 9 Added Private Methods">
-            <span>2.4 Modern Interfaces: Why Java ...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#5</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="#concept-6" title="2.5 Modern Java: Records (Java 16) & Sealed Classes (Java 17)">
-            <span>2.5 Modern Java: Records (Java 1...</span>
-            <span style="font-size: 0.72rem; opacity: 0.6;">#6</span>
-          </a>
-        </li>
-    
-      </ul>
-      <div class="sidebar-heading" style="margin-top: 2rem;">Phase Switcher</div>
-      <ul class="toc-nav-list">
-  
-        <li class="toc-nav-item">
-          <a href="phase01-fundamentals.html" class="">
-            <span>Phase 01 &bull; Fundamentals</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase02-oop.html" class="active">
-            <span>Phase 02 &bull; OOP Architecture</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase03-strings-objects.html" class="">
-            <span>Phase 03 &bull; Strings & Memory</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase04-exceptions.html" class="">
-            <span>Phase 04 &bull; Exception Handling</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase05-collections.html" class="">
-            <span>Phase 05 &bull; Collections & Nodes</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase06-generics.html" class="">
-            <span>Phase 06 &bull; Generics & PECS</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase07-functional-streams.html" class="">
-            <span>Phase 07 &bull; Functional Streams</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase08-multithreading.html" class="">
-            <span>Phase 08 &bull; Concurrency & Loom</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase09-jvm-memory.html" class="">
-            <span>Phase 09 &bull; JVM & GC Tuning</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase10-io-serialization.html" class="">
-            <span>Phase 10 &bull; File I/O & NIO.2</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase11-jdbc-persistence.html" class="">
-            <span>Phase 11 &bull; Enterprise JDBC</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="phase12-design-patterns.html" class="">
-            <span>Phase 12 &bull; SOLID & Patterns</span>
-          </a>
-        </li>
-    
-        <li class="toc-nav-item">
-          <a href="projects-stages.html" class="">
-            <span>Milestones & Capstones</span>
-          </a>
-        </li>
-    </ul>
-    </aside>
-
-    <main class="main-article-canvas">
-      <div class="phase-page-header">
-        <div class="meta-pill-cluster">
-          <span class="phase-id-pill">Phase 02 &bull; OOP Architecture</span>
-          <span class="repo-source-badge">&#128194; Module 1_ Class Relationship & Binding Demos \ Module 2_ Java LTS Features</span>
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 02</span>
         </div>
         <h1 class="phase-h1">Object-Oriented Programming & Modern Class Design</h1>
-        <div class="textbook-alignment-callout">
-          <span>&#128214; <strong>Core Java Alignment:</strong> Volume I — Chapter 4: Objects & Classes &bull; Chapter 5: Inheritance &bull; Chapter 6: Interfaces</span>
+        <div class="source-mapping-bar">
+          <span>&#128194; Repository Module: Module 1 \ Class Relationships & LTS Features</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Horstmann Vol I — Ch 4, 5, 6</span>
         </div>
       </div>
 
+      <!-- Phase Concepts -->
       <div class="section-header">
           <div class="section-title-wrapper">
             <span class="phase-badge-pill phase-pill-2">Phase 2</span>
@@ -934,21 +888,22 @@ graph TD
           </div>
         </div>
 
+      <!-- Pagination -->
       <nav class="phase-pagination">
         
         <a href="phase01-fundamentals.html" class="page-nav-link prev">
-          <span class="page-nav-sub">&larr; Previous Phase</span>
-          <span class="page-nav-title">Java Fundamentals & JVM Execution Model</span>
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">Phase 01: Java Fundamentals & JVM Execution Model</span>
         </a>
         
-        <a href="index.html" class="btn-header" style="padding: 0.85rem 1.4rem;">
-          &#9776; All Phases
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
         </a>
 
         
         <a href="phase03-strings-objects.html" class="page-nav-link next">
           <span class="page-nav-sub">Next Phase &rarr;</span>
-          <span class="page-nav-title">Strings, Object Contract & Memory Internals</span>
+          <span class="page-nav-title">Phase 03: Strings, Object Contract & Memory Internals</span>
         </a>
       </nav>
     </main>

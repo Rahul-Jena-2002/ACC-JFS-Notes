@@ -3,443 +3,502 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Core Java Enterprise Engineering Architecture &bull; Roadmap Portal</title>
+  <title>Core Java Backend Engineering Syllabus &bull; Developer Reference</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
 
-  <div class="ambient-glow"></div>
-
-  <!-- Top Enterprise Header -->
-  <header class="top-header">
-    <div class="header-left">
-      <a href="index.html" class="brand-link">
-        <div class="brand-logo-icon">&#9749;</div>
-        <span>ACC JFS Architecture</span>
-      </a>
-      <span class="brand-badge">Java 21 LTS Standard</span>
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <span class="brand-title">Core Java Backend Roadmap</span>
+      <span class="brand-tag">Accenture JFS Edition</span>
     </div>
-    <div class="header-right">
-      <div class="header-progress-chip">
-        <svg class="mini-progress-ring" viewBox="0 0 20 20">
-          <circle class="ring-bg" cx="10" cy="10" r="7" stroke-width="2.5" fill="none"></circle>
-          <circle id="headerRingBar" class="ring-bar" cx="10" cy="10" r="7" stroke-width="2.5" fill="none" stroke-dasharray="44" stroke-dashoffset="44"></circle>
-        </svg>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
         <span id="globalProgressCount">0 / 35 (0%)</span>
       </div>
-      <a href="phase01-fundamentals.html" class="btn-header primary">Start Learning &rarr;</a>
+      <a href="https://github.com/Rahul-Jena-2002/ACC-JFS-Notes" target="_blank" rel="noopener" class="btn-header">
+        <span>GitHub</span>
+      </a>
+      <a href="phase01-fundamentals.html" class="btn-header primary">
+        <span>Start Phase 01</span>
+      </a>
     </div>
   </header>
 
-  <!-- Executive Hero Section -->
-  <section class="hero-executive">
-    <div class="hero-pill-badge">
-      <span class="dot"></span>
-      <span>Enterprise Engineering Curriculum &bull; Horstmann Vol I &amp; II</span>
-    </div>
-    <h1 class="hero-title-main">
-      Core Java Enterprise<br/>
-      <span class="hero-title-gradient">Architectural Roadmap</span>
-    </h1>
-    <p class="hero-subtitle-lead">
-      A structured, interactive developer portal covering HotSpot JVM internals, modern Java LTS standards (Java 8 through 21), high-throughput concurrency, design patterns, and robust persistence with line-by-line annotated source code.
-    </p>
+  <!-- Application Layout -->
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase01-fundamentals.html" class="">
+              <span>01. Fundamentals</span>
+              <span class="sidebar-phase-badge">P01</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase02-oop.html" class="">
+              <span>02. OOP & Class Design</span>
+              <span class="sidebar-phase-badge">P02</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase03-strings-objects.html" class="">
+              <span>03. Strings & Memory</span>
+              <span class="sidebar-phase-badge">P03</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase04-exceptions.html" class="">
+              <span>04. Exception Handling</span>
+              <span class="sidebar-phase-badge">P04</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 2: Data Structures & Collections</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase05-collections.html" class="">
+              <span>05. Collections Framework</span>
+              <span class="sidebar-phase-badge">P05</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase06-generics.html" class="">
+              <span>06. Generics & PECS</span>
+              <span class="sidebar-phase-badge">P06</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 3: Functional & Modern LTS Features</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase07-functional-streams.html" class="">
+              <span>07. Lambdas & Streams</span>
+              <span class="sidebar-phase-badge">P07</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase10-io-serialization.html" class="">
+              <span>10. File I/O & NIO.2</span>
+              <span class="sidebar-phase-badge">P10</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase08-multithreading.html" class="">
+              <span>08. Multithreading & Loom</span>
+              <span class="sidebar-phase-badge">P08</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase09-jvm-memory.html" class="">
+              <span>09. JVM & GC Tuning</span>
+              <span class="sidebar-phase-badge">P09</span>
+            </a>
+          </li>
+        </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="phase11-jdbc-persistence.html" class="">
+              <span>11. Enterprise JDBC</span>
+              <span class="sidebar-phase-badge">P11</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="phase12-design-patterns.html" class="">
+              <span>12. SOLID & Patterns</span>
+              <span class="sidebar-phase-badge">P12</span>
+            </a>
+          </li>
+        
+          <li class="sidebar-nav-item">
+            <a href="projects-stages.html" class="">
+              <span>13. Capstone Projects</span>
+              <span class="sidebar-phase-badge">P13</span>
+            </a>
+          </li>
+        </ul></nav>
 
-    <!-- Executive KPI Deck -->
-    <div class="kpi-deck">
-      <div class="kpi-card">
-        <div class="kpi-card-header">
-          <span class="kpi-label">Mastery Milestones</span>
-          <span class="kpi-icon">&#9989;</span>
+    <main class="app-main">
+      <div class="dashboard-masthead">
+        <h1 class="masthead-title">Core Java Backend Engineering Syllabus</h1>
+        <p class="masthead-subtitle">
+          Official implementation reference and architectural curriculum. Covers Java fundamentals, object modeling, memory layout, collections, concurrency, modern Java LTS standards, JDBC persistence, and enterprise design patterns mapped to Horstmann Core Java Vol I &amp; II.
+        </p>
+      </div>
+
+      <!-- Compact Status Strip -->
+      <div class="progress-strip">
+        <div class="progress-stat-box">
+          <div class="progress-stat-header">Topics Completed</div>
+          <div class="progress-stat-val"><span id="statCompletedCount">0</span> <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">/ 35</span></div>
+          <div class="stat-bar-track">
+            <div id="statProgressBarFill" class="stat-bar-fill" style="width: 0%;"></div>
+          </div>
         </div>
-        <div class="kpi-number" id="heroMasteredCount">0</div>
-        <div class="kpi-subtext">out of 35 curriculum topics</div>
-        <div class="kpi-progress-track">
-          <div id="heroProgressBar" class="kpi-progress-bar" style="width: 0%;"></div>
+
+        <div class="progress-stat-box">
+          <div class="progress-stat-header">Syllabus Coverage</div>
+          <div class="progress-stat-val" id="statPctCount">0%</div>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width: 100%; background: var(--accent-blue);"></div>
+          </div>
+        </div>
+
+        <div class="progress-stat-box">
+          <div class="progress-stat-header">Code Demos</div>
+          <div class="progress-stat-val">60</div>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width: 100%; background: var(--accent-purple);"></div>
+          </div>
+        </div>
+
+        <div class="progress-stat-box">
+          <div class="progress-stat-header">LTS Alignment</div>
+          <div class="progress-stat-val">Java 21</div>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width: 100%; background: var(--accent-orange);"></div>
+          </div>
         </div>
       </div>
 
-      <div class="kpi-card">
-        <div class="kpi-card-header">
-          <span class="kpi-label">Completion Score</span>
-          <span class="kpi-icon">&#128200;</span>
+      <!-- Controls (Filter + Search) -->
+      <div class="controls-bar">
+        <div class="filter-group">
+          <button class="filter-btn active" data-track="all">All Tracks</button>
+          <button class="filter-btn" data-track="core">Language Core</button>
+          <button class="filter-btn" data-track="collections">Collections &amp; Generics</button>
+          <button class="filter-btn" data-track="lts">LTS &amp; Streams</button>
+          <button class="filter-btn" data-track="concurrency">Concurrency &amp; JVM</button>
+          <button class="filter-btn" data-track="enterprise">Enterprise Systems</button>
         </div>
-        <div class="kpi-number" id="heroPctCount">0%</div>
-        <div class="kpi-subtext">Overall syllabus coverage</div>
-        <div class="kpi-progress-track">
-          <div class="kpi-progress-bar" style="width: 100%; background: var(--primary);"></div>
+
+        <div class="search-field-wrap">
+          <span class="search-field-icon">&#128269;</span>
+          <input type="text" id="syllabusSearch" class="search-field" placeholder="Filter topics by keyword (e.g. String Pool, Virtual Threads, PECS)...">
         </div>
       </div>
 
-      <div class="kpi-card">
-        <div class="kpi-card-header">
-          <span class="kpi-label">Annotated Snippets</span>
-          <span class="kpi-icon">&#128187;</span>
+      <!-- Modules List -->
+      
+    <div class="track-section">
+      <div class="track-section-title">
+        <span>Track 1: Language Foundations & OOP</span>
+      </div>
+      <div class="module-rows-container">
+  
+      <div class="module-row" data-track="core">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 01</span>
+            <span class="module-row-title">Java Fundamentals & JVM Execution Model</span>
+          </div>
+          <p class="module-row-desc">JVM compilation process, Bytecode execution engine, Pass-by-Value proof, primitive types, bitwise operators, and pattern-matching switch.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">JVM & Bytecode</span><span class="tag-item">Pass-by-Value</span><span class="tag-item">Type Casting</span><span class="tag-item">Pattern Switch</span><span class="tag-item">Bitwise Math</span>
+          </div>
         </div>
-        <div class="kpi-number">60</div>
-        <div class="kpi-subtext">100% with line-by-line breakdowns</div>
-        <div class="kpi-progress-track">
-          <div class="kpi-progress-bar" style="width: 100%; background: var(--accent-cyan);"></div>
+        <div class="module-row-right">
+          <span class="module-time-pill">4-5 Hours</span>
+          <a href="phase01-fundamentals.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-card-header">
-          <span class="kpi-label">Guided Phases</span>
-          <span class="kpi-icon">&#128218;</span>
-        </div>
-        <div class="kpi-number">13</div>
-        <div class="kpi-subtext">Mapped to 11 training modules</div>
-        <div class="kpi-progress-track">
-          <div class="kpi-progress-bar" style="width: 100%; background: var(--accent-amber);"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search & Filter Controls -->
-    <div class="controls-wrapper">
-      <div class="command-search-bar">
-        <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" id="phaseSearchInput" class="search-input-field" placeholder="Search keywords, memory models, algorithms (e.g., Virtual Threads, String Pool, PECS, TimSort, JDBC)...">
-        <div class="command-key-chip">&#8984;K</div>
-      </div>
-
-      <div class="filter-chips-row">
-        <button class="filter-chip active" data-filter="all">All Phases (13)</button>
-        <button class="filter-chip" data-filter="core">Foundations &amp; OOP (01-04)</button>
-        <button class="filter-chip" data-filter="collections">Collections &amp; Generics (05-06)</button>
-        <button class="filter-chip" data-filter="lts">LTS Features &amp; Streams (07, 10)</button>
-        <button class="filter-chip" data-filter="concurrency">Concurrency &amp; JVM (08-09)</button>
-        <button class="filter-chip" data-filter="arch">Architecture &amp; DB (11-13)</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Roadmap Cards Grid -->
-  <main class="phases-grid-deck">
     
-    <a href="phase01-fundamentals.html" class="enterprise-card" data-category="core">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 01 &bull; Fundamentals</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>4-5 Hours</span>
+      <div class="module-row" data-track="core">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 02</span>
+            <span class="module-row-title">Object-Oriented Programming & Modern Class Design</span>
+          </div>
+          <p class="module-row-desc">Constructor chaining via this(), Composition vs Aggregation, runtime vtables, default methods, Java 17 Sealed classes, and Records.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Constructor Chaining</span><span class="tag-item">Composition vs Aggregation</span><span class="tag-item">Dynamic Binding</span><span class="tag-item">Java 17 Sealed Classes</span><span class="tag-item">Java 16 Records</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">6-8 Hours</span>
+          <a href="phase02-oop.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div>
-        <h2 class="card-heading">Java Fundamentals & JVM Execution Model</h2>
-        <p class="card-summary">JVM compilation lifecycle, Bytecode execution engine, strict Pass-by-Value proof, primitive types, bitwise arithmetic, and modern pattern-matching switch.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">JVM & Bytecode</span><span class="key-tag">Strict Pass-by-Value</span><span class="key-tag">Type Casting</span><span class="key-tag">Pattern Matching Switch</span><span class="key-tag">Bitwise Math</span>
+    
+      <div class="module-row" data-track="core">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 03</span>
+            <span class="module-row-title">Strings, Object Contract & Memory Internals</span>
+          </div>
+          <p class="module-row-desc">String Constant Pool (SCP), immutability reasons, equals() & hashCode() contracts, defensive copying, Java 11 strip() vs trim(), and Text Blocks.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">String Constant Pool</span><span class="tag-item">equals() & hashCode()</span><span class="tag-item">Defensive Copying</span><span class="tag-item">Java 11 String Suite</span><span class="tag-item">Text Blocks</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">4 Hours</span>
+          <a href="phase03-strings-objects.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
+    
+      <div class="module-row" data-track="core">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 04</span>
+            <span class="module-row-title">Exception Handling & Diagnostic Resilience</span>
+          </div>
+          <p class="module-row-desc">Throwable hierarchy, Checked vs Unchecked exceptions, Try-with-resources AutoCloseable, custom exceptions, and java.util.logging levels.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Throwable Hierarchy</span><span class="tag-item">Try-With-Resources</span><span class="tag-item">Custom Checked Exceptions</span><span class="tag-item">Finally Guarantees</span><span class="tag-item">Enterprise Logger</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">4-5 Hours</span>
+          <a href="phase04-exceptions.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
       </div>
-    </a>
+    
+      </div>
+    </div>
   
-    <a href="phase02-oop.html" class="enterprise-card" data-category="core">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 02 &bull; OOP Architecture</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>6-8 Hours</span>
-        </div>
+    <div class="track-section">
+      <div class="track-section-title">
+        <span>Track 2: Data Structures & Collections</span>
       </div>
-      <div>
-        <h2 class="card-heading">Object-Oriented Programming & Modern Class Design</h2>
-        <p class="card-summary">Constructor chaining via this(), Composition vs Aggregation, runtime dynamic binding & vtables, interface default methods, Java 17 Sealed classes, and Records.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Constructor Chaining</span><span class="key-tag">Composition vs Aggregation</span><span class="key-tag">Dynamic Binding vtables</span><span class="key-tag">Java 17 Sealed Classes</span><span class="key-tag">Java 16 Records</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
+      <div class="module-rows-container">
   
-    <a href="phase03-strings-objects.html" class="enterprise-card" data-category="core">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 03 &bull; Strings & Memory</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>4 Hours</span>
+      <div class="module-row" data-track="collections">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 05</span>
+            <span class="module-row-title">Collections Framework & Low-Level Data Structures</span>
+          </div>
+          <p class="module-row-desc">Pointer nodes vs arrays, custom LinkedList, ArrayList growth math, HashMap treeification & collisions, fail-fast iterators, and Comparators.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Linked Nodes</span><span class="tag-item">ArrayList Growth</span><span class="tag-item">HashMap Treeification</span><span class="tag-item">Fail-Fast Iterators</span><span class="tag-item">Comparable vs Comparator</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">7-9 Hours</span>
+          <a href="phase05-collections.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div>
-        <h2 class="card-heading">Strings, Object Contract & Memory Internals</h2>
-        <p class="card-summary">String Constant Pool (SCP) internals, 4 reasons for immutability, equals() & hashCode() contracts, defensive copying, Java 11 strip() vs trim(), and Text Blocks.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">String Constant Pool</span><span class="key-tag">equals() & hashCode()</span><span class="key-tag">Defensive Copying</span><span class="key-tag">Java 11 strip() vs trim()</span><span class="key-tag">Text Blocks</span>
+    
+      <div class="module-row" data-track="collections">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 06</span>
+            <span class="module-row-title">Generics & Compile-Time Type Safety</span>
+          </div>
+          <p class="module-row-desc">PECS Principle (? extends Producer, ? super Consumer), Type Erasure bytecode mechanics, Invariance vs Covariance, and bounded repository pattern.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">PECS Principle</span><span class="tag-item">Wildcard Invariance</span><span class="tag-item">Type Erasure</span><span class="tag-item">Bounded Type Parameters</span><span class="tag-item">Generic Repository</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">4 Hours</span>
+          <a href="phase06-generics.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
+    
       </div>
-    </a>
+    </div>
   
-    <a href="phase04-exceptions.html" class="enterprise-card" data-category="core">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 04 &bull; Exception Handling</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>4-5 Hours</span>
-        </div>
+    <div class="track-section">
+      <div class="track-section-title">
+        <span>Track 3: Functional & Modern LTS Features</span>
       </div>
-      <div>
-        <h2 class="card-heading">Exception Handling & Diagnostic Resilience Architecture</h2>
-        <p class="card-summary">Throwable hierarchy, Checked vs Unchecked exceptions, Try-with-resources AutoCloseable mechanics, custom checked exceptions, and java.util.logging trace levels.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Throwable Hierarchy</span><span class="key-tag">Try-With-Resources</span><span class="key-tag">Custom Checked Exceptions</span><span class="key-tag">Finally Guarantees</span><span class="key-tag">Enterprise Logger</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
+      <div class="module-rows-container">
   
-    <a href="phase05-collections.html" class="enterprise-card" data-category="collections">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 05 &bull; Collections & Nodes</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>7-9 Hours</span>
+      <div class="module-row" data-track="lts">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 07</span>
+            <span class="module-row-title">Functional Programming, Lambdas & Modern Streams</span>
+          </div>
+          <p class="module-row-desc">Standard functional interfaces (Predicate, Consumer, Function, Supplier), constructor method references (Class::new), lazy streams, and Collectors.groupingBy.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Functional Interfaces</span><span class="tag-item">Constructor References</span><span class="tag-item">Lazy Pipeline Execution</span><span class="tag-item">Collectors.groupingBy</span><span class="tag-item">Optional Patterns</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">6-8 Hours</span>
+          <a href="phase07-functional-streams.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div>
-        <h2 class="card-heading">Collections Framework & Low-Level Data Structures</h2>
-        <p class="card-summary">Pointer nodes vs arrays, custom LinkedList, ArrayList amortized growth, HashMap treeification & hash collisions, fail-fast iterators, and Comparable vs Comparator.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Low-Level Linked Nodes</span><span class="key-tag">ArrayList Growth Math</span><span class="key-tag">HashMap Treeification</span><span class="key-tag">Fail-Fast Iterators</span><span class="key-tag">Comparable vs Comparator</span>
+    
+      <div class="module-row" data-track="lts">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 10</span>
+            <span class="module-row-title">Modern File I/O, NIO.2 & Object Serialization</span>
+          </div>
+          <p class="module-row-desc">Java 11 Files.writeString() / readString(), NIO.2 non-blocking channels, Java Object Serialization & transient security, and BigDecimal rounding precision.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Files.writeString()</span><span class="tag-item">NIO.2 Channels</span><span class="tag-item">Serialization & transient</span><span class="tag-item">serialVersionUID</span><span class="tag-item">BigDecimal Trap</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">4 Hours</span>
+          <a href="phase10-io-serialization.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
+    
       </div>
-    </a>
+    </div>
   
-    <a href="phase06-generics.html" class="enterprise-card" data-category="collections">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 06 &bull; Generics & PECS</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>4 Hours</span>
-        </div>
+    <div class="track-section">
+      <div class="track-section-title">
+        <span>Track 4: Concurrency & HotSpot JVM</span>
       </div>
-      <div>
-        <h2 class="card-heading">Generics & Compile-Time Type Safety</h2>
-        <p class="card-summary">PECS Principle (? extends Producer, ? super Consumer), Type Erasure bytecode mechanics, Generics Invariance vs Covariance, and bounded repository pattern.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">PECS Principle</span><span class="key-tag">Wildcard Invariance</span><span class="key-tag">Type Erasure</span><span class="key-tag">Bounded Type Parameters</span><span class="key-tag">Generic Repository</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
+      <div class="module-rows-container">
   
-    <a href="phase07-functional-streams.html" class="enterprise-card" data-category="lts">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 07 &bull; Functional Streams</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>6-8 Hours</span>
+      <div class="module-row" data-track="concurrency">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 08</span>
+            <span class="module-row-title">Multithreading, Concurrency & Virtual Threads</span>
+          </div>
+          <p class="module-row-desc">Processes vs Threads, thread states, synchronized race conditions, wait() & notifyAll() producer-consumer, Thread.join(), ThreadPoolExecutor, and Java 21 Virtual Threads.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Process vs Thread</span><span class="tag-item">Thread.join()</span><span class="tag-item">wait() & notifyAll()</span><span class="tag-item">ExecutorService Pools</span><span class="tag-item">Java 21 Virtual Threads</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">10-12 Hours</span>
+          <a href="phase08-multithreading.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div>
-        <h2 class="card-heading">Functional Programming, Lambdas & Modern Streams</h2>
-        <p class="card-summary">Standard functional interfaces (Predicate, Consumer, Function, Supplier), constructor method references (Class::new), lazy stream pipelines, and Collectors.groupingBy.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Functional Interfaces</span><span class="key-tag">Constructor Method References</span><span class="key-tag">Lazy Pipeline Execution</span><span class="key-tag">Collectors.groupingBy</span><span class="key-tag">Optional Patterns</span>
+    
+      <div class="module-row" data-track="concurrency">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 09</span>
+            <span class="module-row-title">JVM Architecture, Memory Management & GC Tuning</span>
+          </div>
+          <p class="module-row-desc">JVM Runtime Data Areas (Heap, Stack, Metaspace), ClassLoader parent delegation, generational GC (Eden, Survivor, Tenured), and troubleshooting OutOfMemoryError.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">ClassLoader Delegation</span><span class="tag-item">Heap vs Metaspace</span><span class="tag-item">Generational GC</span><span class="tag-item">OutOfMemoryError Diagnostics</span><span class="tag-item">Memory Leaks</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">6-8 Hours</span>
+          <a href="phase09-jvm-memory.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
+    
       </div>
-    </a>
+    </div>
   
-    <a href="phase08-multithreading.html" class="enterprise-card" data-category="concurrency">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 08 &bull; Concurrency & Loom</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>10-12 Hours</span>
-        </div>
+    <div class="track-section">
+      <div class="track-section-title">
+        <span>Track 5: Enterprise Systems & Architecture</span>
       </div>
-      <div>
-        <h2 class="card-heading">Multithreading, Concurrency & Virtual Threads</h2>
-        <p class="card-summary">Process vs Thread, thread lifecycle, synchronized race conditions, wait() & notifyAll() producer-consumer, Thread.join(), ThreadPoolExecutor, and Java 21 Virtual Threads.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Process vs Thread</span><span class="key-tag">Thread.join() Lifecycle</span><span class="key-tag">wait() & notifyAll()</span><span class="key-tag">ExecutorService Pools</span><span class="key-tag">Java 21 Virtual Threads</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
+      <div class="module-rows-container">
   
-    <a href="phase09-jvm-memory.html" class="enterprise-card" data-category="concurrency">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 09 &bull; JVM & GC Tuning</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>6-8 Hours</span>
+      <div class="module-row" data-track="enterprise">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 11</span>
+            <span class="module-row-title">Enterprise Persistence, JDBC & Database Architecture</span>
+          </div>
+          <p class="module-row-desc">JDBC driver architecture, PreparedStatement SQL injection defense, ACID transactions (commit & rollback), DBUtility connection pooling, and Reflection API.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">PreparedStatement Defense</span><span class="tag-item">ACID Transactions</span><span class="tag-item">Connection Pooling DBUtility</span><span class="tag-item">Reflection setAccessible</span><span class="tag-item">Dynamic Invocation</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">6-8 Hours</span>
+          <a href="phase11-jdbc-persistence.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div>
-        <h2 class="card-heading">JVM Architecture, Memory Management & GC Tuning</h2>
-        <p class="card-summary">JVM Runtime Data Areas (Heap, Stack, Metaspace), ClassLoader parent delegation security, generational GC (Eden, Survivor, Tenured), and troubleshooting OutOfMemoryError.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">ClassLoader Delegation</span><span class="key-tag">Heap vs Metaspace</span><span class="key-tag">Generational GC Hypothesis</span><span class="key-tag">OutOfMemoryError Diagnostics</span><span class="key-tag">Memory Leaks</span>
+    
+      <div class="module-row" data-track="enterprise">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 12</span>
+            <span class="module-row-title">SOLID Design Principles, GoF Patterns & JUnit 5</span>
+          </div>
+          <p class="module-row-desc">5 SOLID principles, GoF patterns (Double-Checked Locking Singleton, Factory Method, Builder, Observer, Strategy), and JUnit 5 testing.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">SOLID Principles</span><span class="tag-item">Thread-Safe Singleton</span><span class="tag-item">Factory Method</span><span class="tag-item">Builder Pattern</span><span class="tag-item">Observer Pattern</span><span class="tag-item">JUnit 5 Testing</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">8-10 Hours</span>
+          <a href="phase12-design-patterns.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
         </div>
       </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
+    
+      <div class="module-row" data-track="enterprise">
+        <div class="module-row-left">
+          <div class="module-row-header">
+            <span class="module-row-badge">Phase 13</span>
+            <span class="module-row-title">Progression Stages & 5 Capstone Projects</span>
+          </div>
+          <p class="module-row-desc">Four recommended progression milestones and five production-grade capstone projects for enterprise Java backend mastery.</p>
+          <div class="module-row-tags">
+            <span class="tag-item">Stage 1: Fundamentals</span><span class="tag-item">Stage 2: Collections</span><span class="tag-item">Stage 3: Concurrency</span><span class="tag-item">Stage 4: Practical Java</span><span class="tag-item">5 Capstone Projects</span>
+          </div>
+        </div>
+        <div class="module-row-right">
+          <span class="module-time-pill">15-20 Hours</span>
+          <a href="projects-stages.html" class="open-phase-btn">
+            <span>Read Phase</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
       </div>
-    </a>
+    
+      </div>
+    </div>
   
-    <a href="phase10-io-serialization.html" class="enterprise-card" data-category="lts">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 10 &bull; File I/O & NIO.2</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>4 Hours</span>
-        </div>
-      </div>
-      <div>
-        <h2 class="card-heading">Modern File I/O, NIO.2 & Object Serialization</h2>
-        <p class="card-summary">Java 11 Files.writeString() / readString(), NIO.2 non-blocking channels, Java Object Serialization & transient security, and solving BigDecimal precision traps.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Files.writeString()</span><span class="key-tag">NIO.2 vs Classic IO</span><span class="key-tag">Serialization & transient</span><span class="key-tag">serialVersionUID</span><span class="key-tag">BigDecimal Financial Trap</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
-  
-    <a href="phase11-jdbc-persistence.html" class="enterprise-card" data-category="arch">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 11 &bull; Enterprise JDBC</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>6-8 Hours</span>
-        </div>
-      </div>
-      <div>
-        <h2 class="card-heading">Enterprise Persistence, JDBC & Database Architecture</h2>
-        <p class="card-summary">JDBC driver architecture, PreparedStatement SQL injection defense, ACID transaction demarcation (commit & rollback), DBUtility connection pooling, and Reflection API.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">PreparedStatement Defense</span><span class="key-tag">ACID Transactions</span><span class="key-tag">Connection Pooling DBUtility</span><span class="key-tag">Reflection API setAccessible</span><span class="key-tag">Dynamic Invocation</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
-  
-    <a href="phase12-design-patterns.html" class="enterprise-card" data-category="arch">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Phase 12 &bull; SOLID & Patterns</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>8-10 Hours</span>
-        </div>
-      </div>
-      <div>
-        <h2 class="card-heading">SOLID Design Principles, GoF Patterns & Clean Architecture</h2>
-        <p class="card-summary">5 SOLID principles with real-world analogies, GoF patterns (Double-Checked Locking Singleton, Factory Method, Builder, Observer, Strategy), and JUnit 5 testing.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">SOLID Principles</span><span class="key-tag">Thread-Safe Singleton</span><span class="key-tag">Factory Method Pattern</span><span class="key-tag">Builder Pattern</span><span class="key-tag">Observer Pattern</span><span class="key-tag">JUnit 5 Testing</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
-  
-    <a href="projects-stages.html" class="enterprise-card" data-category="arch">
-      <div class="card-phase-meta">
-        <span class="phase-tag">Milestones & Capstones</span>
-        <div class="card-metrics-pill">
-          <span>&#9201;</span>
-          <span>15-20 Hours</span>
-        </div>
-      </div>
-      <div>
-        <h2 class="card-heading">Recommended Progression Stages & 5 Capstone Projects</h2>
-        <p class="card-summary">Four recommended progression stages and five end-to-end hands-on capstone projects designed to cement enterprise Java backend engineering proficiency.</p>
-        <div class="card-keywords-flex">
-          <span class="key-tag">Stage 1: Fundamentals</span><span class="key-tag">Stage 2: Collections</span><span class="key-tag">Stage 3: Concurrency</span><span class="key-tag">Stage 4: Enterprise Java</span><span class="key-tag">5 Capstone Projects</span>
-        </div>
-      </div>
-      <div class="card-action-bar">
-        <span>Launch Phase Guide</span>
-        <svg class="action-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </div>
-    </a>
-  
-  </main>
 
-  <footer style="text-align: center; padding: 3rem 1.5rem; border-top: 1px solid var(--border-subtle); color: var(--text-3); font-size: 0.85rem;">
-    <p>&copy; 2026 Core Java Enterprise Architectural Roadmap &bull; ACC Backend Training Portal</p>
-  </footer>
+      <footer style="margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border-default); color: var(--text-muted); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <span>Accenture Java Full Stack Training &bull; Core Java Backend Engineering</span>
+        <a href="https://github.com/Rahul-Jena-2002/ACC-JFS-Notes" target="_blank" rel="noopener">github.com/Rahul-Jena-2002/ACC-JFS-Notes</a>
+      </footer>
+    </main>
+  </div>
 
   <div id="appToast" class="toast"></div>
 

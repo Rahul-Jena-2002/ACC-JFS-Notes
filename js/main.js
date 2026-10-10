@@ -1,28 +1,24 @@
 /* ==========================================================================
-   ENTERPRISE DEVELOPER PORTAL INTERACTION ENGINE (V2.0)
+   DEVELOPER PORTAL ENGINE (Clean Developer Edition)
    ========================================================================== */
 
 (function() {
   'use strict';
 
   const STORAGE_PREFIX = 'java_mastery_';
-  const TOTAL_CHECKLIST_ITEMS = 35;
+  const TOTAL_ITEMS = 35;
 
   document.addEventListener('DOMContentLoaded', () => {
-    initChecklistState();
+    initChecklist();
     initCopyButtons();
-    initMobileDrawer();
-    initCategoryFilters();
-    initSearch();
-    initKeyboardShortcuts();
+    initMobileNav();
+    initFilterTabs();
+    initLiveSearch();
     initMermaid();
-    updateProgressDisplays();
+    updateProgressDisplay();
   });
 
-  /* --------------------------------------------------------------------------
-     1. Checklist State & LocalStorage
-     -------------------------------------------------------------------------- */
-  function initChecklistState() {
+  function initChecklist() {
     document.querySelectorAll('.checklist-btn').forEach(btn => {
       let itemId = btn.getAttribute('data-item-id');
       if (!itemId) {
@@ -47,122 +43,85 @@
 
   window.toggleCompleted = function(btn, itemId) {
     if (!itemId) itemId = btn.getAttribute('data-item-id');
-    const isCompleted = btn.classList.toggle('completed');
-    localStorage.setItem(STORAGE_PREFIX + itemId, isCompleted ? 'true' : 'false');
+    const isDone = btn.classList.toggle('completed');
+    localStorage.setItem(STORAGE_PREFIX + itemId, isDone ? 'true' : 'false');
 
     const icon = btn.querySelector('.check-icon');
     if (icon) {
-      icon.innerHTML = isCompleted ? '&#9679;' : '&#9675;';
+      icon.innerHTML = isDone ? '&#9679;' : '&#9675;';
     }
 
-    showToast(isCompleted ? '&#10003; Milestone marked as Mastered!' : 'Milestone marked In Progress');
-    updateProgressDisplays();
+    showToast(isDone ? 'Topic marked as completed' : 'Topic reset');
+    updateProgressDisplay();
   };
 
-  /* --------------------------------------------------------------------------
-     2. Progress Displays (Header + Hero Cards)
-     -------------------------------------------------------------------------- */
-  function updateProgressDisplays() {
-    let completedCount = 0;
+  function updateProgressDisplay() {
+    let completed = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && key.startsWith(STORAGE_PREFIX) && localStorage.getItem(key) === 'true') {
-        completedCount++;
+        completed++;
       }
     }
 
-    const pct = Math.min(100, Math.round((completedCount / TOTAL_CHECKLIST_ITEMS) * 100));
+    const pct = Math.min(100, Math.round((completed / TOTAL_ITEMS) * 100));
 
-    // Update Top Header Pill
-    const headerPill = document.getElementById('globalProgressCount');
-    if (headerPill) headerPill.textContent = completedCount + ' / ' + TOTAL_CHECKLIST_ITEMS + ' (' + pct + '%)';
+    const pill = document.getElementById('globalProgressCount');
+    if (pill) pill.textContent = completed + ' / ' + TOTAL_ITEMS + ' (' + pct + '%)';
 
-    // Update Header Mini Progress Ring (circumference = 2 * PI * 7 ≈ 44)
-    const ringBar = document.getElementById('headerRingBar');
-    if (ringBar) {
-      const offset = 44 - (44 * (pct / 100));
-      ringBar.style.strokeDashoffset = offset;
-    }
+    const countStat = document.getElementById('statCompletedCount');
+    if (countStat) countStat.textContent = completed;
 
-    // Update Dashboard Hero KPIs
-    const heroMastered = document.getElementById('heroMasteredCount');
-    if (heroMastered) heroMastered.textContent = completedCount;
+    const pctStat = document.getElementById('statPctCount');
+    if (pctStat) pctStat.textContent = pct + '%';
 
-    const heroPct = document.getElementById('heroPctCount');
-    if (heroPct) heroPct.textContent = pct + '%';
-
-    const heroBar = document.getElementById('heroProgressBar');
-    if (heroBar) heroBar.style.width = pct + '%';
+    const barFill = document.getElementById('statProgressBarFill');
+    if (barFill) barFill.style.width = pct + '%';
   }
 
-  /* --------------------------------------------------------------------------
-     3. Category Filter Tabs & Live Search
-     -------------------------------------------------------------------------- */
-  let activeCategory = 'all';
+  let activeTrack = 'all';
 
-  function initCategoryFilters() {
-    const chips = document.querySelectorAll('.filter-chip');
-    chips.forEach(chip => {
-      chip.addEventListener('click', function() {
-        chips.forEach(c => c.classList.remove('active'));
+  function initFilterTabs() {
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        btns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        activeCategory = this.getAttribute('data-filter') || 'all';
-        applyCardFilters();
+        activeTrack = this.getAttribute('data-track') || 'all';
+        applyFilters();
       });
     });
   }
 
-  function initSearch() {
-    const searchInput = document.getElementById('phaseSearchInput');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', () => {
-      applyCardFilters();
-    });
+  function initLiveSearch() {
+    const input = document.getElementById('syllabusSearch');
+    if (!input) return;
+    input.addEventListener('input', applyFilters);
   }
 
-  function applyCardFilters() {
-    const searchInput = document.getElementById('phaseSearchInput');
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    const cards = document.querySelectorAll('.enterprise-card');
+  function applyFilters() {
+    const input = document.getElementById('syllabusSearch');
+    const q = input ? input.value.toLowerCase().trim() : '';
+    const rows = document.querySelectorAll('.module-row');
 
-    cards.forEach(card => {
-      const cat = card.getAttribute('data-category') || '';
-      const matchesCat = (activeCategory === 'all' || cat.includes(activeCategory));
+    rows.forEach(row => {
+      const track = row.getAttribute('data-track') || '';
+      const matchesTrack = (activeTrack === 'all' || track.includes(activeTrack));
 
-      const title = card.querySelector('.card-heading')?.textContent.toLowerCase() || '';
-      const desc = card.querySelector('.card-summary')?.textContent.toLowerCase() || '';
-      const keywords = card.querySelector('.card-keywords-flex')?.textContent.toLowerCase() || '';
+      const title = row.querySelector('.module-row-title')?.textContent.toLowerCase() || '';
+      const desc = row.querySelector('.module-row-desc')?.textContent.toLowerCase() || '';
+      const tags = row.querySelector('.module-row-tags')?.textContent.toLowerCase() || '';
 
-      const matchesSearch = (!query || title.includes(query) || desc.includes(query) || keywords.includes(query));
+      const matchesQuery = (!q || title.includes(q) || desc.includes(q) || tags.includes(q));
 
-      if (matchesCat && matchesSearch) {
-        card.style.display = 'flex';
+      if (matchesTrack && matchesQuery) {
+        row.style.display = 'flex';
       } else {
-        card.style.display = 'none';
+        row.style.display = 'none';
       }
     });
   }
 
-  /* --------------------------------------------------------------------------
-     4. Keyboard Shortcuts (Cmd+K / Ctrl+K)
-     -------------------------------------------------------------------------- */
-  function initKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        const searchInput = document.getElementById('phaseSearchInput');
-        if (searchInput) {
-          e.preventDefault();
-          searchInput.focus();
-          searchInput.select();
-        }
-      }
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     5. Copy Code with Toast
-     -------------------------------------------------------------------------- */
   function initCopyButtons() {
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -171,11 +130,11 @@
         const codeElem = codeBox.querySelector('pre code');
         if (!codeElem) return;
 
-        const textToCopy = codeElem.innerText || codeElem.textContent;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          showToast('&#128203; Snippet copied to clipboard!');
+        const text = codeElem.innerText || codeElem.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Copied to clipboard');
           const orig = this.textContent;
-          this.textContent = 'Copied!';
+          this.textContent = 'Copied';
           setTimeout(() => { this.textContent = orig; }, 2000);
         });
       });
@@ -187,11 +146,11 @@
     if (!codeBox) return;
     const codeElem = codeBox.querySelector('pre code');
     if (!codeElem) return;
-    const textToCopy = codeElem.innerText || codeElem.textContent;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      showToast('&#128203; Snippet copied to clipboard!');
+    const text = codeElem.innerText || codeElem.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied to clipboard');
       const orig = btn.textContent;
-      btn.textContent = 'Copied!';
+      btn.textContent = 'Copied';
       setTimeout(() => { btn.textContent = orig; }, 2000);
     });
   };
@@ -204,40 +163,24 @@
       toast.className = 'toast';
       document.body.appendChild(toast);
     }
-    toast.innerHTML = msg;
+    toast.textContent = msg;
     toast.classList.add('show');
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(() => {
       toast.classList.remove('show');
-    }, 2500);
+    }, 2000);
   }
 
-  /* --------------------------------------------------------------------------
-     6. Mobile Drawer
-     -------------------------------------------------------------------------- */
-  function initMobileDrawer() {
-    const toggleBtn = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar-toc');
-    const backdrop = document.getElementById('sidebarBackdrop');
+  function initMobileNav() {
+    const toggle = document.getElementById('menuToggle');
+    const sidebar = document.querySelector('.app-sidebar');
+    if (!toggle || !sidebar) return;
 
-    if (!toggleBtn || !sidebar) return;
-
-    toggleBtn.addEventListener('click', () => {
+    toggle.addEventListener('click', () => {
       sidebar.classList.toggle('open');
-      if (backdrop) backdrop.classList.toggle('show');
     });
-
-    if (backdrop) {
-      backdrop.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        backdrop.classList.remove('show');
-      });
-    }
   }
 
-  /* --------------------------------------------------------------------------
-     7. Mermaid Init
-     -------------------------------------------------------------------------- */
   function initMermaid() {
     if (typeof mermaid !== 'undefined') {
       try {
@@ -246,16 +189,13 @@
           theme: 'dark',
           themeVariables: {
             darkMode: true,
-            background: '#090d18',
-            primaryColor: '#6366f1',
-            primaryTextColor: '#f8fafc',
-            lineColor: '#06b6d4',
-            secondaryColor: '#1e293b'
+            background: '#0b0e14',
+            primaryColor: '#1f6feb',
+            primaryTextColor: '#e6edf3',
+            lineColor: '#58a6ff'
           }
         });
-      } catch (e) {
-        console.warn('Mermaid initialization deferred', e);
-      }
+      } catch (e) {}
     }
   }
 
