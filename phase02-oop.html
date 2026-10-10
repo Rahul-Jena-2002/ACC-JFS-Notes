@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,34 +210,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 5, Section 5.1 ("Inheritance & Dynamic Binding")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;Dynamic binding has a very important property: it makes programs extensible without needing to modify existing code. When the virtual machine calls a method, it looks up the method table for the actual class of the implicit parameter. If a subclass has overridden the method, the overriding version is called.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">Dynamic Dispatch Law</span>
-                <span><strong>LHS vs RHS Rule:</strong> The compiler verifies that the method exists on the <em>declared reference type</em> (LHS). The JVM invokes the implementation of the <em>actual object on the heap</em> (RHS).</span>
-              </li>
-              <li>
-                <span class="axiom-badge">vtable Optimization</span>
-                <span><strong>Method Table Pre-computation:</strong> To avoid expensive runtime class hierarchy searches on every invocation, the HotSpot JVM constructs a flat method table (vtable) per loaded class for instant $O(1)$ dispatch.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The Constructor Chaining Rule</div>
-            <div class="protip-content">
-              <strong>this() and super() must be the FIRST statement:</strong> You cannot run statements before calling <code>this(...)</code> or <code>super(...)</code> in a constructor body. The parent class's state must be completely initialized before the child class initializes its own fields!
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 5, Section 5.1 ("Inheritance & Dynamic Binding")</span></div>
+      <div class="horstmann-quote-text">&ldquo;Dynamic binding has a very important property: it makes programs extensible without needing to modify existing code. When the virtual machine calls a method, it looks up the method table for the actual class of the implicit parameter.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">vtable Law</span><span>HotSpot computes a flat method table per loaded class for instant O(1) dynamic method dispatch.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: Constructor Chaining Rule</div>
+      <div class="protip-content">this() or super() MUST be the very first statement in a constructor body. Base state must be initialized before subclass field initialization!</div>
+    </div>
 
 
           <div class="analogy-box">

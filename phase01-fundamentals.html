@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,40 +210,19 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 4, Section 4.5 ("Method Parameters")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;In computer science folklore, it is often said that Java passes objects 'by reference'. Many programmers believe this. This is untrue. In Java, a method cannot modify any parameter variable that is passed to it. Java always uses call by value.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">Horstmann Axiom 1</span>
-                <span><strong>A method cannot modify a numeric or boolean parameter:</strong> Primitives are passed by value. The parameter is initialized with a copy of the argument. Changes inside the method frame have zero effect on caller variables.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">Horstmann Axiom 2</span>
-                <span><strong>A method can change the state of an object parameter:</strong> The parameter holds a copy of the object's heap address; mutations made through that reference affect the shared object on the heap.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">Horstmann Axiom 3</span>
-                <span><strong>A method cannot make an object parameter refer to a new object:</strong> Reassigning a parameter reference (e.g. <code>x = new Employee(...)</code>) only changes the local copy inside the method frame; the caller's outside variable remains untouched.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The Hotel Key Card Analogy</div>
-            <div class="protip-content">
-              <strong>The Reference is the Key Card; The Object is the Hotel Room:</strong>
-              <br/>When you pass a reference into a method, Java photocopies the key card! If the method uses the copied key card to repaint the walls blue (<code>room.setColor("blue")</code>), your original room is painted blue.
-              <br/>But if the method throws away its key card and gets a new key to Room 202 (<code>room = new Room(202)</code>), <strong>YOUR key card still opens Room 101</strong>! Everything is strictly Pass-by-Value.
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 4, Section 4.5 ("Method Parameters")</span></div>
+      <div class="horstmann-quote-text">&ldquo;In computer science folklore, it is often said that Java passes objects 'by reference'. Many programmers believe this. This is untrue. In Java, a method cannot modify any parameter variable that is passed to it. Java always uses call by value.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">Axiom 1</span><span><strong>Primitives:</strong> Copied directly. Changes inside method frame have zero effect on caller variables.</span></li>
+        <li><span class="axiom-badge">Axiom 2</span><span><strong>Object References:</strong> Reference address is copied. Calling mutators affects the shared heap object.</span></li>
+        <li><span class="axiom-badge">Axiom 3</span><span><strong>Reassignment:</strong> Reassigning the parameter reference only changes the local frame copy; caller variable remains unchanged.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The Hotel Key Card Analogy</div>
+      <div class="protip-content">Java photocopies the room key card. The cleaner can repaint the room walls blue, but throwing away their copy for Room 202 does NOT change YOUR key card back in main()!</div>
+    </div>
 
 
           <div class="analogy-box">

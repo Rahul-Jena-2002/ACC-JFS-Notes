@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,34 +210,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 3, Section 3.6 ("Strings") &bull; Chapter 5, Section 5.2 ("Object Contract")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;The Java designers decided to share strings. No method in the String class can change a string. A string is an immutable sequence of Unicode characters. Sharing is far more efficient than copying: the compiler can arrange that identical string literals are shared in a common pool.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">SCP Flyweight Pool</span>
-                <span><strong>String Constant Pool:</strong> String literals reside in the SCP within the Heap. Calling <code>String.intern()</code> looks up or places the string into this canonical pool.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">equals() & hashCode() Contract</span>
-                <span><strong>Sacred Invariant:</strong> If <code>a.equals(b)</code> is true, then <code>a.hashCode() == b.hashCode()</code> MUST be true. Never override equals() without overriding hashCode()!</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Defensive Copying Pattern</div>
-            <div class="protip-content">
-              <strong>Never Return Mutable References:</strong> If an immutable class holds a mutable field (like <code>java.util.Date</code> or <code>ArrayList</code>), never assign or return it directly! Always return a cloned copy (<code>new Date(this.date.getTime())</code>) so external callers cannot mutate internal state.
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 3, Section 3.6 ("Strings") &bull; Chapter 5 ("Object Contract")</span></div>
+      <div class="horstmann-quote-text">&ldquo;The Java designers decided to share strings. No method in the String class can change a string. A string is an immutable sequence of Unicode characters... The equals method determines whether two objects have identical state.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">SCP Flyweight</span><span>String literals reside in the String Constant Pool in Heap memory for maximum sharing.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: equals() & hashCode() Sacred Contract</div>
+      <div class="protip-content">If a.equals(b) is true, then a.hashCode() == b.hashCode() MUST be true! Always generate both methods together in your IDE using the exact same business key fields.</div>
+    </div>
 
 
           <div class="analogy-box">

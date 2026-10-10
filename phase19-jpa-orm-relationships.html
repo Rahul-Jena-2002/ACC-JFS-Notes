@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPA / Hibernate ORM & Entity Relationships Architecture &bull; Core Java Developer Reference</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 19</span>
+    </div>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
+      </div>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase20-jpms-clean-code.html" class="btn-header primary">Next: P20 &rarr;</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="active">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
+
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 19</span>
+        </div>
+        <h1 class="phase-h1">JPA / Hibernate ORM & Entity Relationships Architecture</h1>
+        <div class="source-mapping-bar">
+          <span>&#128194; <strong>Repository Module:</strong> Module 6_ Database and ORM \ Demos_Introduction_to_ORM_JPA & Demos_Entity_Relationships</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume II — Chapter 5: Database Programming & Entity Persistence</span>
+        </div>
+      </div>
+
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+      <section id="phase-19" class="phase-section" data-phase-id="19">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-19">Phase 19</span>
+            <h2 class="section-title">JPA / Hibernate ORM & Entity Relationships Architecture</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 6_ Database and ORM \ Demos_Introduction_to_ORM_JPA & Demos_Entity_Relationships</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Cay S. Horstmann &bull; Volume II &mdash; Chapter 5: Database Programming & Entity Persistence</span>
+        </div>
+
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">19.1 Object-Relational Impedance Mismatch, Entity Life Cycle & Relationships</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p19-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 5, Section 5.1 ("Object-Relational Persistence")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Writing raw JDBC code requires tedious mapping between relational database rows and Java object graphs. Object-Relational Mapping (ORM) frameworks like Hibernate, adhering to the Java Persistence API (JPA) standard, bridge this impedance mismatch. An entity represents a persistent domain object managed by an EntityManager within a persistence context. Relationships between entities must be modeled with precision to prevent catastrophic performance degradation.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Entity Life Cycle</span>
+                <span><strong>Four States:</strong> <em>New/Transient</em> (created in memory, no DB id), <em>Managed</em> (tracked in persistence context, auto-dirtied), <em>Detached</em> (session closed), <em>Removed</em> (scheduled for SQL DELETE).</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Lazy Loading Axiom</span>
+                <span><strong>Always Default to LAZY:</strong> All collection relationships (<code>@OneToMany</code>, <code>@ManyToMany</code>) MUST be <code>FetchType.LAZY</code> to prevent loading entire relational tables into RAM!</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Currency Exchange & The N+1 Restaurant Trap</div>
+            <div class="analogy-content">
+              • <strong>Impedance Mismatch:</strong> Tables have rows and foreign keys (2D grid). Java has objects, polymorphism, and collections (graph). JPA is the automatic currency exchange translating between Yen and Euros.
+              <br/>• <strong>The N+1 Query Trap:</strong> Imagine ordering food for 50 people. The waiter brings 1 bill for the group (Query 1), then walks back to the kitchen 50 separate times to fetch each person's fork one by one (N queries)! Solution: Use <code>JOIN FETCH</code> to bring all forks and plates in 1 trip.
+            </div>
+          </div>
+
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The mappedBy Rule</div>
+            <div class="protip-content">
+              <strong>Who owns the Foreign Key?</strong> In a bidirectional <code>@OneToMany</code> / <code>@ManyToOne</code> relationship, the child entity with the <code>@ManyToOne</code> annotation OWNS the foreign key column. The parent entity's <code>@OneToMany</code> MUST have <code>mappedBy = "fieldName"</code>, meaning: <em>"I don't own the foreign key column; go look at the child's field!"</em>
+            </div>
+          </div>
+
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 6_ Database and ORM/.../Department.java & Employee.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.orm;
+
+<span class="kw">import</span> jakarta.persistence.*;
+<span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.List;
+
+<span class="annotation">@Entity</span>
+<span class="annotation">@Table</span>(name = <span class="str">"departments"</span>)
+<span class="kw">public class</span> <span class="typ">Department</span> {
+    <span class="annotation">@Id</span>
+    <span class="annotation">@GeneratedValue</span>(strategy = <span class="typ">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="typ">Long</span> id;
+
+    <span class="kw">private</span> <span class="typ">String</span> name;
+
+    <span class="cmt">// mappedBy points to the owning field in Employee</span>
+    <span class="annotation">@OneToMany</span>(mappedBy = <span class="str">"department"</span>, cascade = <span class="typ">CascadeType</span>.ALL, fetch = <span class="typ">FetchType</span>.LAZY)
+    <span class="kw">private</span> <span class="typ">List</span>&lt;<span class="typ">Employee</span>&gt; employees = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> addEmployee(<span class="typ">Employee</span> emp) {
+        employees.add(emp);
+        emp.setDepartment(<span class="kw">this</span>); <span class="cmt">// Maintain bidirectional sync!</span>
+    }
+}
+
+<span class="annotation">@Entity</span>
+<span class="annotation">@Table</span>(name = <span class="str">"employees"</span>)
+<span class="kw">class</span> <span class="typ">Employee</span> {
+    <span class="annotation">@Id</span>
+    <span class="annotation">@GeneratedValue</span>(strategy = <span class="typ">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="typ">Long</span> id;
+
+    <span class="kw">private</span> <span class="typ">String</span> fullName;
+
+    <span class="annotation">@ManyToOne</span>(fetch = <span class="typ">FetchType</span>.LAZY)
+    <span class="annotation">@JoinColumn</span>(name = <span class="str">"dept_id"</span>) <span class="cmt">// Owning side holding physical foreign key column</span>
+    <span class="kw">private</span> <span class="typ">Department</span> department;
+
+    <span class="kw">public void</span> setDepartment(<span class="typ">Department</span> dept) { <span class="kw">this</span>.department = dept; }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Persistence Context</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1:</span> When <code>department.addEmployee(emp)</code> is called inside a managed transaction, Hibernate's dirty-checking engine automatically emits the SQL <code>INSERT</code> statements upon transaction commit.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2:</span> <code>FetchType.LAZY</code> generates dynamic CGLIB proxies so employee records are only queried from the database when <code>department.getEmployees()</code> is explicitly invoked.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <!-- Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase18-junit5-mockito-tdd.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">P18: 18. JUnit 5 & Mockito</span>
+        </a>
+        
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
+        </a>
+
+        
+        <a href="phase20-jpms-clean-code.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">P20: 20. JPMS & Clean Code</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

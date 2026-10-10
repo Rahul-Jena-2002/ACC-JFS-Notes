@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,34 +210,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 7, Section 7.1 ("Dealing with Errors")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;In Java, an exception object is always an instance of a class derived from Throwable. When an exceptional condition occurs, the runtime system searches backward through the call stack until it finds a method that contains an appropriate exception handler. If no handler is found, the thread terminates.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">Checked vs Unchecked</span>
-                <span><strong>External Failure vs Logic Defect:</strong> Checked exceptions represent anticipated external failures (network down, file missing) that caller code must handle. RuntimeExceptions represent programmer bugs (NullPointerException) that must be fixed in code.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">Try-With-Resources</span>
-                <span><strong>AutoCloseable:</strong> Any resource declared in <code>try (Resource r = ...)</code> has its <code>close()</code> method invoked automatically in reverse declaration order, even if exceptions occur.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The finally Guarantee</div>
-            <div class="protip-content">
-              <strong>The finally block ALWAYS executes:</strong> Even if the <code>try</code> block contains a <code>return</code> statement, <code>finally</code> runs before the method finishes! The only exceptions are if <code>System.exit(0)</code> terminates the process or the machine crashes.
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 7, Section 7.1 ("Dealing with Errors")</span></div>
+      <div class="horstmann-quote-text">&ldquo;In Java, an exception object is always an instance of a class derived from Throwable. Checked exceptions represent situations beyond the program's control that the compiler forces you to handle.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">Try-With-Resources</span><span>Any AutoCloseable resource closes automatically in reverse order of declaration.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: The finally Execution Guarantee</div>
+      <div class="protip-content">The finally block runs ALWAYS, even after a return statement in try! The only exception is System.exit(0) terminating the JVM process.</div>
+    </div>
 
 
           <div class="analogy-box">

@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,34 +210,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 9, Section 9.1 ("The Collections Framework")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;The Java library separates interfaces and implementations. A LinkedList has constant-time insertions and removals at an iterator position, while an ArrayList has constant-time random access. In a hash table, when a bucket contains too many elements due to poor hash functions or collisions, Java 8 converts the bucket list into a balanced red-black tree, reducing lookup from O(n) to O(log n).&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">ArrayList Growth Math</span>
-                <span><strong>$1.5 	imes$ Resizing Factor:</strong> Initial capacity is 10. When capacity is exceeded, <code>newCapacity = oldCapacity + (oldCapacity >> 1)</code>. The array is copied via <code>System.arraycopy()</code>.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">HashMap Treeification</span>
-                <span><strong>Threshold 8:</strong> When a bucket contains $ge 8$ collision nodes and the table capacity is $ge 64$, the linked list converts to a TreeNode Red-Black tree.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Fail-Fast Iterators & modCount</div>
-            <div class="protip-content">
-              <strong>ConcurrentModificationException:</strong> If you modify a collection directly (<code>list.add()</code> or <code>list.remove()</code>) while iterating over it, the iterator detects <code>modCount != expectedModCount</code> and immediately throws an exception! Use <code>iterator.remove()</code> or <code>list.removeIf()</code>.
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 9, Section 9.1 ("The Collections Framework")</span></div>
+      <div class="horstmann-quote-text">&ldquo;The Java library separates interfaces and implementations. A LinkedList has constant-time insertions at an iterator position, while an ArrayList has constant-time random access. In a hash table, when a bucket contains &ge; 8 nodes, Java 8 converts the linked list to a balanced red-black tree.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">Growth Math</span><span>ArrayList grows by 1.5x: newCapacity = oldCapacity + (oldCapacity >> 1).</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: Fail-Fast Iterators & modCount</div>
+      <div class="protip-content">Mutating a collection directly while looping throws ConcurrentModificationException! Use iterator.remove() or list.removeIf().</div>
+    </div>
 
 
           <div class="analogy-box">

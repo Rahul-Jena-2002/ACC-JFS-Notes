@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -181,34 +209,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 8, Section 8.1 & 8.5 ("Generic Programming & Wildcards")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;Type parameters make programs easier to read and safer to run. In Java, generic types are implemented through type erasure: the compiler translates all generic code into raw types and inserts casts. Remember the PECS rule: Producer Extends, Consumer Super. If a parameterized type represents a producer that supplies items, use ? extends. If it represents a consumer that receives items, use ? super.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">PECS Law</span>
-                <span><strong>Producer = Extends (Read-Only):</strong> <code>List&lt;? extends Fruit&gt;</code> is safe to read items as <code>Fruit</code>, but you cannot add anything except <code>null</code>.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">Consumer = Super (Write-Allowed)</span>
-                <span><strong>Consumer = Super (Write-Allowed):</strong> <code>List&lt;? super Apple&gt;</code> is guaranteed to accept <code>Apple</code> instances safely.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Why List&lt;Dog&gt; is NOT a List&lt;Animal&gt;</div>
-            <div class="protip-content">
-              <strong>Type Invariance:</strong> Even though <code>Dog extends Animal</code>, a <code>List&lt;Dog&gt;</code> is NOT a subtype of <code>List&lt;Animal&gt;</code>! If Java permitted this, you could add a <code>Cat</code> to the animal list, which would corrupt the dog list at runtime!
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 8, Section 8.1 & 8.5 ("Generic Programming & Wildcards")</span></div>
+      <div class="horstmann-quote-text">&ldquo;Type parameters make programs easier to read and safer to run. Generic types are implemented through type erasure. Remember the PECS rule: Producer Extends, Consumer Super.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">PECS Law</span><span>Producer = Extends (read-only); Consumer = Super (write-allowed).</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: Type Invariance</div>
+      <div class="protip-content">List&lt;Dog&gt; is NOT a List&lt;Animal&gt;! Generics are invariant to prevent putting Cats into Dog lists.</div>
+    </div>
 
 
           <div class="analogy-box">

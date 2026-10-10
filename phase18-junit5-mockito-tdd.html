@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JUnit 5, Mockito & Test-Driven Development (TDD) Architecture &bull; Core Java Developer Reference</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 18</span>
+    </div>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
+      </div>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase19-jpa-orm-relationships.html" class="btn-header primary">Next: P19 &rarr;</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="active">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
+
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 18</span>
+        </div>
+        <h1 class="phase-h1">JUnit 5, Mockito & Test-Driven Development (TDD) Architecture</h1>
+        <div class="source-mapping-bar">
+          <span>&#128194; <strong>Repository Module:</strong> Module 3_ Unit Testing with Junit 5 \ 01_Junit5_Demos & 01_TDD_Demos</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I — Chapter 7: Assertions, Diagnostics & Engineering Test Suites</span>
+        </div>
+      </div>
+
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+      <section id="phase-18" class="phase-section" data-phase-id="18">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-18">Phase 18</span>
+            <h2 class="section-title">JUnit 5, Mockito & Test-Driven Development (TDD) Architecture</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 3_ Unit Testing with Junit 5 \ 01_Junit5_Demos & 01_TDD_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Cay S. Horstmann &bull; Volume I &mdash; Chapter 7: Assertions, Diagnostics & Engineering Test Suites</span>
+        </div>
+
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">18.1 JUnit 5 Architecture: Parameterized Tests, Nested Lifecycles & Assertions</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p18-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 7 ("Unit Testing and Assertions")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Software defects must be detected automatically before software reaches production. JUnit 5 separates into three sub-projects: JUnit Platform, JUnit Jupiter (the modern programming model and extension API), and JUnit Vintage (backward compatibility for JUnit 3 and 4). With parameterized tests, developers can run identical test logic against hundreds of boundary conditions without duplicating code.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">AAA Pattern</span>
+                <span><strong>Arrange, Act, Assert:</strong> Every test case sets up preconditions (Arrange), invokes the target method under test (Act), and verifies expected outcomes (Assert).</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Isolation Principle</span>
+                <span><strong>Zero Order Dependency:</strong> Tests must never depend on the execution order or shared mutable state of previous test cases.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Crash-Test Dummy vs Real Passengers</div>
+            <div class="analogy-content">
+              You do not test automotive brake safety with live passengers on the highway.
+              <br/>Instead, you mount a calibrated Crash-Test Dummy into an isolated simulator, simulate exact collision speeds, and verify that the airbag deployed within 20 milliseconds. That is what <strong>JUnit 5 + Mockito</strong> does for backend business logic.
+            </div>
+          </div>
+
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: assertThrows & Mockito verify</div>
+            <div class="protip-content">
+              <strong>Testing Exceptions:</strong> Never wrap test code in a manual <code>try-catch</code>! Use <code>assertThrows(InvalidCredentialsException.class, () -> authService.login(null, null));</code>.
+              <br/><strong>Verification:</strong> <code>verify(emailService, times(1)).sendWelcomeEmail(any());</code> proves the method was called with zero side effects on real mail servers.
+            </div>
+          </div>
+
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 3_ Unit Testing with Junit 5/.../EmployeeServiceTest01.java & ParameterizedTests.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.junit5;
+
+<span class="kw">import</span> org.junit.jupiter.api.*;
+<span class="kw">import</span> org.junit.jupiter.params.ParameterizedTest;
+<span class="kw">import</span> org.junit.jupiter.params.provider.CsvSource;
+<span class="kw">import</span> org.junit.jupiter.params.provider.ValueSource;
+<span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="kw">public class</span> <span class="typ">EnterpriseTestingSuite</span> {
+
+    <span class="cmt">// 1. Parameterized Testing: Clean multi-input execution</span>
+    <span class="annotation">@ParameterizedTest</span>
+    <span class="annotation">@ValueSource</span>(strings = {<span class="str">"radar"</span>, <span class="str">"level"</span>, <span class="str">"kayak"</span>, <span class="str">"rotator"</span>})
+    <span class="kw">void</span> shouldIdentifyPalindromes(<span class="typ">String</span> word) {
+        <span class="typ">String</span> reversed = <span class="kw">new</span> <span class="typ">StringBuilder</span>(word).reverse().toString();
+        assertEquals(word, reversed);
+    }
+
+    <span class="cmt">// 2. CSV Data-Driven Testing</span>
+    <span class="annotation">@ParameterizedTest</span>
+    <span class="annotation">@CsvSource</span>({
+        <span class="str">"100.0, 0.10, 110.0"</span>,
+        <span class="str">"250.0, 0.20, 300.0"</span>,
+        <span class="str">"50.0,  0.00, 50.0"</span>
+    })
+    <span class="kw">void</span> shouldCalculateTaxCorrectly(<span class="typ">double</span> base, <span class="typ">double</span> rate, <span class="typ">double</span> expected) {
+        <span class="typ">double</span> result = base + (base * rate);
+        assertEquals(expected, result, <span class="num">0.001</span>);
+    }
+
+    <span class="cmt">// 3. Exception Verification</span>
+    <span class="annotation">@Test</span>
+    <span class="kw">void</span> shouldThrowWhenInputIsNegative() {
+        assertThrows(<span class="typ">IllegalArgumentException</span>.<span class="kw">class</span>, () -> {
+            <span class="kw">if</span> (<span class="num">-5</span> &lt; <span class="num">0</span>) <span class="kw">throw new</span> <span class="typ">IllegalArgumentException</span>(<span class="str">"Invalid balance"</span>);
+        });
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Test Life Cycle</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1:</span> JUnit 5 creates a brand-new test class instance per test method execution to enforce absolute state isolation between runs.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2:</span> <code>@CsvSource</code> reads comma-separated arguments and casts them directly to method parameter types via internal converters.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <!-- Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase17-modern-datetime.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">P17: 17. Modern Date & Time</span>
+        </a>
+        
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
+        </a>
+
+        
+        <a href="phase19-jpa-orm-relationships.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">P19: 19. JPA / Hibernate ORM</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

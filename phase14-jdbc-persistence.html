@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -182,34 +210,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 5, Section 5.1 & 5.3 ("Database Programming: JDBC")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;The Java Database Connectivity (JDBC) API defines how a Java application executes SQL statements and retrieves query results. Always use a PreparedStatement instead of a raw Statement whenever SQL commands contain parameters. A PreparedStatement precompiles the SQL query template and treats all input parameters as literal data, completely neutralizing SQL injection attacks.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">ACID Demarcation</span>
-                <span><strong>Transactions:</strong> Set <code>connection.setAutoCommit(false);</code>. Call <code>connection.commit();</code> on success, and <code>connection.rollback();</code> in the catch block.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">Connection Pooling</span>
-                <span><strong>Reuse Sockets:</strong> Creating a raw database connection takes 50-100ms. Production architectures always use connection pools (HikariCP) via a DataSource.</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: PreparedStatement Defense</div>
-            <div class="protip-content">
-              <strong>Never concatenate SQL strings:</strong> String concatenation allows attackers to inject malicious SQL syntax. A PreparedStatement sends the SQL structure to the database engine first for parsing, then transmits parameters as pure data packets, making injection impossible!
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 5, Section 5.1 & 5.3 ("Database Programming: JDBC")</span></div>
+      <div class="horstmann-quote-text">&ldquo;Always use PreparedStatement instead of raw Statement whenever queries contain user parameters. PreparedStatement treats inputs strictly as literal data, completely neutralizing SQL injection attacks.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">ACID Transactions</span><span>Call connection.setAutoCommit(false), commit() on success, and rollback() in catch.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: PreparedStatement Security</div>
+      <div class="protip-content">Never concatenate strings in SQL! PreparedStatement precompiles the query template, rendering injection mathematically impossible.</div>
+    </div>
 
 
           <div class="analogy-box">

@@ -112,7 +112,7 @@
             <span class="sidebar-phase-badge">P12</span>
           </a>
         </li>
-      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems, Architecture & Standards</div><ul class="sidebar-nav-list">
         <li class="sidebar-nav-item">
           <a href="phase13-io-serialization.html" class="active">
             <span>13. File I/O & NIO.2</span>
@@ -131,6 +131,34 @@
           <a href="phase15-design-patterns.html" class="">
             <span>15. SOLID & Patterns</span>
             <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase17-modern-datetime.html" class="">
+            <span>17. Modern Date & Time</span>
+            <span class="sidebar-phase-badge">P17</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase18-junit5-mockito-tdd.html" class="">
+            <span>18. JUnit 5 & Mockito</span>
+            <span class="sidebar-phase-badge">P18</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase19-jpa-orm-relationships.html" class="">
+            <span>19. JPA / Hibernate ORM</span>
+            <span class="sidebar-phase-badge">P19</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase20-jpms-clean-code.html" class="">
+            <span>20. JPMS & Clean Code</span>
+            <span class="sidebar-phase-badge">P20</span>
           </a>
         </li>
       
@@ -181,34 +209,17 @@
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
-
-          <div class="horstmann-quote-box">
-            <div class="horstmann-citation">
-              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 2 & Chapter 3 ("Input/Output & Object Serialization")</span>
-            </div>
-            <div class="horstmann-quote-text">
-              &ldquo;The java.nio.file API (NIO.2), introduced to supersede the antiquated java.io.File class, provides clean, robust, and platform-independent file manipulation using Path and Files. For object persistence, Java provides object serialization, transforming object graphs into byte streams. Any sensitive field must be marked transient so it is omitted from the serialized stream.&rdquo;
-            </div>
-            <ul class="horstmann-axioms-list">
-              <li>
-                <span class="axiom-badge">serialVersionUID Evolution</span>
-                <span><strong>Always Define Explicitly:</strong> Declare <code>private static final long serialVersionUID = 1L;</code> so class evolution doesn't break deserialization compatibility.</span>
-              </li>
-              <li>
-                <span class="axiom-badge">BigDecimal Financial Rule</span>
-                <span><strong>Never use double for Money:</strong> Floating point numbers cannot represent 0.1 exactly. Always use <code>new BigDecimal("0.1")</code> with String constructors!</span>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="protip-box">
-            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The transient Security Barrier</div>
-            <div class="protip-content">
-              <strong>Protecting Sensitive Data:</strong> Mark passwords, API tokens, and database handles with <code>transient</code>. When serialized to disk or sent over a network socket, transient fields are automatically skipped, neutralizing data leak vulnerabilities.
-            </div>
-          </div>
-
+<div class="horstmann-quote-box">
+      <div class="horstmann-citation"><span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 2 & Chapter 3 ("Input/Output & Object Serialization")</span></div>
+      <div class="horstmann-quote-text">&ldquo;NIO.2 provides robust non-blocking file manipulation using Path and Files. For persistence, object serialization transforms object graphs into byte streams. Sensitive fields must be marked transient.&rdquo;</div>
+      <ul class="horstmann-axioms-list">
+        <li><span class="axiom-badge">BigDecimal Rule</span><span>Never use double for currency! Always use new BigDecimal("0.1") with String constructor.</span></li>
+      </ul>
+    </div>
+<div class="protip-box">
+      <div class="protip-title">&#9889; Pro-Tip: The transient Security Barrier</div>
+      <div class="protip-content">Mark passwords and secret tokens with transient. Serialization skips them completely, protecting against data leakage.</div>
+    </div>
 
 
           <div class="analogy-box">
