@@ -1,40 +1,36 @@
 /* ==========================================================================
-   CORE JAVA ENTERPRISE ROADMAP - UNIFIED INTERACTION ENGINE
-   Handles LocalStorage state, mobile drawers, live progress & copy toasts
+   ENTERPRISE DEVELOPER PORTAL INTERACTION ENGINE (V2.0)
    ========================================================================== */
 
 (function() {
   'use strict';
 
   const STORAGE_PREFIX = 'java_mastery_';
-
-  // Total items registered in the full syllabus
   const TOTAL_CHECKLIST_ITEMS = 35;
 
-  // Initialize on DOM ready
   document.addEventListener('DOMContentLoaded', () => {
     initChecklistState();
     initCopyButtons();
     initMobileDrawer();
-    initDashboardSearch();
+    initCategoryFilters();
+    initSearch();
+    initKeyboardShortcuts();
     initMermaid();
-    updateGlobalProgressDisplay();
+    updateProgressDisplays();
   });
 
   /* --------------------------------------------------------------------------
-     1. Checklist & Mastery State (localStorage)
+     1. Checklist State & LocalStorage
      -------------------------------------------------------------------------- */
   function initChecklistState() {
-    const buttons = document.querySelectorAll('.checklist-btn');
-    buttons.forEach(btn => {
-      const onclickAttr = btn.getAttribute('onclick');
-      let itemId = null;
-      if (onclickAttr) {
-        const match = onclickAttr.match(/toggleCompleted\(this,\s*'([^']+)'\)/);
-        if (match) itemId = match[1];
-      }
+    document.querySelectorAll('.checklist-btn').forEach(btn => {
+      let itemId = btn.getAttribute('data-item-id');
       if (!itemId) {
-        itemId = btn.getAttribute('data-item-id');
+        const onclickAttr = btn.getAttribute('onclick');
+        if (onclickAttr) {
+          const match = onclickAttr.match(/toggleCompleted\(this,\s*'([^']+)'\)/);
+          if (match) itemId = match[1];
+        }
       }
 
       if (itemId) {
@@ -59,14 +55,14 @@
       icon.innerHTML = isCompleted ? '&#9679;' : '&#9675;';
     }
 
-    showToast(isCompleted ? '&#10003; Topic marked as Mastered!' : 'Topic reset to In Progress');
-    updateGlobalProgressDisplay();
+    showToast(isCompleted ? '&#10003; Milestone marked as Mastered!' : 'Milestone marked In Progress');
+    updateProgressDisplays();
   };
 
   /* --------------------------------------------------------------------------
-     2. Global & Page Progress Calculations
+     2. Progress Displays (Header + Hero Cards)
      -------------------------------------------------------------------------- */
-  function updateGlobalProgressDisplay() {
+  function updateProgressDisplays() {
     let completedCount = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -77,23 +73,95 @@
 
     const pct = Math.min(100, Math.round((completedCount / TOTAL_CHECKLIST_ITEMS) * 100));
 
-    // Update global tracker pill if present in header
-    const pillCount = document.getElementById('globalProgressCount');
-    if (pillCount) pillCount.textContent = completedCount + ' / ' + TOTAL_CHECKLIST_ITEMS + ' (' + pct + '%)';
+    // Update Top Header Pill
+    const headerPill = document.getElementById('globalProgressCount');
+    if (headerPill) headerPill.textContent = completedCount + ' / ' + TOTAL_CHECKLIST_ITEMS + ' (' + pct + '%)';
 
-    // Update dashboard stat card if on index.html
-    const statMastered = document.getElementById('dashMasteredCount');
-    if (statMastered) statMastered.textContent = completedCount;
+    // Update Header Mini Progress Ring (circumference = 2 * PI * 7 ≈ 44)
+    const ringBar = document.getElementById('headerRingBar');
+    if (ringBar) {
+      const offset = 44 - (44 * (pct / 100));
+      ringBar.style.strokeDashoffset = offset;
+    }
 
-    const statPct = document.getElementById('dashPctCount');
-    if (statPct) statPct.textContent = pct + '%';
+    // Update Dashboard Hero KPIs
+    const heroMastered = document.getElementById('heroMasteredCount');
+    if (heroMastered) heroMastered.textContent = completedCount;
 
-    const statFill = document.getElementById('dashProgressFill');
-    if (statFill) statFill.style.width = pct + '%';
+    const heroPct = document.getElementById('heroPctCount');
+    if (heroPct) heroPct.textContent = pct + '%';
+
+    const heroBar = document.getElementById('heroProgressBar');
+    if (heroBar) heroBar.style.width = pct + '%';
   }
 
   /* --------------------------------------------------------------------------
-     3. Code Copy with Toast Notification
+     3. Category Filter Tabs & Live Search
+     -------------------------------------------------------------------------- */
+  let activeCategory = 'all';
+
+  function initCategoryFilters() {
+    const chips = document.querySelectorAll('.filter-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', function() {
+        chips.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        activeCategory = this.getAttribute('data-filter') || 'all';
+        applyCardFilters();
+      });
+    });
+  }
+
+  function initSearch() {
+    const searchInput = document.getElementById('phaseSearchInput');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', () => {
+      applyCardFilters();
+    });
+  }
+
+  function applyCardFilters() {
+    const searchInput = document.getElementById('phaseSearchInput');
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const cards = document.querySelectorAll('.enterprise-card');
+
+    cards.forEach(card => {
+      const cat = card.getAttribute('data-category') || '';
+      const matchesCat = (activeCategory === 'all' || cat.includes(activeCategory));
+
+      const title = card.querySelector('.card-heading')?.textContent.toLowerCase() || '';
+      const desc = card.querySelector('.card-summary')?.textContent.toLowerCase() || '';
+      const keywords = card.querySelector('.card-keywords-flex')?.textContent.toLowerCase() || '';
+
+      const matchesSearch = (!query || title.includes(query) || desc.includes(query) || keywords.includes(query));
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     4. Keyboard Shortcuts (Cmd+K / Ctrl+K)
+     -------------------------------------------------------------------------- */
+  function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        const searchInput = document.getElementById('phaseSearchInput');
+        if (searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     5. Copy Code with Toast
      -------------------------------------------------------------------------- */
   function initCopyButtons() {
     document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -105,12 +173,10 @@
 
         const textToCopy = codeElem.innerText || codeElem.textContent;
         navigator.clipboard.writeText(textToCopy).then(() => {
-          showToast('&#128203; Code copied to clipboard!');
+          showToast('&#128203; Snippet copied to clipboard!');
           const orig = this.textContent;
           this.textContent = 'Copied!';
           setTimeout(() => { this.textContent = orig; }, 2000);
-        }).catch(err => {
-          console.error('Failed to copy', err);
         });
       });
     });
@@ -123,7 +189,7 @@
     if (!codeElem) return;
     const textToCopy = codeElem.innerText || codeElem.textContent;
     navigator.clipboard.writeText(textToCopy).then(() => {
-      showToast('&#128203; Code copied to clipboard!');
+      showToast('&#128203; Snippet copied to clipboard!');
       const orig = btn.textContent;
       btn.textContent = 'Copied!';
       setTimeout(() => { btn.textContent = orig; }, 2000);
@@ -147,7 +213,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Mobile Navigation Drawer
+     6. Mobile Drawer
      -------------------------------------------------------------------------- */
   function initMobileDrawer() {
     const toggleBtn = document.getElementById('menuToggle');
@@ -167,45 +233,10 @@
         backdrop.classList.remove('show');
       });
     }
-
-    // Close on navigation link click on mobile
-    sidebar.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 860) {
-          sidebar.classList.remove('open');
-          if (backdrop) backdrop.classList.remove('show');
-        }
-      });
-    });
   }
 
   /* --------------------------------------------------------------------------
-     5. Dashboard Search & Filter
-     -------------------------------------------------------------------------- */
-  function initDashboardSearch() {
-    const searchInput = document.getElementById('phaseSearchInput');
-    if (!searchInput) return;
-
-    const cards = document.querySelectorAll('.roadmap-card');
-
-    searchInput.addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      cards.forEach(card => {
-        const title = card.querySelector('.roadmap-card-title')?.textContent.toLowerCase() || '';
-        const desc = card.querySelector('.roadmap-card-desc')?.textContent.toLowerCase() || '';
-        const tags = card.querySelector('.topic-tags-row')?.textContent.toLowerCase() || '';
-
-        if (!q || title.includes(q) || desc.includes(q) || tags.includes(q)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     6. Mermaid Diagrams Initialization
+     7. Mermaid Init
      -------------------------------------------------------------------------- */
   function initMermaid() {
     if (typeof mermaid !== 'undefined') {
@@ -215,10 +246,11 @@
           theme: 'dark',
           themeVariables: {
             darkMode: true,
-            background: '#0f172a',
+            background: '#090d18',
             primaryColor: '#6366f1',
             primaryTextColor: '#f8fafc',
-            lineColor: '#06b6d4'
+            lineColor: '#06b6d4',
+            secondaryColor: '#1e293b'
           }
         });
       } catch (e) {

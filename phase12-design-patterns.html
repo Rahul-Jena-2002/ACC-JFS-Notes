@@ -3,171 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SOLID Design Principles, GoF Patterns & Architecture &mdash; Core Java Enterprise Roadmap</title>
+  <title>SOLID Design Principles, GoF Patterns & Clean Architecture &bull; ACC Core Java Architecture</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
   <header class="top-header">
     <div class="header-left">
       <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
       <a href="index.html" class="brand-link">
-        <span class="brand-icon">&#9749;</span>
-        <span>Core Java Roadmap</span>
+        <div class="brand-logo-icon">&#9749;</div>
+        <span>ACC Architecture</span>
       </a>
-      <span class="brand-badge">Enterprise Edition</span>
       <div class="header-breadcrumbs">
         <span class="sep">/</span>
         <a href="index.html">Dashboard</a>
         <span class="sep">/</span>
-        <span>Phase 12: Design Patterns</span>
+        <span>Phase 12 &bull; SOLID & Patterns</span>
       </div>
     </div>
     <div class="header-right">
-      <div class="global-tracker-pill">
-        <span class="progress-dot"></span>
+      <div class="header-progress-chip">
+        <svg class="mini-progress-ring" viewBox="0 0 20 20">
+          <circle class="ring-bg" cx="10" cy="10" r="7" stroke-width="2.5" fill="none"></circle>
+          <circle id="headerRingBar" class="ring-bar" cx="10" cy="10" r="7" stroke-width="2.5" fill="none" stroke-dasharray="44" stroke-dashoffset="44"></circle>
+        </svg>
         <span id="globalProgressCount">0 / 35 (0%)</span>
       </div>
-      <a href="index.html" class="nav-btn">Dashboard</a>
-      <a href="projects-stages.html" class="nav-btn primary">Next &rarr;</a>
+      <a href="index.html" class="btn-header">Dashboard</a>
+      <a href="projects-stages.html" class="btn-header primary">Next Phase &rarr;</a>
     </div>
   </header>
 
-  <!-- Layout Container -->
   <div class="layout-container">
-    <!-- Backdrop for mobile drawer -->
     <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
 
-    <!-- Sidebar TOC -->
     <aside class="sidebar-toc">
       
-      <div class="sidebar-title">Phase Contents</div>
+      <div class="sidebar-heading">Phase Milestones</div>
       <ul class="toc-nav-list">
   
-        <li>
-          <a href="#concept-1" class="toc-link" title="12.1 The 5 SOLID Design Principles Explained with Real-World Analogies">
-            <span>12.1 The 5 SOLID Design Principles...</span>
-            <span class="toc-badge">1</span>
+        <li class="toc-nav-item">
+          <a href="#concept-1" title="12.1 The 5 SOLID Design Principles Explained with Real-World Analogies">
+            <span>12.1 The 5 SOLID Design Principl...</span>
+            <span style="font-size: 0.72rem; opacity: 0.6;">#1</span>
           </a>
         </li>
     
-        <li>
-          <a href="#concept-2" class="toc-link" title="12.2 GoF Design Patterns: Singleton, Builder & Strategy in Action">
-            <span>12.2 GoF Design Patterns: Singleto...</span>
-            <span class="toc-badge">2</span>
+        <li class="toc-nav-item">
+          <a href="#concept-2" title="12.2 GoF Design Patterns: Singleton, Builder & Strategy in Action">
+            <span>12.2 GoF Design Patterns: Single...</span>
+            <span style="font-size: 0.72rem; opacity: 0.6;">#2</span>
           </a>
         </li>
     
-        <li>
-          <a href="#concept-3" class="toc-link" title="12.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking">
-            <span>12.3 Unit Testing with JUnit 5: As...</span>
-            <span class="toc-badge">3</span>
+        <li class="toc-nav-item">
+          <a href="#concept-3" title="12.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking">
+            <span>12.3 Unit Testing with JUnit 5: ...</span>
+            <span style="font-size: 0.72rem; opacity: 0.6;">#3</span>
           </a>
         </li>
     
       </ul>
-      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <div class="sidebar-heading" style="margin-top: 2rem;">Phase Switcher</div>
       <ul class="toc-nav-list">
   
-        <li>
-          <a href="phase01-fundamentals.html" class="toc-link ">
-            <span>Phase 1: Fundamentals</span>
+        <li class="toc-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>Phase 01 &bull; Fundamentals</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase02-oop.html" class="toc-link ">
-            <span>Phase 2: OOP & Class Design</span>
+        <li class="toc-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>Phase 02 &bull; OOP Architecture</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase03-strings-objects.html" class="toc-link ">
-            <span>Phase 3: Strings & Memory</span>
+        <li class="toc-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>Phase 03 &bull; Strings & Memory</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase04-exceptions.html" class="toc-link ">
-            <span>Phase 4: Exception Handling</span>
+        <li class="toc-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>Phase 04 &bull; Exception Handling</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase05-collections.html" class="toc-link ">
-            <span>Phase 5: Collections Framework</span>
+        <li class="toc-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>Phase 05 &bull; Collections & Nodes</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase06-generics.html" class="toc-link ">
-            <span>Phase 6: Generics & PECS</span>
+        <li class="toc-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>Phase 06 &bull; Generics & PECS</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase07-functional-streams.html" class="toc-link ">
-            <span>Phase 7: Lambdas & Streams</span>
+        <li class="toc-nav-item">
+          <a href="phase07-functional-streams.html" class="">
+            <span>Phase 07 &bull; Functional Streams</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase08-multithreading.html" class="toc-link ">
-            <span>Phase 8: Multithreading</span>
+        <li class="toc-nav-item">
+          <a href="phase08-multithreading.html" class="">
+            <span>Phase 08 &bull; Concurrency & Loom</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase09-jvm-memory.html" class="toc-link ">
-            <span>Phase 9: JVM & Memory</span>
+        <li class="toc-nav-item">
+          <a href="phase09-jvm-memory.html" class="">
+            <span>Phase 09 &bull; JVM & GC Tuning</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase10-io-serialization.html" class="toc-link ">
-            <span>Phase 10: File I/O & NIO.2</span>
+        <li class="toc-nav-item">
+          <a href="phase10-io-serialization.html" class="">
+            <span>Phase 10 &bull; File I/O & NIO.2</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase11-jdbc-persistence.html" class="toc-link ">
-            <span>Phase 11: JDBC Persistence</span>
+        <li class="toc-nav-item">
+          <a href="phase11-jdbc-persistence.html" class="">
+            <span>Phase 11 &bull; Enterprise JDBC</span>
           </a>
         </li>
     
-        <li>
-          <a href="phase12-design-patterns.html" class="toc-link active">
-            <span>Phase 12: Design Patterns</span>
+        <li class="toc-nav-item">
+          <a href="phase12-design-patterns.html" class="active">
+            <span>Phase 12 &bull; SOLID & Patterns</span>
           </a>
         </li>
     
-        <li>
-          <a href="projects-stages.html" class="toc-link ">
-            <span>Practice Projects & Stages</span>
+        <li class="toc-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>Milestones & Capstones</span>
           </a>
         </li>
     </ul>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="phase-hero-header">
-        <div class="phase-meta-bar">
-          <span class="phase-pill">Phase 12: Design Patterns</span>
-          <span class="module-tag">&#128194; Module 5_ Architecture and Design Patterns \ Module 3_ Unit Testing with Junit 5</span>
+    <main class="main-article-canvas">
+      <div class="phase-page-header">
+        <div class="meta-pill-cluster">
+          <span class="phase-id-pill">Phase 12 &bull; SOLID & Patterns</span>
+          <span class="repo-source-badge">&#128194; Module 5_ Architecture and Design Patterns \ Module 3_ Unit Testing with Junit 5</span>
         </div>
-        <h1 class="page-title">SOLID Design Principles, GoF Patterns & Architecture</h1>
-        <div class="textbook-bar">
-          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I & II Best Engineering Practices &bull; Clean Architecture Standards</span>
+        <h1 class="phase-h1">SOLID Design Principles, GoF Patterns & Clean Architecture</h1>
+        <div class="textbook-alignment-callout">
+          <span>&#128214; <strong>Core Java Alignment:</strong> Volume I & II Best Engineering Practices &bull; Clean Architecture Standards</span>
         </div>
       </div>
 
-      <!-- Phase Body Content -->
       <div class="section-header">
           <div class="section-title-wrapper">
             <span class="phase-badge-pill phase-pill-12">Phase 12</span>
@@ -646,7 +641,6 @@
           </div>
         </div>
 
-      <!-- Bottom Pagination -->
       <nav class="phase-pagination">
         
         <a href="phase11-jdbc-persistence.html" class="page-nav-link prev">
@@ -654,14 +648,14 @@
           <span class="page-nav-title">Enterprise Persistence, JDBC & Database Architecture</span>
         </a>
         
-        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
-          &#9776; View All Phases
+        <a href="index.html" class="btn-header" style="padding: 0.85rem 1.4rem;">
+          &#9776; All Phases
         </a>
 
         
         <a href="projects-stages.html" class="page-nav-link next">
           <span class="page-nav-sub">Next Phase &rarr;</span>
-          <span class="page-nav-title">Learning Stages, 5 Capstone Projects & Master Checklist</span>
+          <span class="page-nav-title">Recommended Progression Stages & 5 Capstone Projects</span>
         </a>
       </nav>
     </main>
