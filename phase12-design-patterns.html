@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOLID Design Principles, GoF Patterns & Architecture &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 12: Design Patterns</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="projects-stages.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="12.1 The 5 SOLID Design Principles Explained with Real-World Analogies">
+            <span>12.1 The 5 SOLID Design Principles...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="12.2 GoF Design Patterns: Singleton, Builder & Strategy in Action">
+            <span>12.2 GoF Design Patterns: Singleto...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="12.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking">
+            <span>12.3 Unit Testing with JUnit 5: As...</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link active">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 12: Design Patterns</span>
+          <span class="module-tag">&#128194; Module 5_ Architecture and Design Patterns \ Module 3_ Unit Testing with Junit 5</span>
+        </div>
+        <h1 class="page-title">SOLID Design Principles, GoF Patterns & Architecture</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I & II Best Engineering Practices &bull; Clean Architecture Standards</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-12">Phase 12</span>
+            <h2 class="section-title">SOLID Design Principles, GoF Patterns & Production Architecture</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 5_ Architecture and Design Patterns \ Module 3_ Unit Testing with Junit 5</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I & II Best Engineering Practices &bull; Clean Architecture Standards</span>
+        </div>
+
+        <!-- 12.1 SOLID Principles Deep Dive -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">12.1 The 5 SOLID Design Principles Explained with Real-World Analogies</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12a')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Principle</th>
+                  <th>Real-World Analogy</th>
+                  <th>Code Smell (Violation)</th>
+                  <th>Clean Architecture Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>S - Single Responsibility</strong></td>
+                  <td>A Swiss Army Knife with 50 tools is bulky and hard to hold. A chef uses a dedicated kitchen knife for cutting, and a corkscrew for wine.</td>
+                  <td>An <code>Invoice</code> class that calculates tax, prints PDF, AND executes SQL database inserts.</td>
+                  <td>Split into <code>Invoice</code> (data), <code>InvoiceCalculator</code>, <code>InvoicePdfExporter</code>, and <code>InvoiceRepository</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>O - Open/Closed</strong></td>
+                  <td>Your phone allows you to install new apps (open for extension) without having to open the phone casing and resolder microchips (closed for modification).</td>
+                  <td>Massive <code>if-else</code> or <code>switch</code> statements checking <code>if (paymentType == "PAYPAL") ... else if ("CARD")</code>.</td>
+                  <td>Strategy Pattern: Interface <code>PaymentStrategy</code> with pluggable implementations.</td>
+                </tr>
+                <tr>
+                  <td><strong>L - Liskov Substitution</strong></td>
+                  <td>If it looks like a duck and quacks like a duck, but needs batteries, you probably have the wrong abstraction!</td>
+                  <td><code>Square extends Rectangle</code> where <code>setWidth()</code> unexpectedly alters height and breaks existing rectangle logic.</td>
+                  <td>Do not force inheritance. Make <code>Shape</code> interface with <code>getArea()</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>I - Interface Segregation</strong></td>
+                  <td>A TV remote control shouldn't force you to carry buttons for controlling an airplane cockpit.</td>
+                  <td>A giant "fat" interface with 40 methods forcing classes to implement empty dummy methods with <code>throw new UnsupportedOperationException()</code>.</td>
+                  <td>Split into small, focused, role-specific interfaces: <code>Printable</code>, <code>Scanable</code>, <code>Faxable</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>D - Dependency Inversion</strong></td>
+                  <td>Your lamp plugs into a standard electrical wall socket (abstraction). It doesn't solder its wires directly to the regional electrical power plant (concrete detail).</td>
+                  <td>High-level <code>OrderService</code> writing <code>new MySQLDatabase()</code> directly inside its constructor.</td>
+                  <td>Inject interface <code>PaymentGateway</code> via constructor (Spring Inversion of Control & Dependency Injection).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: SRP Solution from Module 5 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 5.../SRPDemoSolution.java &mdash; Clean SRP Implementation</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.solid;
+
+<span class="cmt">/**
+ * Demonstrates SRP: Single responsibility of tax and total calculation.
+ * Persistence and notifications are handled by dedicated services.
+ */</span>
+<span class="kw">public class</span> <span class="typ">InvoiceCalculator</span> {
+    <span class="kw">public double</span> <span class="fn">calculateTotal</span>(<span class="typ">Order</span> order) {
+        <span class="kw">return</span> order.getItems().stream()
+                    .mapToDouble(<span class="typ">Item</span>::getPrice)
+                    .sum() * <span class="num">1.18</span>; <span class="cmt">// 18% GST tax rate</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Single Responsibility Principle (SRP) Code Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">One Reason to Change</span>
+                <span>Robert C. Martin defines SRP: <em>"A class should have one, and only one, reason to change."</em> <code>InvoiceCalculator</code> changes ONLY if tax laws or discount algorithms change.</span>
+              </li>
+              <li>
+                <span class="step-badge">High Cohesion, Low Coupling</span>
+                <span>By separating database operations (<code>InvoiceRepository</code>) and printing (<code>InvoicePdfExporter</code>) into distinct classes, modifying your SQL schema has zero risk of breaking tax calculations.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 12.2 GoF Design Patterns Deep Dive -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">12.2 GoF Design Patterns: Singleton, Builder & Strategy in Action</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12b')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <!-- Code Box: Singleton Pattern -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; SingletonPatternDemo.java &mdash; Thread-Safe Double-Checked Locking Singleton</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">SingletonPatternDemo</span> {
+
+    <span class="kw">public static class</span> <span class="typ">DatabaseConnectionPool</span> {
+        <span class="cmt">// volatile is MANDATORY: Prevents CPU instruction reordering during initialization!</span>
+        <span class="kw">private static volatile</span> <span class="typ">DatabaseConnectionPool</span> instance;
+
+        <span class="cmt">// Private constructor prevents direct 'new' instantiation</span>
+        <span class="kw">private</span> <span class="fn">DatabaseConnectionPool</span>() {
+            <span class="typ">System</span>.out.println(<span class="str">"Initializing Database Connection Pool..."</span>);
+        }
+
+        <span class="cmt">// Double-Checked Locking: Fast, thread-safe, locks ONLY on first initialization</span>
+        <span class="kw">public static</span> <span class="typ">DatabaseConnectionPool</span> <span class="fn">getInstance</span>() {
+            <span class="kw">if</span> (instance == <span class="kw">null</span>) { <span class="cmt">// 1st Check (no lock overhead)</span>
+                <span class="kw">synchronized</span> (<span class="typ">DatabaseConnectionPool</span>.class) {
+                    <span class="kw">if</span> (instance == <span class="kw">null</span>) { <span class="cmt">// 2nd Check (inside lock)</span>
+                        instance = <span class="kw">new</span> <span class="typ">DatabaseConnectionPool</span>();
+                    }
+                }
+            }
+            <span class="kw">return</span> instance;
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">DatabaseConnectionPool</span> pool1 = <span class="typ">DatabaseConnectionPool</span>.getInstance();
+        <span class="typ">DatabaseConnectionPool</span> pool2 = <span class="typ">DatabaseConnectionPool</span>.getInstance();
+        <span class="typ">System</span>.out.println(<span class="str">"Are pool1 and pool2 identical instance? "</span> + (pool1 == pool2)); <span class="cmt">// true</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Double-Checked Locking & The volatile Requirement Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Why the 1st Check?</span>
+                <span>Avoids acquiring the heavy synchronized lock once the instance is already initialized. 99.99% of calls skip the synchronized block entirely, ensuring high throughput.</span>
+              </li>
+              <li>
+                <span class="step-badge">Why volatile is Mandatory</span>
+                <span>The instruction <code>instance = new DatabaseConnectionPool()</code> is executed in 3 steps: (1) Allocate memory, (2) Run constructor, (3) Assign reference to <code>instance</code>. Without <code>volatile</code>, the JVM/CPU can reorder steps to (1) -> (3) -> (2). Another thread could observe <code>instance != null</code> before the constructor finishes, leading to a disastrous partially-initialized object crash!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Builder Pattern -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; UserBuilderPatternDemo.java &mdash; Fluent Construction of Complex Objects</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">UserBuilderPatternDemo</span> {
+
+    <span class="kw">public static class</span> <span class="typ">UserProfile</span> {
+        <span class="cmt">// Mandatory fields</span>
+        <span class="kw">private final String</span> username;
+        <span class="kw">private final String</span> email;
+        <span class="cmt">// Optional fields</span>
+        <span class="kw">private final String</span> phoneNumber;
+        <span class="kw">private final int</span> age;
+
+        <span class="kw">private</span> <span class="fn">UserProfile</span>(<span class="typ">Builder</span> b) {
+            <span class="kw">this</span>.username = b.username;
+            <span class="kw">this</span>.email = b.email;
+            <span class="kw">this</span>.phoneNumber = b.phoneNumber;
+            <span class="kw">this</span>.age = b.age;
+        }
+
+        <span class="kw">public static class</span> <span class="typ">Builder</span> {
+            <span class="kw">private final String</span> username;
+            <span class="kw">private final String</span> email;
+            <span class="kw">private String</span> phoneNumber = <span class="str">"N/A"</span>;
+            <span class="kw">private int</span> age = <span class="num">18</span>;
+
+            <span class="kw">public</span> <span class="fn">Builder</span>(<span class="typ">String</span> username, <span class="typ">String</span> email) {
+                <span class="kw">this</span>.username = username;
+                <span class="kw">this</span>.email = email;
+            }
+
+            <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">phoneNumber</span>(<span class="typ">String</span> phone) { <span class="kw">this</span>.phoneNumber = phone; <span class="kw">return this</span>; }
+            <span class="kw">public</span> <span class="typ">Builder</span> <span class="fn">age</span>(<span class="kw">int</span> age) { <span class="kw">this</span>.age = age; <span class="kw">return this</span>; }
+
+            <span class="kw">public</span> <span class="typ">UserProfile</span> <span class="fn">build</span>() {
+                <span class="kw">return new</span> <span class="typ">UserProfile</span>(<span class="kw">this</span>);
+            }
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">UserProfile</span> user = <span class="kw">new</span> <span class="typ">UserProfile</span>.<span class="typ">Builder</span>(<span class="str">"john_dev"</span>, <span class="str">"john@accenture.com"</span>)
+            .phoneNumber(<span class="str">"+1-555-0199"</span>)
+            .age(<span class="num">28</span>)
+            .build();
+        <span class="typ">System</span>.out.println(<span class="str">"Built user profile for: "</span> + user.username);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Builder Pattern Mechanics & The Telescoping Constructor Problem</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Solves Telescoping Constructors</span>
+                <span>When a class has 10 optional fields, creating constructors for every permutation (<code>User(a)</code>, <code>User(a,b)</code>, <code>User(a,b,c)</code>) results in an unmaintainable nightmare. The Builder pattern eliminates this completely.</span>
+              </li>
+              <li>
+                <span class="step-badge">Fluent Method Chaining</span>
+                <span>Methods like <code>phoneNumber(...)</code> return <code>this</code> (the builder reference), enabling readable, chained configuration before calling the terminal <code>build()</code> method.</span>
+              </li>
+              <li>
+                <span class="step-badge">Guarantees Immutability</span>
+                <span>The product class (<code>UserProfile</code>) fields remain strictly <code>private final</code> with no setter methods, ensuring constructed objects are immutable and thread-safe.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Factory Method Pattern from Module 5 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 5.../01_Design_Patterns_Demos/.../FactoryMethodPatternDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="cmt">// Common Interface</span>
+<span class="kw">interface</span> <span class="typ">Payment</span> {
+    <span class="kw">void</span> <span class="fn">pay</span>(<span class="kw">int</span> amount);
+}
+
+<span class="cmt">// Concrete Implementations</span>
+<span class="kw">class</span> <span class="typ">UpiPayment</span> <span class="kw">implements</span> <span class="typ">Payment</span> {
+    <span class="kw">public void</span> <span class="fn">pay</span>(<span class="kw">int</span> amount) {
+        <span class="typ">System</span>.out.println(<span class="str">"Paid via UPI: $"</span> + amount);
+    }
+}
+
+<span class="kw">class</span> <span class="typ">CardPayment</span> <span class="kw">implements</span> <span class="typ">Payment</span> {
+    <span class="kw">public void</span> <span class="fn">pay</span>(<span class="kw">int</span> amount) {
+        <span class="typ">System</span>.out.println(<span class="str">"Paid via Credit/Debit Card: $"</span> + amount);
+    }
+}
+
+<span class="cmt">// Factory: Decouples creation logic from caller</span>
+<span class="kw">class</span> <span class="typ">PaymentFactory</span> {
+    <span class="kw">public static</span> <span class="typ">Payment</span> <span class="fn">getPaymentMethod</span>(<span class="typ">String</span> type) {
+        <span class="kw">if</span> (<span class="str">"UPI"</span>.equalsIgnoreCase(type)) <span class="kw">return new</span> <span class="typ">UpiPayment</span>();
+        <span class="kw">if</span> (<span class="str">"CARD"</span>.equalsIgnoreCase(type)) <span class="kw">return new</span> <span class="typ">CardPayment</span>();
+        <span class="kw">throw new</span> <span class="typ">IllegalArgumentException</span>(<span class="str">"Unknown payment method: "</span> + type);
+    }
+}
+
+<span class="kw">public class</span> <span class="typ">FactoryMethodPatternDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Client does NOT instantiate concrete classes directly (no 'new CardPayment()')</span>
+        <span class="typ">Payment</span> payment = <span class="typ">PaymentFactory</span>.getPaymentMethod(<span class="str">"CARD"</span>);
+        payment.pay(<span class="num">500</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Factory Method Pattern Decoupling Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Decoupling Instantiation</span>
+                <span>The client code only depends on the <code>Payment</code> interface and <code>PaymentFactory</code>. Concrete classes (<code>UpiPayment</code>, <code>CardPayment</code>) can be swapped or refactored without altering client business logic.</span>
+              </li>
+              <li>
+                <span class="step-badge">Spring Bean Factory Alignment</span>
+                <span>This is the foundational pattern of Spring's <code>BeanFactory</code> and <code>ApplicationContext</code>, which manufactures beans dynamically without hardcoded <code>new</code> expressions.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Observer Pattern from Module 5 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 5.../01_Design_Patterns_Demos/.../ObserverPatternDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">import</span> java.util.*;
+
+<span class="cmt">// Observer (Subscriber Contract)</span>
+<span class="kw">interface</span> <span class="typ">Subscriber</span> {
+    <span class="kw">void</span> <span class="fn">notify</span>(<span class="typ">String</span> videoTitle);
+}
+
+<span class="cmt">// Concrete Observer</span>
+<span class="kw">class</span> <span class="typ">User</span> <span class="kw">implements</span> <span class="typ">Subscriber</span> {
+    <span class="kw">private final String</span> name;
+    <span class="kw">public</span> <span class="fn">User</span>(<span class="typ">String</span> name) { <span class="kw">this</span>.name = name; }
+    <span class="kw">public void</span> <span class="fn">notify</span>(<span class="typ">String</span> video) {
+        <span class="typ">System</span>.out.println(name + <span class="str">" notified of new upload: "</span> + video);
+    }
+}
+
+<span class="cmt">// Subject (Publisher)</span>
+<span class="kw">class</span> <span class="typ">YouTubeChannel</span> {
+    <span class="kw">private final</span> <span class="typ">List</span>&lt;<span class="typ">Subscriber</span>&gt; subscribers = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="fn">subscribe</span>(<span class="typ">Subscriber</span> s) { subscribers.add(s); }
+    <span class="kw">public void</span> <span class="fn">unsubscribe</span>(<span class="typ">Subscriber</span> s) { subscribers.remove(s); }
+
+    <span class="kw">public void</span> <span class="fn">uploadVideo</span>(<span class="typ">String</span> title) {
+        <span class="typ">System</span>.out.println(<span class="str">"Channel uploaded: "</span> + title);
+        <span class="cmt">// Notify all registered observers automatically</span>
+        subscribers.forEach(sub -> sub.notify(title));
+    }
+}
+
+<span class="kw">public class</span> <span class="typ">ObserverPatternDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">YouTubeChannel</span> channel = <span class="kw">new</span> <span class="typ">YouTubeChannel</span>();
+        channel.subscribe(<span class="kw">new</span> <span class="typ">User</span>(<span class="str">"Alice"</span>));
+        channel.subscribe(<span class="kw">new</span> <span class="typ">User</span>(<span class="str">"Bob"</span>));
+
+        channel.uploadVideo(<span class="str">"Spring Boot Microservices Architecture"</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Observer Pattern Event Broadcasting Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Publish-Subscribe (Pub/Sub)</span>
+                <span>The Subject (<code>YouTubeChannel</code>) maintains an internal list of observers. It does not know or care who the observers are, only that they implement <code>Subscriber</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Event-Driven Architecture</span>
+                <span>Foundational to message queues (Kafka, RabbitMQ) and Spring <code>ApplicationEventPublisher</code>: when an event occurs (e.g. <code>OrderPlacedEvent</code>), multiple decoupled listeners react independently without hardcoded couplings.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Strategy Pattern -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; StrategyPaymentDemo.java &mdash; Behavioral Strategy Pattern with Pluggable Algorithms</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">StrategyPaymentDemo</span> {
+
+    <span class="cmt">// Strategy Interface</span>
+    <span class="kw">public interface</span> <span class="typ">PaymentStrategy</span> {
+        <span class="kw">void</span> <span class="fn">pay</span>(<span class="kw">double</span> amount);
+    }
+
+    <span class="cmt">// Concrete Strategy A</span>
+    <span class="kw">public static class</span> <span class="typ">CreditCardStrategy</span> <span class="kw">implements</span> <span class="typ">PaymentStrategy</span> {
+        <span class="kw">public void</span> <span class="fn">pay</span>(<span class="kw">double</span> amount) {
+            <span class="typ">System</span>.out.println(<span class="str">"Processing $"</span> + amount + <span class="str">" via Credit Card Gateway."</span>);
+        }
+    }
+
+    <span class="cmt">// Concrete Strategy B</span>
+    <span class="kw">public static class</span> <span class="typ">PayPalStrategy</span> <span class="kw">implements</span> <span class="typ">PaymentStrategy</span> {
+        <span class="kw">public void</span> <span class="fn">pay</span>(<span class="kw">double</span> amount) {
+            <span class="typ">System</span>.out.println(<span class="str">"Processing $"</span> + amount + <span class="str">" via PayPal OAuth Session."</span>);
+        }
+    }
+
+    <span class="cmt">// Context class: Open for extension, closed for modification!</span>
+    <span class="kw">public static class</span> <span class="typ">ShoppingCart</span> {
+        <span class="kw">private</span> <span class="typ">PaymentStrategy</span> strategy;
+
+        <span class="kw">public void</span> <span class="fn">setPaymentStrategy</span>(<span class="typ">PaymentStrategy</span> s) { <span class="kw">this</span>.strategy = s; }
+
+        <span class="kw">public void</span> <span class="fn">checkout</span>(<span class="kw">double</span> amount) {
+            strategy.pay(amount);
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">ShoppingCart</span> cart = <span class="kw">new</span> <span class="typ">ShoppingCart</span>();
+        cart.setPaymentStrategy(<span class="kw">new</span> <span class="typ">CreditCardStrategy</span>());
+        cart.checkout(<span class="num">250.0</span>);
+
+        <span class="cmt">// Switch algorithm at runtime without modifying ShoppingCart code!</span>
+        cart.setPaymentStrategy(<span class="kw">new</span> <span class="typ">PayPalStrategy</span>());
+        cart.checkout(<span class="num">85.0</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Strategy Pattern & Open/Closed Principle Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Family of Algorithms</span>
+                <span>The Strategy pattern defines an interchangeable family of algorithms encapsulated behind a common interface (<code>PaymentStrategy</code>).</span>
+              </li>
+              <li>
+                <span class="step-badge">Eliminates Conditionals</span>
+                <span>Replaces brittle <code>if-else if-else</code> or <code>switch</code> blocks with polymorphism. Adding Bitcoin or Apple Pay requires only creating a new class implementing <code>PaymentStrategy</code> &mdash; <code>ShoppingCart</code> remains untouched.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 12.3 Unit Testing with JUnit 5 -->
+        <div id="concept-3" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">12.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12c')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <!-- Code Box: JUnit 5 Testing from Module 3 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 3.../EmployeeServiceTest01.java &mdash; Modern JUnit 5 Unit Testing</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.testing;
+
+<span class="kw">import</span> org.junit.jupiter.api.*;
+<span class="kw">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="kw">public class</span> <span class="typ">EmployeeServiceTest01</span> {
+    <span class="kw">private</span> <span class="typ">EmployeeService</span> service;
+
+    <span class="ann">@BeforeEach</span>
+    <span class="kw">void</span> <span class="fn">setUp</span>() {
+        service = <span class="kw">new</span> <span class="typ">EmployeeService</span>();
+    }
+
+    <span class="ann">@Test</span>
+    <span class="ann">@DisplayName</span>(<span class="str">"Should calculate bonus accurately for top performer"</span>)
+    <span class="kw">void</span> <span class="fn">testBonusCalculation</span>() {
+        <span class="kw">double</span> bonus = service.calculateBonus(<span class="num">100000.0</span>, <span class="num">5</span>);
+        assertEquals(<span class="num">20000.0</span>, bonus, <span class="num">0.001</span>, <span class="str">"Bonus must equal 20% of base salary"</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Modern JUnit 5 Architecture & Testing Best Practices</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">@BeforeEach Lifecycle Isolation</span>
+                <span>Line 9: <code>@BeforeEach</code> executes before <em>every individual</em> <code>@Test</code> method. Instantiating a fresh <code>EmployeeService</code> guarantees test state isolation and prevents test pollution.</span>
+              </li>
+              <li>
+                <span class="step-badge">@DisplayName Semantic Documentation</span>
+                <span>Line 15: Replaces ugly camelCase method names in CI/CD test reports with clean, readable human descriptions of expected system behavior.</span>
+              </li>
+              <li>
+                <span class="step-badge">Delta Tolerance in assertEquals</span>
+                <span>Line 18: <code>assertEquals(expected, actual, delta, message)</code> &mdash; When comparing <code>double</code> values, always provide a delta tolerance (e.g. <code>0.001</code>) to absorb tiny IEEE 754 floating-point inaccuracies.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase11-jdbc-persistence.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Enterprise Persistence, JDBC & Database Architecture</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="projects-stages.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Learning Stages, 5 Capstone Projects & Master Checklist</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

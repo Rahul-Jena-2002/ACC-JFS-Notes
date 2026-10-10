@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collections Framework & Low-Level Data Structures &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 5: Collections Framework</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase06-generics.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="5.1 Collections Hierarchy: List, Set, Queue & Why Map is Separate">
+            <span>5.1 Collections Hierarchy: List, S...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="5.2 HashMap Internals: Bucket Hashing, Collisions & Treeification">
+            <span>5.2 HashMap Internals: Bucket Hash...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link active">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 5: Collections Framework</span>
+          <span class="module-tag">&#128194; Module 1_ Collections part1 & part2 demos \ Demos_Data_Structures</span>
+        </div>
+        <h1 class="page-title">Collections Framework & Low-Level Data Structures</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 9: Collections (Lists, Sets, Maps, Queues, Iterators, and Algorithms)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-5">Phase 5</span>
+            <h2 class="section-title">Collections Framework & Data Structures</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1... \ Collections part1 demos & Collections_Part2_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 9: Collections (The JCF Hierarchy, Maps, Views, and Algorithms)</span>
+        </div>
+
+        <!-- 5.1 Collections Overview & Map Separation -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">5.1 Collections Hierarchy: List, Set, Queue & Why Map is Separate</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p5-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Warehouse Storage Systems</div>
+            <div class="analogy-content">
+              • <strong>List (The Numbered Shelf):</strong> Elements have exact index numbers (0, 1, 2, ...). Insertion order is preserved, and duplicate items are completely welcome.
+              <br/>• <strong>Set (The Unique Keyring):</strong> A bag of unique items. You cannot have two identical room keys. If you try to add a duplicate, it gets ignored.
+              <br/>• <strong>Queue (The Supermarket Checkout Line):</strong> First-In, First-Out (FIFO). The first customer in line is the first one served.
+              <br/>• <strong>Map (The Theater Coat Check):</strong> You hand the attendant your jacket and get ticket <code>#42</code>. To retrieve your jacket, you present ticket <code>#42</code>. A Map holds <strong>Key &rarr; Value pairs</strong>. It does not extend <code>Collection</code> because key-value mappings cannot support single-element methods like <code>add(element)</code>.
+            </div>
+          </div>
+
+          <!-- Mermaid Collections Hierarchy -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Diagram: Java Collections & Map Framework Hierarchy [Core Java Vol I Ch 9]</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    Iterable["java.lang.Iterable"] --> Collection["java.util.Collection"]
+    Collection --> List["List (Ordered, Index-accessible)"]
+    Collection --> Set["Set (Unique elements)"]
+    Collection --> Queue["Queue / Deque (FIFO / LIFO)"]
+    
+    List --> ArrayList["ArrayList (Dynamic Resizable Array)"]
+    List --> LinkedList["LinkedList (Doubly-linked nodes)"]
+    List --> Vector["Vector / Stack (Legacy Synchronized)"]
+    
+    Set --> HashSet["HashSet (Backed by HashMap)"]
+    Set --> LinkedHashSet["LinkedHashSet (Maintains insertion order)"]
+    Set --> TreeSet["TreeSet (Sorted Red-Black Tree)"]
+    
+    Queue --> PriorityQueue["PriorityQueue (Min-Heap)"]
+    Queue --> ArrayDeque["ArrayDeque (Circular array buffer)"]
+
+    Map["java.util.Map (Key-Value Mappings)"]
+    Map --> HashMap["HashMap (Node Array + Red-Black Tree)"]
+    Map --> LinkedHashMap["LinkedHashMap (Hash table + Linked list)"]
+    Map --> TreeMap["TreeMap (Navigable Red-Black Tree)"]
+    Map --> ConcurrentHashMap["ConcurrentHashMap (Lock-striped concurrent)"]
+            </div>
+          </div>
+        </div>
+
+        <!-- 5.2 HashMap Internals & Treeification Deep Dive -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">5.2 HashMap Internals: Bucket Hashing, Collisions & Treeification</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p5-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: How HashMap Works (The Post Office Mailboxes)</div>
+            <div class="analogy-content">
+              Imagine a wall of 16 mailboxes labeled 0 through 15 (<code>Node&lt;K,V&gt;[] table</code>).
+              <br/>1. When you do <code>map.put("Alice", 25)</code>, Java takes the key's hash code and calculates: <code>index = (16 - 1) & hash</code>. Suppose it equals <strong>3</strong>.
+              <br/>2. Java opens mailbox #3 and places the package inside.
+              <br/>3. <strong>Hash Collision:</strong> What if another key ("Bob") ALSO calculates to mailbox #3? Java links Bob's package to Alice's package like a chain (Singly Linked List).
+              <br/>4. <strong>Treeification (Java 8+):</strong> If 8 people all collide into mailbox #3, scanning that long chain becomes slow (O(n)). So Java transforms that mailbox into a balanced <strong>Red-Black Tree</strong>, speeding search up to <strong>O(log n)</strong>!
+            </div>
+          </div>
+
+          <!-- Mermaid HashMap Buckets -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Deep Dive: HashMap Bucket Collisions & Treeification</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph LR
+    subgraph BucketArray ["Bucket Array: Node&lt;K,V&gt;[] table"]
+        B0["Bucket [0]"]
+        B1["Bucket [1]"]
+        B2["Bucket [2]"]
+    end
+
+    subgraph SingleNode ["Bucket [0]: Single Node"]
+        N0["Node: Key='Alice', Hash=1024, Val=100"]
+    end
+
+    subgraph LinkedListChain ["Bucket [1]: Linked List (len &lt; 8)"]
+        L1["Node 1"] --> L2["Node 2"] --> L3["Node 3"]
+    end
+
+    subgraph RedBlackTree ["Bucket [2]: Treeified (len &gt;= 8 & cap &gt;= 64)"]
+        Root["TreeNode (Root)"]
+        Left["TreeNode (Left)"]
+        Right["TreeNode (Right)"]
+        Root --> Left
+        Root --> Right
+    end
+
+    B0 --> SingleNode
+    B1 --> LinkedListChain
+    B2 --> RedBlackTree
+            </div>
+          </div>
+
+          <!-- Code Box: SortByNameComparator from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../SortByNameComparator.java &mdash; Custom Comparator</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.collections;
+
+<span class="kw">import</span> java.util.Comparator;
+
+<span class="cmt">/**
+ * Comparable vs Comparator:
+ * - Comparable defines the NATURAL sorting order inside the class itself (compareTo).
+ * - Comparator defines EXTERNAL custom sorting strategies without modifying the class.
+ */</span>
+<span class="kw">public class</span> <span class="typ">SortByNameComparator</span> <span class="kw">implements</span> <span class="typ">Comparator</span>&lt;<span class="typ">Course</span>&gt; {
+    <span class="ann">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compare</span>(<span class="typ">Course</span> c1, <span class="typ">Course</span> c2) {
+        <span class="kw">return</span> c1.getCourseName().compareToIgnoreCase(c2.getCourseName());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Comparable vs Comparator Architectural Differences</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Comparable (Natural Ordering)</span>
+                <span>Implemented inside the domain model (e.g. <code>class Employee implements Comparable&lt;Employee&gt;</code>). Defines the single default sort order via <code>compareTo(o)</code>. Modifies the class directly.</span>
+              </li>
+              <li>
+                <span class="step-badge">Comparator (Custom Sorting Strategies)</span>
+                <span>Implemented in separate external classes or inline lambdas (<code>Comparator.comparing(Course::getCourseName)</code>). Adheres to the Open/Closed Principle: you can introduce 20 different sorting strategies (by price, rating, date) without modifying the original <code>Course</code> class!</span>
+              </li>
+              <li>
+                <span class="step-badge">The compare() Contract</span>
+                <span>Returns negative if <code>c1 &lt; c2</code>, zero if equal, positive if <code>c1 &gt; c2</code>. When sorting custom objects in <code>TreeSet</code> or <code>TreeMap</code>, returning 0 causes the second object to be treated as a duplicate and dropped!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Comparable Implementation from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Collections_Part2_Demos/.../CourseComparableTester.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.collection.assignment.comparable;
+
+<span class="kw">import</span> java.util.ArrayList;
+<span class="kw">import</span> java.util.Collections;
+<span class="kw">import</span> java.util.List;
+
+<span class="cmt">// Class implements Comparable to define its NATURAL order</span>
+<span class="kw">class</span> <span class="typ">Course</span> <span class="kw">implements</span> <span class="typ">Comparable</span>&lt;<span class="typ">Course</span>&gt; {
+    <span class="kw">private int</span> courseId;
+    <span class="kw">private String</span> courseName;
+    <span class="kw">private int</span> courseFee;
+
+    <span class="kw">public</span> <span class="fn">Course</span>(<span class="kw">int</span> id, <span class="typ">String</span> name, <span class="kw">int</span> fee) {
+        <span class="kw">this</span>.courseId = id;
+        <span class="kw">this</span>.courseName = name;
+        <span class="kw">this</span>.courseFee = fee;
+    }
+
+    <span class="kw">public int</span> <span class="fn">getCourseFee</span>() { <span class="kw">return</span> courseFee; }
+    <span class="kw">public String</span> <span class="fn">getCourseName</span>() { <span class="kw">return</span> courseName; }
+
+    <span class="cmt">// compareTo defines sorting by course fee ascending</span>
+    <span class="ann">@Override</span>
+    <span class="kw">public int</span> <span class="fn">compareTo</span>(<span class="typ">Course</span> o) {
+        <span class="kw">return</span> <span class="typ">Integer</span>.compare(<span class="kw">this</span>.courseFee, o.courseFee);
+    }
+}
+
+<span class="kw">public class</span> <span class="typ">CourseComparableTester</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">Course</span>&gt; courses = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+        courses.add(<span class="kw">new</span> <span class="typ">Course</span>(<span class="num">1056</span>, <span class="str">"C#.Net"</span>, <span class="num">20000</span>));
+        courses.add(<span class="kw">new</span> <span class="typ">Course</span>(<span class="num">1045</span>, <span class="str">"Java"</span>, <span class="num">15000</span>));
+        courses.add(<span class="kw">new</span> <span class="typ">Course</span>(<span class="num">4532</span>, <span class="str">"Python"</span>, <span class="num">20500</span>));
+
+        <span class="typ">Collections</span>.sort(courses); <span class="cmt">// Sorts automatically using compareTo()</span>
+        courses.forEach(c -> <span class="typ">System</span>.out.println(c.getCourseName() + <span class="str">" : $"</span> + c.getCourseFee()));
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Comparable compareTo() Sorting Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Integer.compare()</span>
+                <span>Line 24: Prefer <code>Integer.compare(a, b)</code> over subtraction (<code>this.fee - o.fee</code>) to defend against integer arithmetic overflow when comparing large or negative values.</span>
+              </li>
+              <li>
+                <span class="step-badge">Collections.sort() Integration</span>
+                <span>Line 35: <code>Collections.sort(courses)</code> requires elements to implement <code>Comparable&lt;T&gt;</code>. At runtime, the JVM uses TimSort (adaptive merge sort, O(N log N)).</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Map Iteration from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Collections part1 demos/.../HashMapIteratorExample.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.collection.demo.map;
+
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="typ">HashMapIteratorExample</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Map</span>&lt;<span class="typ">Integer</span>, <span class="typ">String</span>&gt; directory = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+        directory.put(<span class="num">404232</span>, <span class="str">"Venkat Rajaram"</span>);
+        directory.put(<span class="num">502113</span>, <span class="str">"Tia Mathew"</span>);
+        directory.put(<span class="num">562190</span>, <span class="str">"Ali Mohammed"</span>);
+
+        <span class="cmt">// Method 1: Iterating over keySet (Requires secondary map.get(key) lookup)</span>
+        <span class="kw">for</span> (<span class="typ">Integer</span> contact : directory.keySet()) {
+            <span class="typ">System</span>.out.println(<span class="str">"KeySet -> Contact: "</span> + contact + <span class="str">" | Name: "</span> + directory.get(contact));
+        }
+
+        <span class="cmt">// Method 2: Iterating over entrySet (MOST EFFICIENT: No secondary lookup!)</span>
+        <span class="kw">for</span> (<span class="typ">Map.Entry</span>&lt;<span class="typ">Integer</span>, <span class="typ">String</span>&gt; entry : directory.entrySet()) {
+            <span class="typ">System</span>.out.println(<span class="str">"EntrySet -> "</span> + entry.getKey() + <span class="str">" = "</span> + entry.getValue());
+        }
+
+        <span class="cmt">// Method 3: Java 8+ forEach BiConsumer lambda</span>
+        directory.forEach((k, v) -> <span class="typ">System</span>.out.println(<span class="str">"Lambda -> "</span> + k + <span class="str">" : "</span> + v));
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Map Traversal Performance: keySet() vs entrySet()</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">The keySet() Penalty</span>
+                <span>Calling <code>map.get(key)</code> inside a <code>keySet()</code> loop performs a second hash calculation and bucket lookup for every single key! Avoid this in large loops.</span>
+              </li>
+              <li>
+                <span class="step-badge">The entrySet() Efficiency</span>
+                <span><code>entrySet()</code> iterates over the underlying <code>Node&lt;K,V&gt;</code> bucket array directly, giving both key and value in a single memory access without extra hashing.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase04-exceptions.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Exception Handling & Diagnostic Resilience Architecture</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase06-generics.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Generics & Compile-Time Type Safety</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Persistence, JDBC & Database Architecture &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 11: JDBC Persistence</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase12-design-patterns.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="11.1 Access Modifiers, Wrapper IntegerCache & BigDecimal Financial Precision">
+            <span>11.1 Access Modifiers, Wrapper Int...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="11.2 JDBC Architecture, PreparedStatement & SQL Injection Immunity">
+            <span>11.2 JDBC Architecture, PreparedSt...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="11.3 Java Reflection API & Dynamic Inspection">
+            <span>11.3 Java Reflection API & Dynamic...</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link active">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 11: JDBC Persistence</span>
+          <span class="module-tag">&#128194; Module 6_ Database and ORM \ 01_JDBC_Demos</span>
+        </div>
+        <h1 class="page-title">Enterprise Persistence, JDBC & Database Architecture</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 5: Database Programming (JDBC, DataSources, Transactions, and Metadata)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-11">Phase 11</span>
+            <h2 class="section-title">Core APIs, Reflection, JPMS & JDBC Persistence</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 6_ Database and ORM \ 01_JDBC_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 5: Database Programming (JDBC) &bull; Chapter 8: Annotations &bull; Volume I — Chapter 4: Reflection</span>
+        </div>
+
+        <!-- 11.1 Access Modifiers, Wrapper Caching & BigDecimal -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">11.1 Access Modifiers, Wrapper IntegerCache & BigDecimal Financial Precision</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-11a')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The IntegerCache (-128 to 127 Trap)</div>
+            <div class="analogy-content">
+              Why does <code>Integer a = 100, b = 100; (a == b)</code> return <strong>true</strong>, but <code>Integer x = 200, y = 200; (x == y)</code> return <strong>false</strong>?
+              <br/>• Java pre-allocates an array of small Integer objects from <strong>-128 to 127</strong> in memory during JVM bootup (like keeping coins in a cash register).
+              <br/>• For 100, Java hands both <code>a</code> and <code>b</code> the exact same cached object reference!
+              <br/>• For 200, it's outside the cache, so Java does <code>new Integer(200)</code> twice on the Heap. Two different objects &rarr; two different addresses &rarr; <code>==</code> returns false!
+              <br/><strong>Senior Rule: Always compare wrapper objects using <code>.equals()</code>, NEVER <code>==</code>!</strong>
+            </div>
+          </div>
+
+          <!-- Code Box: BigDecimal Financial Arithmetic -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; BigDecimalFinancialDemo.java &mdash; Solving the Double Precision Trap</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.math.BigDecimal;
+<span class="kw">import</span> java.math.RoundingMode;
+
+<span class="kw">public class</span> <span class="typ">BigDecimalFinancialDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// THE TRAP: Binary floating-point IEEE 754 precision error</span>
+        <span class="kw">double</span> doublePrice = <span class="num">0.1</span> + <span class="num">0.2</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"Double calculation: "</span> + doublePrice); <span class="cmt">// Prints 0.30000000000000004! Unacceptable in banking!</span>
+
+        <span class="cmt">// THE SOLUTION: BigDecimal instantiated with STRING (Never pass raw double to BigDecimal constructor!)</span>
+        <span class="typ">BigDecimal</span> price1 = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.10"</span>);
+        <span class="typ">BigDecimal</span> price2 = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.20"</span>);
+
+        <span class="typ">BigDecimal</span> sum = price1.add(price2);
+        <span class="typ">System</span>.out.println(<span class="str">"BigDecimal exact sum: "</span> + sum); <span class="cmt">// Prints exact 0.30</span>
+
+        <span class="cmt">// Financial Division with explicit scale and rounding mode</span>
+        <span class="typ">BigDecimal</span> total = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"100.00"</span>);
+        <span class="typ">BigDecimal</span> splits = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"3"</span>);
+        <span class="typ">BigDecimal</span> perPerson = total.divide(splits, <span class="num">2</span>, <span class="typ">RoundingMode</span>.HALF_EVEN); <span class="cmt">// Banker's rounding</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Per person: $"</span> + perPerson); <span class="cmt">// $33.33</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; BigDecimal Financial Arithmetic & The String Constructor Rule</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">The IEEE 754 Floating-Point Trap</span>
+                <span>Numbers like 0.1 cannot be represented precisely in binary base-2 floating-point arithmetic (just as 1/3 cannot be represented finite in base-10). Over millions of transactions, rounding errors cost millions of dollars.</span>
+              </li>
+              <li>
+                <span class="step-badge">Always Use String Constructor</span>
+                <span>Line 11: <code>new BigDecimal("0.10")</code> &mdash; Passing a string guarantees exact precision. If you mistakenly write <code>new BigDecimal(0.10)</code> with a double literal, you bake in the double rounding inaccuracy immediately!</span>
+              </li>
+              <li>
+                <span class="step-badge">Scale and RoundingMode</span>
+                <span>Line 20: When dividing, if the result has non-terminating decimals (e.g. 100 / 3), calling <code>divide(splits)</code> without scale throws an immediate <code>ArithmeticException</code>. Always specify explicit decimal scale (2 digits) and a <code>RoundingMode</code> (e.g. <code>HALF_EVEN</code> &mdash; Banker's rounding).</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 11.2 JDBC Fundamentals & SQL Injection Immunity -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">11.2 JDBC Architecture, PreparedStatement & SQL Injection Immunity</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-11b')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Why PreparedStatement is Immune to SQL Injection</div>
+            <div class="analogy-content">
+              • <strong>Regular Statement (Vulnerable):</strong> Like a boss telling an assistant: <em>"Execute whatever is written on this paper."</em> If an attacker sneaks in the text <code>' OR 1=1; DROP TABLE users; --</code>, the database interprets those words as actual SQL commands!
+              <br/>• <strong>PreparedStatement (Safe):</strong> Like an official government passport application with strict blank boxes: <em>[First Name] [Last Name]</em>. The SQL command template is compiled and locked by the database engine FIRST. Whatever the user enters in the box is treated <strong>strictly as harmless literal text data</strong>, never as executable SQL code!
+            </div>
+          </div>
+
+          <!-- Mermaid PreparedStatement Execution Plan -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Flow: PreparedStatement SQL Injection Prevention</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph LR
+    SQLQuery["SQL Template with Placeholders:<br/>SELECT * FROM users WHERE user = ? AND pass = ?"]
+    DBEngine["Database Optimizer Engine<br/>Compiles Query Tree & Execution Plan ONCE"]
+    Params["User Input Parameter:<br/>' OR '1'='1<br/>Bound strictly as literal string DATA!"]
+    Exec["Safe Execution:<br/>Malicious input cannot alter query structure!"]
+
+    SQLQuery --> DBEngine
+    Params --> Exec
+    DBEngine --> Exec
+            </div>
+          </div>
+
+          <!-- Code Box: PreparedStatement from Module 6 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 6.../EmployeeDAOImpl.java &mdash; Production JDBC PreparedStatement</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.dao;
+
+<span class="kw">import</span> java.sql.*;
+
+<span class="kw">public class</span> <span class="typ">EmployeeDAOImpl</span> {
+    <span class="kw">private static final String</span> INSERT_SQL = 
+        <span class="str">"INSERT INTO employees (id, name, department, salary) VALUES (?, ?, ?, ?)"</span>;
+
+    <span class="kw">public void</span> <span class="fn">saveEmployee</span>(<span class="typ">Connection</span> conn, <span class="kw">int</span> id, <span class="typ">String</span> name, <span class="typ">String</span> dept, <span class="kw">double</span> salary) <span class="kw">throws</span> <span class="typ">SQLException</span> {
+        <span class="cmt">// Try-with-resources closes PreparedStatement automatically</span>
+        <span class="kw">try</span> (<span class="typ">PreparedStatement</span> pstmt = conn.prepareStatement(INSERT_SQL)) {
+            pstmt.setInt(<span class="num">1</span>, id);
+            pstmt.setString(<span class="num">2</span>, name);
+            pstmt.setString(<span class="num">3</span>, dept);
+            pstmt.setDouble(<span class="num">4</span>, salary);
+            pstmt.executeUpdate();
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Production JDBC Architecture & PreparedStatement Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Pre-Compiled Execution Plan</span>
+                <span>Line 10: <code>conn.prepareStatement(INSERT_SQL)</code> sends the SQL skeleton to the database engine. The DB compiles the query and caches its execution plan. Repeated queries simply reuse the cached plan with different parameters, improving throughput.</span>
+              </li>
+              <li>
+                <span class="step-badge">1-Indexed Parameter Binding</span>
+                <span>Lines 11-14: Notice JDBC parameters are <strong>1-indexed</strong> (<code>pstmt.setInt(1, id)</code>). The driver escapes and typesets all parameters into literal binary tokens, making SQL injection attacks impossible.</span>
+              </li>
+              <li>
+                <span class="step-badge">Automatic Connection Hygiene</span>
+                <span>Using try-with-resources ensures the <code>PreparedStatement</code> and underlying database cursor are closed immediately, preventing database connection pool exhaustion in high-volume microservices.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Database Utility from Module 6 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 6.../01_JDBC_Demos/.../DBUtility.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.utility;
+
+<span class="kw">import</span> java.sql.*;
+
+<span class="kw">public class</span> <span class="typ">DBUtility</span> {
+    <span class="kw">private static final String</span> URL = <span class="str">"jdbc:mysql://localhost:3306/jdbcdemos"</span>;
+    <span class="kw">private static final String</span> USER = <span class="str">"root"</span>;
+    <span class="kw">private static final String</span> PASS = <span class="str">"root"</span>;
+    <span class="kw">private static</span> <span class="typ">Connection</span> connection = <span class="kw">null</span>;
+
+    <span class="kw">public static</span> <span class="typ">Connection</span> <span class="fn">getDBConnection</span>() <span class="kw">throws</span> <span class="typ">ClassNotFoundException</span>, <span class="typ">SQLException</span> {
+        <span class="cmt">// Explicit driver loading (legacy/guaranteed registration)</span>
+        <span class="typ">Class</span>.forName(<span class="str">"com.mysql.cj.jdbc.Driver"</span>);
+        connection = <span class="typ">DriverManager</span>.getConnection(URL, USER, PASS);
+
+        <span class="cmt">// Inspecting database metadata</span>
+        <span class="typ">DatabaseMetaData</span> meta = connection.getMetaData();
+        <span class="typ">System</span>.out.println(<span class="str">"Connected to: "</span> + meta.getDatabaseProductName() + <span class="str">" v"</span> + meta.getDatabaseProductVersion());
+        <span class="kw">return</span> connection;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">closeConnection</span>() <span class="kw">throws</span> <span class="typ">SQLException</span> {
+        <span class="kw">if</span> (connection != <span class="kw">null</span> && !connection.isClosed()) {
+            connection.close();
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; JDBC Connection Management & Metadata Inspection</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">DriverManager.getConnection()</span>
+                <span>Loads JDBC URL, username, and password credentials and opens an active TCP socket to the database server. In enterprise production, raw DriverManager is replaced by high-performance HikariCP connection pooling.</span>
+              </li>
+              <li>
+                <span class="step-badge">DatabaseMetaData</span>
+                <span>Provides diagnostic reflection over the database engine (version, capabilities, table schemas) without issuing SQL queries.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 11.3 Java Reflection API -->
+        <div id="concept-3" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">11.3 Java Reflection API & Dynamic Inspection</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-11c')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The X-Ray Machine for Java Objects</div>
+            <div class="analogy-content">
+              Normally, a class is like an opaque black safe: private fields are locked inside, accessible only to the class itself.
+              <br/>• <strong>Reflection is the X-Ray Machine:</strong> It allows frameworks like Spring Boot, Hibernate, and JUnit to peer inside any class at runtime, inspect its fields and methods, read its annotations (<code>@Autowired</code>, <code>@Test</code>), and even invoke private methods dynamically!
+            </div>
+          </div>
+
+          <!-- Code Box: Reflection API Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; ReflectionApiDemo.java &mdash; Inspecting Private Fields & Dynamic Method Invocation</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.lang.reflect.*;
+
+<span class="kw">public class</span> <span class="typ">ReflectionApiDemo</span> {
+    <span class="kw">static class</span> <span class="typ">Account</span> {
+        <span class="kw">private double</span> balance = <span class="num">5000.0</span>;
+
+        <span class="kw">private void</span> <span class="fn">secretAudit</span>(<span class="typ">String</span> auditor) {
+            <span class="typ">System</span>.out.println(<span class="str">"Audit executed by: "</span> + auditor + <span class="str">" | Balance: $"</span> + balance);
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="typ">Account</span> acc = <span class="kw">new</span> <span class="typ">Account</span>();
+        <span class="typ">Class</span>&lt;?&gt; clazz = acc.getClass();
+
+        <span class="cmt">// 1. Inspect and read private field at runtime</span>
+        <span class="typ">Field</span> balanceField = clazz.getDeclaredField(<span class="str">"balance"</span>);
+        balanceField.setAccessible(<span class="kw">true</span>); <span class="cmt">// Bypasses Java language access control checks!</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Reflected private field value: $"</span> + balanceField.get(acc));
+
+        <span class="cmt">// 2. Mutate private field directly</span>
+        balanceField.set(acc, <span class="num">9999.0</span>);
+
+        <span class="cmt">// 3. Invoke private method dynamically</span>
+        <span class="typ">Method</span> auditMethod = clazz.getDeclaredMethod(<span class="str">"secretAudit"</span>, <span class="typ">String</span>.class);
+        auditMethod.setAccessible(<span class="kw">true</span>);
+        auditMethod.invoke(acc, <span class="str">"ExternalComplianceOfficer"</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Reflection API Breakdown & Framework Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Class&lt;?&gt; Metadata Mirror</span>
+                <span>Line 14: <code>acc.getClass()</code> retrieves the <code>java.lang.Class</code> instance loaded in the JVM Metaspace. Contains full architectural blueprints of constructors, fields, methods, and annotations.</span>
+              </li>
+              <li>
+                <span class="step-badge">setAccessible(true)</span>
+                <span>Lines 18, 26: Suppresses Java language access control checks. This is the exact mechanism Spring Dependency Injection uses to inject beans into <code>@Autowired private MyService service;</code> without needing public setter methods!</span>
+              </li>
+              <li>
+                <span class="step-badge">Performance Tradeoff</span>
+                <span>Reflective lookups bypass JVM JIT compiler inlining and escape analysis optimizations. Frameworks typically inspect and cache reflection metadata during bootup to avoid runtime penalties.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase10-io-serialization.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Modern File I/O, NIO.2 & Object Serialization</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase12-design-patterns.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">SOLID Design Principles, GoF Patterns & Architecture</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

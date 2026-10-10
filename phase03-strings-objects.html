@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strings, Object Contract & Memory Internals &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 3: Strings & Memory</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase04-exceptions.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="3.1 String Immutability, String Constant Pool (SCP) & Memory Mechanics">
+            <span>3.1 String Immutability, String Co...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="3.2 The equals() and hashCode() Contract (The Library Analogy)">
+            <span>3.2 The equals() and hashCode() Co...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link active">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 3: Strings & Memory</span>
+          <span class="module-tag">&#128194; Module 1_ Arrays & Strings Demos \ Module 2_ 01_Java11_Demos</span>
+        </div>
+        <h1 class="page-title">Strings, Object Contract & Memory Internals</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 3: Strings & StringBuilder &bull; Chapter 5: Object: The Cosmic Superclass (equals, hashCode, toString)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-3">Phase 3</span>
+            <h2 class="section-title">Strings, Object Contract & Memory Internals</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1... \ 02_Arrays_Strings_Demos & Module 2 \ 01_Java11_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 3: Strings & StringBuilder &bull; Chapter 5: Object: The Cosmic Superclass (equals, hashCode, toString)</span>
+        </div>
+
+        <!-- 3.1 String Immutability, SCP & Memory Internals -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">3.1 String Immutability, String Constant Pool (SCP) & Memory Mechanics</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p3-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Why Strings are Immutable (Currency Engraving)</div>
+            <div class="analogy-content">
+              Imagine you have a $10 bill. If you want $20, you cannot take a red pen and scribble a '2' over the '1' to change its value. That would cause chaos and counterfeiting! Instead, you must receive an entirely distinct, newly minted $20 bill.
+              <br/>In Java, <code>String</code> is designed the same way:
+              <br/>• When you do <code>String s = "Hello"; s = s + " World";</code>, Java does NOT change "Hello".
+              <br/>• It leaves "Hello" completely untouched in memory, and mints a brand-new String object <code>"Hello World"</code> on the Heap!
+            </div>
+          </div>
+
+          <!-- Mermaid String Memory Diagram -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Memory Layout: String Pool vs new String() Heap Instances</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    subgraph StackSpace ["Thread Stack"]
+        s1["s1 = 'Java'"]
+        s2["s2 = 'Java'"]
+        s3["s3 = new String('Java')"]
+    end
+
+    subgraph HeapSpace ["Java Heap Memory"]
+        subgraph SCP ["String Constant Pool (SCP)"]
+            PoolLiteral["'Java' (Single interned instance @ 0x100)"]
+        end
+        HeapObj["Heap Object: new String() @ 0x500<br/>value -> points to Pool instance"]
+    end
+
+    s1 --> PoolLiteral
+    s2 --> PoolLiteral
+    s3 --> HeapObj
+    HeapObj -.-> PoolLiteral
+            </div>
+          </div>
+
+          <!-- Code Box: String Memory Proof -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; StringMemoryDemo.java &mdash; Literal vs new String()</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">StringMemoryDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// String Literals: Reuses the single instance in String Constant Pool (SCP)</span>
+        <span class="typ">String</span> s1 = <span class="str">"Java"</span>;
+        <span class="typ">String</span> s2 = <span class="str">"Java"</span>;
+
+        <span class="cmt">// 'new' Operator: FORCES a brand-new object on Heap outside SCP</span>
+        <span class="typ">String</span> s3 = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"Java"</span>);
+
+        <span class="cmt">// == compares MEMORY ADDRESS POINTERS</span>
+        <span class="typ">System</span>.out.println(s1 == s2);      <span class="cmt">// true  (Both point to same SCP address!)</span>
+        <span class="typ">System</span>.out.println(s1 == s3);      <span class="cmt">// false (Different Heap addresses!)</span>
+
+        <span class="cmt">// .equals() compares CHARACTER CONTENTS</span>
+        <span class="typ">System</span>.out.println(s1.equals(s3)); <span class="cmt">// true  (Both hold characters 'J','a','v','a')</span>
+
+        <span class="cmt">// .intern() moves/finds the reference in the String Constant Pool</span>
+        <span class="typ">String</span> s4 = s3.intern();
+        <span class="typ">System</span>.out.println(s1 == s4);      <span class="cmt">// true  (Now pointing to same SCP instance!)</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; 4 Core Reasons Why Strings Are Immutable in Java</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">1. Memory Saving</span>
+                <span>The <strong>String Constant Pool (SCP)</strong> allows millions of identical string literals across your application to share a single Heap instance. If strings were mutable, changing <code>s1</code> would secretly corrupt <code>s2</code>!</span>
+              </li>
+              <li>
+                <span class="step-badge">2. Thread Safety</span>
+                <span>Immutable objects can be shared freely across 500 concurrent worker threads with ZERO locks and ZERO synchronization overhead.</span>
+              </li>
+              <li>
+                <span class="step-badge">3. Security</span>
+                <span>File paths, network socket URLs, and database connection strings are passed as Strings. If Strings were mutable, an attacker could pass a valid file path, bypass validation, and then mutate the path to <code>/etc/shadow</code> on another thread!</span>
+              </li>
+              <li>
+                <span class="step-badge">4. HashCode Caching</span>
+                <span>Because a String's content never changes, its <code>hashCode()</code> is calculated once lazily and cached. This makes <code>HashMap</code> lookups with String keys lightning fast.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 3.2 equals() and hashCode() Contract -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">3.2 The equals() and hashCode() Contract (The Library Analogy)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p3-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Finding a Book in a Giant Library</div>
+            <div class="analogy-content">
+              Imagine you walk into a library with 1,000,000 books looking for <em>"Core Java Vol I"</em>.
+              <br/>• <strong>hashCode() is the Aisle Number:</strong> It tells the librarian: <em>"Check Aisle #42"</em>. Instead of scanning all 1,000,000 books one-by-one, you instantly jump to Aisle #42 (O(1) time!).
+              <br/>• <strong>equals() is the Title Verification:</strong> Once inside Aisle #42, there might be 5 books on the shelf. You check each book's title to find the exact match.
+              <br/><br/>
+              <strong>THE DISASTER OF BREAKING THE CONTRACT:</strong>
+              <br/>If you override <code>equals()</code> but FORGET to override <code>hashCode()</code>:
+              <br/>You put a book into the library. Later, you create an identical book with the same title to look it up. But because <code>hashCode()</code> was default, it generates a <em>different aisle number</em> (Aisle #99)!
+              <br/>You walk into Aisle #99 and search every book. The librarian says: <strong>"Book not found!"</strong> &mdash; even though the exact book is sitting in Aisle #42! That is why your <code>HashMap.get(key)</code> returns <code>null</code> when the contract is broken.
+            </div>
+          </div>
+
+          <!-- Code Box: Designing Immutable Class with Defensive Copying -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; ImmutableEmployee.java &mdash; Complete Implementation</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.oop;
+
+<span class="kw">import</span> java.util.*;
+
+<span class="cmt">/**
+ * Standard Production Immutable Class Design:
+ * 1. Declare class 'final' to prevent subclasses from adding mutable state.
+ * 2. All fields are 'private final'.
+ * 3. No setter methods.
+ * 4. Perform defensive copying in constructor for mutable objects (Lists, Dates).
+ * 5. Perform defensive copying in getters.
+ */</span>
+<span class="kw">public final class</span> <span class="typ">ImmutableEmployee</span> {
+    <span class="kw">private final</span> <span class="typ">String</span> empId;
+    <span class="kw">private final</span> <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; skills;
+
+    <span class="kw">public</span> <span class="fn">ImmutableEmployee</span>(<span class="typ">String</span> empId, <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; skills) {
+        <span class="kw">this</span>.empId = empId;
+        <span class="cmt">// Defensive copy in constructor: Prevents caller from mutating our internal list!</span>
+        <span class="kw">this</span>.skills = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;(skills);
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">getEmpId</span>() { <span class="kw">return</span> empId; }
+
+    <span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; <span class="fn">getSkills</span>() {
+        <span class="cmt">// Return unmodifiable view: Prevents caller from adding elements to our list!</span>
+        <span class="kw">return</span> <span class="typ">Collections</span>.unmodifiableList(skills);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="typ">Object</span> o) {
+        <span class="kw">if</span> (<span class="kw">this</span> == o) <span class="kw">return true</span>;
+        <span class="kw">if</span> (o == <span class="kw">null</span> || getClass() != o.getClass()) <span class="kw">return false</span>;
+        <span class="typ">ImmutableEmployee</span> that = (<span class="typ">ImmutableEmployee</span>) o;
+        <span class="kw">return</span> <span class="typ">Objects</span>.equals(empId, that.empId);
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public int</span> <span class="fn">hashCode</span>() {
+        <span class="kw">return</span> <span class="typ">Objects</span>.hash(empId);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; The 5 Golden Rules of Immutability & Defensive Copying</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Rule 1: final Class</span>
+                <span><code>public final class ImmutableEmployee</code> prevents malicious or accidental subclassing that could override getters and introduce mutable state.</span>
+              </li>
+              <li>
+                <span class="step-badge">Rule 2 & 3: private final Fields & No Setters</span>
+                <span>Fields are initialized once during construction and can never be reassigned. Absence of setters guarantees state is fixed for the lifetime of the object.</span>
+              </li>
+              <li>
+                <span class="step-badge">Rule 4: Defensive Copy in Constructor</span>
+                <span>Line 8: <code>this.skills = new ArrayList&lt;&gt;(skills);</code> &mdash; If you wrote <code>this.skills = skills;</code>, the caller would keep the original list pointer outside the class and could add elements (<code>skills.add("Hacker")</code>), quietly mutating your "immutable" object! Defensive copying clones the data into a private internal list.</span>
+              </li>
+              <li>
+                <span class="step-badge">Rule 5: Defensive Copy in Getters</span>
+                <span>Line 15: <code>return Collections.unmodifiableList(skills);</code> &mdash; Never return raw references to mutable collections. Returning an unmodifiable wrapper guarantees anyone calling <code>getSkills().add(...)</code> receives an immediate <code>UnsupportedOperationException</code>.</span>
+              </li>
+            </ul>
+
+          <!-- Code Box: Java 11 String Methods from Module 2 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2.../01_Java11_Demos/.../Tester1005_String_Strip.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.zeleven;
+
+<span class="kw">public class</span> <span class="typ">Tester1005_String_Strip</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">String</span> name = <span class="str">"  Mohpreet  "</span>;
+
+        <span class="cmt">// 1. strip(): Unicode-aware removal of leading and trailing whitespace</span>
+        <span class="typ">System</span>.out.println(<span class="str">"strip(): ["</span> + name.strip() + <span class="str">"]"</span>);
+
+        <span class="cmt">// 2. stripLeading(): Removes only leading whitespaces</span>
+        <span class="typ">System</span>.out.println(<span class="str">"stripLeading(): ["</span> + name.stripLeading() + <span class="str">"]"</span>);
+
+        <span class="cmt">// 3. stripTrailing(): Removes only trailing whitespaces</span>
+        <span class="typ">System</span>.out.println(<span class="str">"stripTrailing(): ["</span> + name.stripTrailing() + <span class="str">"]"</span>);
+
+        <span class="cmt">// 4. isBlank(): Checks if empty or contains only whitespace codepoints</span>
+        <span class="typ">System</span>.out.println(<span class="str">""   ".isBlank(): "</span> + <span class="str">"   "</span>.isBlank()); <span class="cmt">// true (isEmpty() would be false!)</span>
+
+        <span class="cmt">// 5. repeat(count): Concatenates string N times without manual loop</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Java "</span>.repeat(<span class="num">3</span>)); <span class="cmt">// "Java Java Java "</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Java 11 Modern String Enhancements: strip() vs trim()</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">strip() vs trim()</span>
+                <span><code>trim()</code> was introduced in Java 1.0 and only detects ASCII whitespace (characters &le; U+0020). <code>strip()</code> is the modern Unicode-aware replacement using <code>Character.isWhitespace(c)</code>, properly stripping non-breaking spaces and international Unicode whitespace.</span>
+              </li>
+              <li>
+                <span class="step-badge">isBlank() vs isEmpty()</span>
+                <span><code>isEmpty()</code> checks if <code>length == 0</code>. <code>"   ".isEmpty()</code> returns <code>false</code>! <code>isBlank()</code> accurately identifies strings consisting purely of whitespace characters, eliminating manual regex or Apache Commons utility dependencies.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Enterprise Logging & Tracing from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Part-1-Demos/.../TracingWithLogger.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">import</span> java.util.logging.Logger;
+<span class="kw">import</span> java.util.logging.Level;
+
+<span class="kw">public class</span> <span class="typ">TracingWithLogger</span> {
+    <span class="cmt">// Thread-safe static logger instance bound to class name</span>
+    <span class="kw">private static final</span> <span class="typ">Logger</span> LOG = <span class="typ">Logger</span>.getLogger(<span class="typ">TracingWithLogger</span>.class.getName());
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        LOG.setLevel(<span class="typ">Level</span>.ALL); <span class="cmt">// Capture all tracing thresholds</span>
+        LOG.info(<span class="str">"=== Enterprise Tracing With Logger START ==="</span>);
+
+        <span class="kw">int</span>[] numbers = {<span class="num">2</span>, -<span class="num">1</span>, <span class="num">3</span>};
+        <span class="kw">int</span> total = process(numbers);
+
+        LOG.info(<span class="str">"Final computed total = "</span> + total);
+        LOG.info(<span class="str">"=== Execution Finished Successfully ==="</span>);
+    }
+
+    <span class="kw">static int</span> <span class="fn">process</span>(<span class="kw">int</span>[] arr) {
+        LOG.info(<span class="str">"process() called with array length="</span> + arr.length);
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; arr.length; i++) {
+            LOG.fine(<span class="str">"At index "</span> + i + <span class="str">", value="</span> + arr[i]);
+            sum = add(sum, arr[i]);
+        }
+        <span class="kw">return</span> sum;
+    }
+
+    <span class="kw">static int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+        <span class="kw">if</span> (b &lt; <span class="num">0</span>) {
+            LOG.warning(<span class="str">"add() received negative parameter: "</span> + b); <span class="cmt">// Highlight potential business anomaly</span>
+        } <span class="kw">else</span> {
+            LOG.info(<span class="str">"add() adding "</span> + b);
+        }
+        <span class="kw">return</span> a + b;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Production Logging Levels & Diagnostic Tracing</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Logger vs System.out.println</span>
+                <span>Never use <code>System.out.println</code> in enterprise code. <code>System.out</code> causes thread blocking on stdout streams, cannot be filtered dynamically, and lacks timestamps, thread identifiers, or log level severities.</span>
+              </li>
+              <li>
+                <span class="step-badge">Log Level Hierarchy</span>
+                <span><code>SEVERE</code> (System crash/fatal) &gt; <code>WARNING</code> (Recoverable anomaly) &gt; <code>INFO</code> (Normal operational milestone) &gt; <code>FINE/DEBUG</code> (Diagnostic execution steps). In production, set level to <code>INFO</code> to keep log volume minimal; set to <code>FINE</code> during diagnostic investigations.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase02-oop.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Object-Oriented Programming (OOP) & Modern Class Design</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase04-exceptions.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Exception Handling & Diagnostic Resilience Architecture</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

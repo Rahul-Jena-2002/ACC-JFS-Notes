@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Multithreading, Concurrency & Virtual Threads &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 8: Multithreading</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase09-jvm-memory.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="8.1 What is Multithreading? Process vs Thread Architecture">
+            <span>8.1 What is Multithreading? Proces...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="8.2 Creating Threads: Extending Thread vs Implementing Runnable">
+            <span>8.2 Creating Threads: Extending Th...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="8.3 The 6 Official Thread Lifecycle States (Thread.State)">
+            <span>8.3 The 6 Official Thread Lifecycl...</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-4" class="toc-link" title="8.4 The Danger: Race Conditions, synchronized, volatile & AtomicInteger">
+            <span>8.4 The Danger: Race Conditions, s...</span>
+            <span class="toc-badge">4</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-5" class="toc-link" title="8.5 ExecutorService, Thread Pools & Java 21 Virtual Threads">
+            <span>8.5 ExecutorService, Thread Pools ...</span>
+            <span class="toc-badge">5</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link active">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 8: Multithreading</span>
+          <span class="module-tag">&#128194; Module 1_ 01_MultiThreading_Demos \ Java 21 Project Loom</span>
+        </div>
+        <h1 class="page-title">Java Multithreading, Concurrency & Virtual Threads</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 12: Concurrency (Threads, Thread Pools, and Synchronizers)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-8">Phase 8</span>
+            <h2 class="section-title">Java Multithreading & Concurrency Master Class</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1_ Problem Solving & Java programming \ 01_MultiThreading_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 12: Concurrency (Threads, Thread Pools, and Synchronizers)</span>
+        </div>
+
+        <!-- 8.1 What is Multithreading? Process vs Thread -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.1 What is Multithreading? Process vs Thread Architecture</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: E-Commerce Order Processing</div>
+            <div class="analogy-content">
+              Imagine an e-commerce customer places an order on Amazon:
+              <br/>• <strong>Task A:</strong> Send an order confirmation email.
+              <br/>• <strong>Task B:</strong> Update inventory stock in the database.
+              <br/>• <strong>Task C:</strong> Charge the customer's credit card.
+              <br/>• <strong>Task D:</strong> Generate an invoice PDF.
+              <br/>If done on a single thread sequentially, the user would stare at a spinning wheel for 15 seconds! Multithreading allows these independent tasks to execute concurrently.
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Operating System Process</th>
+                  <th>Java Thread</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Definition</strong></td>
+                  <td>An independently executing program (e.g. your JVM instance, Chrome browser).</td>
+                  <td>An independent execution path within a process.</td>
+                </tr>
+                <tr>
+                  <td><strong>Address Space</strong></td>
+                  <td>Separate isolated memory space. One process cannot access another's memory directly.</td>
+                  <td>All threads within the same JVM process <strong>share the same Heap memory</strong>.</td>
+                </tr>
+                <tr>
+                  <td><strong>Creation Cost</strong></td>
+                  <td>Heavyweight; requires OS page table and security context setup.</td>
+                  <td>Much lighter than processes, though OS threads still consume ~1MB stack.</td>
+                </tr>
+                <tr>
+                  <td><strong>Communication</strong></td>
+                  <td>Requires Inter-Process Communication (IPC, sockets, pipes).</td>
+                  <td>Fast; communicates directly through shared Java objects on the Heap.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 8.2 Creating Threads: Thread vs Runnable -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.2 Creating Threads: Extending Thread vs Implementing Runnable</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <p style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.25rem;">
+            Why should we almost always use <code>Runnable</code> instead of extending <code>Thread</code>?
+            <br/><code>Runnable</code> is an interface representing a <strong>task</strong> to execute, while <code>Thread</code> represents the <strong>worker worker mechanism</strong>.
+          </p>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Approach A: Extending <code>Thread</code></th>
+                  <th>Approach B: Implementing <code>Runnable</code></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+<pre style="margin:0; padding: 0.5rem; background: transparent;"><code><span class="kw">class</span> <span class="typ">MyThread</span> <span class="kw">extends</span> <span class="typ">Thread</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>() {
+        <span class="typ">System</span>.out.println(<span class="str">"Running"</span>);
+    }
+}
+<span class="cmt">// Usage:</span>
+<span class="typ">MyThread</span> t = <span class="kw">new</span> <span class="typ">MyThread</span>();
+t.start();</code></pre>
+                  </td>
+                  <td>
+<pre style="margin:0; padding: 0.5rem; background: transparent;"><code><span class="kw">class</span> <span class="typ">MyTask</span> <span class="kw">implements</span> <span class="typ">Runnable</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>() {
+        <span class="typ">System</span>.out.println(<span class="str">"Running"</span>);
+    }
+}
+<span class="cmt">// Usage:</span>
+<span class="typ">Thread</span> t = <span class="kw">new</span> <span class="typ">Thread</span>(<span class="kw">new</span> <span class="typ">MyTask</span>());
+t.start();</code></pre>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="def-box">
+            <div class="def-title">&#128214; 4 Reasons Why Senior Developers Prefer Runnable:</div>
+            <div class="def-content">
+              <strong>1. Java Single Inheritance Rule:</strong> If you do <code>class Employee extends Thread</code>, your <code>Employee</code> class can NEVER inherit from <code>Person</code> or any other class! Implementing <code>Runnable</code> preserves your ability to extend another domain class.<br/>
+              <strong>2. Separation of Concerns:</strong> <code>Runnable</code> describes WHAT to do (the task). <code>Thread</code> describes HOW to run it (the worker). Don't couple your business logic to a thread lifecycle.<br/>
+              <strong>3. Task Reusability:</strong> The same <code>Runnable</code> instance can be submitted to 10 different threads simultaneously or run on multiple worker threads.<br/>
+              <strong>4. Thread Pool Integration:</strong> In production Spring Boot backends, you NEVER create raw <code>new Thread()</code> objects. You submit tasks to an <code>ExecutorService</code> thread pool. <code>ExecutorService</code> accepts <code>Runnable</code> and <code>Callable</code>, not custom <code>Thread</code> subclasses!
+            </div>
+          </div>
+
+          <!-- Interview Accordion: start() vs run() -->
+          <div class="interview-card">
+            <div class="interview-header" onclick="toggleAccordion(this)">
+              <span class="interview-q">&#10067; Crucial Interview Question: What happens if you call t.run() instead of t.start()?</span>
+              <span class="interview-icon">&#9660;</span>
+            </div>
+            <div class="interview-body">
+              <strong>Answer:</strong>
+              <br/>• <code>t.start()</code> asks the JVM and OS to spawn a <strong>brand new operating system thread</strong>. That new thread allocates its own call stack and executes the <code>run()</code> method asynchronously in the background.
+              <br/>• <code>t.run()</code> is just a regular, ordinary method call! It executes the code directly on the <strong>CURRENT thread (like the main thread)</strong> synchronously, blocking the caller. No new thread is spawned!
+              <br/>• <strong>Trap:</strong> Calling <code>start()</code> more than once on the same <code>Thread</code> instance throws <code>IllegalThreadStateException</code>.
+            </div>
+          </div>
+        </div>
+
+        <!-- 8.3 Thread Lifecycle States -->
+        <div id="concept-3" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.3 The 6 Official Thread Lifecycle States (Thread.State)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-3')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <!-- Mermaid Thread Lifecycle -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural State Diagram: Java Thread Lifecycle States (Thread.State)</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    NEW["1. NEW<br/>(Thread created; start() not yet called)"]
+    RUNNABLE["2. RUNNABLE<br/>(Executing in JVM / Ready in OS scheduler queue)"]
+    BLOCKED["3. BLOCKED<br/>(Waiting to acquire synchronized monitor lock)"]
+    WAITING["4. WAITING<br/>(Waiting indefinitely: wait(), join(), park())"]
+    TIMED_WAITING["5. TIMED_WAITING<br/>(Waiting with timeout: sleep(ms), wait(timeout))"]
+    TERMINATED["6. TERMINATED<br/>(run() completed or unhandled exception died)"]
+
+    NEW -->|thread.start()| RUNNABLE
+    RUNNABLE -->|Contended synchronized block| BLOCKED
+    BLOCKED -->|Lock acquired| RUNNABLE
+    RUNNABLE -->|wait() / join()| WAITING
+    WAITING -->|notify() / notifyAll()| RUNNABLE
+    RUNNABLE -->|Thread.sleep(ms)| TIMED_WAITING
+    TIMED_WAITING -->|Time elapsed| RUNNABLE
+    RUNNABLE -->|Completes| TERMINATED
+            </div>
+          </div>
+        </div>
+
+        <!-- 8.4 Race Conditions, synchronized, volatile & Atomics -->
+        <div id="concept-4" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.4 The Danger: Race Conditions, synchronized, volatile & AtomicInteger</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-4')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Why "count++" is Not Thread-Safe</div>
+            <div class="analogy-content">
+              Imagine two roommates updating a shared grocery list on the fridge that says <code>Eggs = 10</code>.
+              <br/>Roommate A looks at the paper (Reads 10), decides to add 1 (Calculates 11).
+              <br/>Before Roommate A writes it down, Roommate B looks at the paper (also reads 10!) and decides to add 1 (Calculates 11).
+              <br/>Roommate A writes 11. Roommate B writes 11.
+              <br/><strong>Two eggs were added, but the final count is 11, not 12!</strong>
+              <br/>In Java bytecode, <code>count++</code> is NOT one operation. It is 3 operations: (1) Read, (2) Increment, (3) Write. When two threads interleave, updates get lost!
+            </div>
+          </div>
+
+          <!-- Comparison Table of Solutions -->
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Code Sample</th>
+                  <th>Atomicity?</th>
+                  <th>Visibility?</th>
+                  <th>When to Use in Production</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Synchronized</strong></td>
+                  <td><code>synchronized void add() { count++; }</code></td>
+                  <td>Yes</td>
+                  <td>Yes</td>
+                  <td>Protecting multiple related variables or complex invariants.</td>
+                </tr>
+                <tr>
+                  <td><strong>AtomicInteger</strong></td>
+                  <td><code>count.incrementAndGet();</code></td>
+                  <td>Yes</td>
+                  <td>Yes</td>
+                  <td>High-throughput standalone counters without lock overhead (uses CPU CAS).</td>
+                </tr>
+                <tr>
+                  <td><strong>volatile</strong></td>
+                  <td><code>volatile boolean running = true;</code></td>
+                  <td><strong>NO</strong> (only 1-op reads/writes)</td>
+                  <td>Yes</td>
+                  <td>Status flag indicators (e.g. cancellation token). NOT for counters!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: SavingAccount Thread Safety from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_MultiThreading_Demos/SavingAccount.java &mdash; Preventing Race Conditions</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.multithreading;
+
+<span class="kw">public class</span> <span class="typ">SavingAccount</span> {
+    <span class="kw">private double</span> balance;
+
+    <span class="kw">public</span> <span class="fn">SavingAccount</span>(<span class="kw">double</span> initialBalance) {
+        <span class="kw">this</span>.balance = initialBalance;
+    }
+
+    <span class="cmt">// Synchronized method: Acquires the intrinsic lock of 'this' instance</span>
+    <span class="kw">public synchronized void</span> <span class="fn">withdraw</span>(<span class="kw">double</span> amount) {
+        <span class="kw">if</span> (balance >= amount) {
+            <span class="typ">System</span>.out.println(<span class="typ">Thread</span>.currentThread().getName() + <span class="str">" withdrawing: $"</span> + amount);
+            balance -= amount;
+        } <span class="kw">else</span> {
+            <span class="typ">System</span>.out.println(<span class="str">"Insufficient balance for "</span> + <span class="typ">Thread</span>.currentThread().getName());
+        }
+    }
+
+    <span class="kw">public synchronized double</span> <span class="fn">getBalance</span>() {
+        <span class="kw">return</span> balance;
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Synchronized Methods & The Intrinsic Object Monitor Lock</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Intrinsic Lock (Monitor)</span>
+                <span>Every object on the Java Heap has an internal <strong>Monitor Lock</strong>. When a thread enters <code>public synchronized void withdraw(...)</code>, it acquires this lock for <code>this</code> account instance.</span>
+              </li>
+              <li>
+                <span class="step-badge">Mutual Exclusion (Mutex)</span>
+                <span>If Thread B attempts to call <code>withdraw()</code> while Thread A is inside the method, Thread B is immediately placed into the <strong>BLOCKED</strong> state. It sleeps until Thread A finishes and releases the lock.</span>
+              </li>
+              <li>
+                <span class="step-badge">Memory Visibility (Happens-Before)</span>
+                <span>Exiting a synchronized block establishes a <strong>Happens-Before relationship</strong>. Any memory writes (like <code>balance -= amount</code>) are immediately flushed out of CPU L1/L2 caches back into main RAM, ensuring Thread B sees the fresh balance!</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 8.5 ExecutorService, Thread Pools & Virtual Threads -->
+        <div id="concept-5" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.5 ExecutorService, Thread Pools & Java 21 Virtual Threads</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-5')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Platform Threads (Traditional)</th>
+                  <th>Virtual Threads (Java 21+)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>OS Mapping</strong></td>
+                  <td>1:1 mapping with heavy OS kernel thread.</td>
+                  <td>M:N mapping. Millions of virtual threads scheduled by JVM onto few carrier threads.</td>
+                </tr>
+                <tr>
+                  <td><strong>Memory Footprint</strong></td>
+                  <td>~1MB stack per thread allocated in OS memory.</td>
+                  <td>~1KB initially, grows dynamically on Java heap!</td>
+                </tr>
+                <tr>
+                  <td><strong>Max Threads</strong></td>
+                  <td>A few thousand before OS crashes with <code>OutOfMemoryError</code>.</td>
+                  <td><strong>Millions of concurrent threads</strong> easily on standard servers!</td>
+                </tr>
+                <tr>
+                  <td><strong>Best Used For</strong></td>
+                  <td>CPU-heavy mathematical computations.</td>
+                  <td>I/O-heavy Spring Boot microservices waiting on DB queries and HTTP calls.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: Virtual Threads in Java 21 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; VirtualThreadsDemo.java &mdash; Java 21 Virtual Thread Per Task</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.concurrent.Executors;
+
+<span class="kw">public class</span> <span class="typ">VirtualThreadsDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Java 21: Auto-managed virtual thread executor</span>
+        <span class="kw">try</span> (<span class="kw">var</span> executor = <span class="typ">Executors</span>.newVirtualThreadPerTaskExecutor()) {
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">10_000</span>; i++) {
+                <span class="kw">final int</span> taskId = i;
+                executor.submit(() -> {
+                    <span class="cmt">// Simulates blocking I/O: Virtual thread unmounts from carrier thread during sleep!</span>
+                    <span class="typ">Thread</span>.sleep(<span class="num">1000</span>);
+                    <span class="typ">System</span>.out.println(<span class="str">"Virtual task "</span> + taskId + <span class="str">" completed on: "</span> + <span class="typ">Thread</span>.currentThread());
+                    <span class="kw">return</span> taskId;
+                });
+            }
+        } <span class="cmt">// Auto-waits for all 10,000 tasks upon try-with-resources exit</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Java 21 Project Loom Virtual Threads Under the Hood</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Carrier Threads & ForkJoinPool</span>
+                <span>Virtual threads do NOT map 1:1 to OS threads. The JVM manages an underlying <code>ForkJoinPool</code> of few OS "carrier" threads (equal to CPU core count).</span>
+              </li>
+              <li>
+                <span class="step-badge">Unmounting on Blocking I/O</span>
+                <span>Line 11: <code>Thread.sleep(1000)</code> or any blocking socket/database call causes the virtual thread to <strong>unmount</strong> from the carrier thread! The carrier thread is instantly freed to execute other tasks.</span>
+              </li>
+              <li>
+                <span class="step-badge">Heap Stacks</span>
+                <span>Virtual thread call frames live on the Java <strong>Heap</strong>, starting at only ~1 KB instead of a fixed 1 MB OS stack. This allows 1,000,000 concurrent threads to run on a standard 4 GB RAM server without crashing!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Stream Pipeline Complete Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; StreamPipelineCompleteDemo.java &mdash; Filter, Map, FlatMap & GroupingBy</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.util.stream.Collectors;
+
+<span class="kw">public class</span> <span class="typ">StreamPipelineCompleteDemo</span> {
+    <span class="kw">record</span> <span class="typ">Employee</span>(<span class="typ">String</span> name, <span class="typ">String</span> dept, <span class="kw">double</span> salary, <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; skills) {}
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">Employee</span>&gt; employees = <span class="typ">List</span>.of(
+            <span class="kw">new</span> <span class="typ">Employee</span>(<span class="str">"Alice"</span>, <span class="str">"IT"</span>, <span class="num">85000</span>, <span class="typ">List</span>.of(<span class="str">"Java"</span>, <span class="str">"Docker"</span>)),
+            <span class="kw">new</span> <span class="typ">Employee</span>(<span class="str">"Bob"</span>, <span class="str">"HR"</span>, <span class="num">62000</span>, <span class="typ">List</span>.of(<span class="str">"Recruiting"</span>)),
+            <span class="kw">new</span> <span class="typ">Employee</span>(<span class="str">"Charlie"</span>, <span class="str">"IT"</span>, <span class="num">92000</span>, <span class="typ">List</span>.of(<span class="str">"Spring"</span>, <span class="str">"Kubernetes"</span>))
+        );
+
+        <span class="cmt">// 1. Filter, Map & Collect: IT high-earners</span>
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; itStars = employees.stream()
+            .filter(e -> e.dept().equals(<span class="str">"IT"</span>) && e.salary() > <span class="num">80000</span>)
+            .map(Employee::name)
+            .collect(Collectors.toList());
+        <span class="typ">System</span>.out.println(<span class="str">"IT Stars: "</span> + itStars);
+
+        <span class="cmt">// 2. FlatMap: Flatten multiple lists of skills into one unique stream</span>
+        <span class="typ">Set</span>&lt;<span class="typ">String</span>&gt; allSkills = employees.stream()
+            .flatMap(e -> e.skills().stream())
+            .collect(Collectors.toSet());
+        <span class="typ">System</span>.out.println(<span class="str">"Distinct Skills: "</span> + allSkills);
+
+        <span class="cmt">// 3. Collectors.groupingBy: Group employees by Department</span>
+        <span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">List</span>&lt;<span class="typ">Employee</span>&gt;&gt; byDept = employees.stream()
+            .collect(Collectors.groupingBy(Employee::dept));
+        <span class="typ">System</span>.out.println(<span class="str">"Grouped By Dept: "</span> + byDept.keySet());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Streams Pipeline: Filter, Map, FlatMap & GroupingBy Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">filter() & map()</span>
+                <span>Lines 8-12: <code>filter</code> takes a <code>Predicate</code> and drops non-matching items. <code>map</code> takes a <code>Function</code> and transforms each item (e.g. <code>Employee -> String</code>). Both operations are <strong>lazy</strong>: nothing runs until <code>collect()</code> is called.</span>
+              </li>
+              <li>
+                <span class="step-badge">flatMap() (1-to-Many Flattening)</span>
+                <span>Line 15: Each employee has a list of skills. Calling <code>map(e -> e.skills())</code> would yield a nested <code>Stream&lt;List&lt;String&gt;&gt;</code>. <code>flatMap</code> opens each list and merges all individual skill strings into a single unified <code>Stream&lt;String&gt;</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Collectors.groupingBy()</span>
+                <span>Line 21: Equivalent to SQL <code>GROUP BY dept</code>. Partitions the stream elements into a <code>Map&lt;K, List&lt;T&gt;&gt;</code> keyed by the classifier function. High-value feature for reporting engines and dashboard aggregations.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Optional Null-Safe Programming -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; OptionalCompleteDemo.java &mdash; Eliminating NullPointerException</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.Optional;
+
+<span class="kw">public class</span> <span class="typ">OptionalCompleteDemo</span> {
+    <span class="kw">public static</span> <span class="typ">Optional</span>&lt;<span class="typ">String</span>&gt; <span class="fn">findUserEmail</span>(<span class="typ">String</span> userId) {
+        <span class="kw">if</span> (<span class="str">"user_101"</span>.equals(userId)) {
+            <span class="kw">return</span> <span class="typ">Optional</span>.of(<span class="str">"john@accenture.com"</span>);
+        }
+        <span class="kw">return</span> <span class="typ">Optional</span>.empty(); <span class="cmt">// Returns clean Optional, NEVER null!</span>
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. orElse: Safe default fallback value</span>
+        <span class="typ">String</span> email = findUserEmail(<span class="str">"user_999"</span>).orElse(<span class="str">"no-reply@accenture.com"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"Email with fallback: "</span> + email);
+
+        <span class="cmt">// 2. map & ifPresent: Fluent chain without if-checks</span>
+        findUserEmail(<span class="str">"user_101"</span>)
+            .map(String::toUpperCase)
+            .ifPresent(e -> <span class="typ">System</span>.out.println(<span class="str">"Uppercase Email: "</span> + e));
+
+        <span class="cmt">// 3. orElseThrow: Standard Spring Boot pattern for 404 Not Found</span>
+        <span class="kw">try</span> {
+            findUserEmail(<span class="str">"unknown"</span>).orElseThrow(() -> <span class="kw">new</span> <span class="typ">RuntimeException</span>(<span class="str">"User Not Found"</span>));
+        } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+            <span class="typ">System</span>.err.println(<span class="str">"Caught Expected Exception: "</span> + e.getMessage());
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; java.util.Optional Best Practices & Production Anti-Patterns</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Primary Purpose</span>
+                <span><code>Optional&lt;T&gt;</code> was designed exclusively as a <strong>method return type</strong> to clearly signal that a result might be absent, forcing callers to handle missing data explicitly without guessing.</span>
+              </li>
+              <li>
+                <span class="step-badge">Anti-Pattern: get() without isPresent()</span>
+                <span>Never call <code>optional.get()</code> blindly! If empty, it throws <code>NoSuchElementException</code>, trading one crash for another. Prefer <code>.orElse()</code>, <code>.orElseGet(supplier)</code>, or <code>.orElseThrow()</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Anti-Pattern: Optional as Field or Parameter</span>
+                <span>Never use <code>Optional</code> as a class field (it is not <code>Serializable</code>) or as method arguments (just pass <code>null</code> or overload the method instead).</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: CompletableFuture Asynchronous Pipeline -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; CompletableFutureAsyncDemo.java &mdash; Non-Blocking Asynchronous Pipelines</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.concurrent.CompletableFuture;
+
+<span class="kw">public class</span> <span class="typ">CompletableFutureAsyncDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Async Pipeline: Fetch price, apply tax, and print without blocking main thread!</span>
+        <span class="typ">CompletableFuture</span>&lt;<span class="typ">Double</span>&gt; pipeline = <span class="typ">CompletableFuture</span>.supplyAsync(() -> {
+            <span class="cmt">// Stage 1: Async REST / DB call</span>
+            <span class="typ">System</span>.out.println(<span class="str">"Stage 1 fetching base price on: "</span> + <span class="typ">Thread</span>.currentThread().getName());
+            <span class="kw">return</span> <span class="num">100.0</span>;
+        }).thenApply(basePrice -> {
+            <span class="cmt">// Stage 2: Transform result (calculate 18% tax)</span>
+            <span class="typ">System</span>.out.println(<span class="str">"Stage 2 applying tax on: "</span> + <span class="typ">Thread</span>.currentThread().getName());
+            <span class="kw">return</span> basePrice * <span class="num">1.18</span>;
+        }).exceptionally(ex -> {
+            <span class="cmt">// Error handler fallback</span>
+            <span class="typ">System</span>.err.println(<span class="str">"Fallback error: "</span> + ex.getMessage());
+            <span class="kw">return</span> <span class="num">0.0</span>;
+        });
+
+        <span class="cmt">// join() blocks only at the end to retrieve computed result</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Final Total: $"</span> + pipeline.join());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; CompletableFuture Non-Blocking Asynchronous Stage Pipeline</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">supplyAsync()</span>
+                <span>Runs the supplier asynchronously on the shared <code>ForkJoinPool.commonPool()</code> (or custom executor), returning a promise of future completion without freezing the main thread.</span>
+              </li>
+              <li>
+                <span class="step-badge">thenApply() (Callback Chaining)</span>
+                <span>Attaches a transformation stage that executes automatically when the prior stage completes. You don't have to poll or write messy nested callbacks.</span>
+              </li>
+              <li>
+                <span class="step-badge">exceptionally() (Resilience)</span>
+                <span>Catches exceptions thrown anywhere along the pipeline and produces a safe fallback value, ensuring your web service doesn't crash on downstream timeout.</span>
+              </li>
+              <li>
+                <span class="step-badge">join() vs get()</span>
+                <span><code>join()</code> retrieves the value like <code>Future.get()</code>, but throws unchecked <code>CompletionException</code> instead of checked <code>ExecutionException</code>, allowing clean integration with lambdas.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Coordination with wait, notify & ReentrantLock -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; SignalWaitNotifyDemo.java &mdash; wait(), notifyAll() & ReentrantLock</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.concurrent.locks.ReentrantLock;
+
+<span class="kw">public class</span> <span class="typ">SignalWaitNotifyDemo</span> {
+    <span class="kw">private boolean</span> ready = <span class="kw">false</span>;
+    <span class="kw">private final</span> <span class="typ">ReentrantLock</span> lock = <span class="kw">new</span> <span class="typ">ReentrantLock</span>();
+
+    <span class="cmt">// Coordination with wait() / notifyAll(): MUST use while loop to guard against spurious wakeups!</span>
+    <span class="kw">public synchronized void</span> <span class="fn">waitForSignal</span>() <span class="kw">throws</span> <span class="typ">InterruptedException</span> {
+        <span class="kw">while</span> (!ready) {
+            wait(); <span class="cmt">// Releases monitor lock and suspends thread!</span>
+        }
+        <span class="typ">System</span>.out.println(<span class="typ">Thread</span>.currentThread().getName() + <span class="str">" woke up: Signal received!"</span>);
+    }
+
+    <span class="kw">public synchronized void</span> <span class="fn">sendSignal</span>() {
+        ready = <span class="kw">true</span>;
+        notifyAll(); <span class="cmt">// Wakes up all waiting threads!</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Thread Coordination (wait/notifyAll) & The Spurious Wakeup Rule</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">The Spurious Wakeup Law</span>
+                <span>Line 7: <code>while (!ready) { wait(); }</code> &mdash; <strong>Always call wait() inside a while loop, NEVER an if statement!</strong> Operating system threads can wake up spontaneously without any call to <code>notify()</code> (spurious wakeup). The while loop re-checks the predicate upon waking.</span>
+              </li>
+              <li>
+                <span class="step-badge">Lock Release</span>
+                <span>Calling <code>wait()</code> releases the synchronized monitor lock and places the calling thread into the <strong>WAITING</strong> pool.</span>
+              </li>
+              <li>
+                <span class="step-badge">notify() vs notifyAll()</span>
+                <span><code>notify()</code> wakes only 1 arbitrary thread from the waiting pool (can cause thread starvation or lost signals). <code>notifyAll()</code> wakes all waiting threads, allowing them to contend fairly. Senior developers almost universally prefer <code>notifyAll()</code>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Producer-Consumer Coordination from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_MultiThreading_Demos/.../SenderReceiverTest.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.threading.sample;
+
+<span class="cmt">// Shared Data Monitor between Sender (Producer) and Receiver (Consumer)</span>
+<span class="kw">class</span> <span class="typ">Data</span> {
+    <span class="kw">private String</span> packet;
+    <span class="cmt">// true = receiver waits; false = sender waits</span>
+    <span class="kw">private boolean</span> transfer = <span class="kw">true</span>;
+
+    <span class="kw">public synchronized void</span> <span class="fn">send</span>(<span class="typ">String</span> packet) {
+        <span class="kw">while</span> (!transfer) {
+            <span class="kw">try</span> {
+                wait(); <span class="cmt">// Sender waits until receiver has processed previous packet</span>
+            } <span class="kw">catch</span> (<span class="typ">InterruptedException</span> e) {
+                <span class="typ">Thread</span>.currentThread().interrupt();
+            }
+        }
+        transfer = <span class="kw">false</span>;
+        <span class="kw">this</span>.packet = packet;
+        notifyAll(); <span class="cmt">// Wakes up receiver</span>
+    }
+
+    <span class="kw">public synchronized String</span> <span class="fn">receive</span>() {
+        <span class="kw">while</span> (transfer) {
+            <span class="kw">try</span> {
+                wait(); <span class="cmt">// Receiver waits until sender supplies packet</span>
+            } <span class="kw">catch</span> (<span class="typ">InterruptedException</span> e) {
+                <span class="typ">Thread</span>.currentThread().interrupt();
+            }
+        }
+        transfer = <span class="kw">true</span>;
+        notifyAll(); <span class="cmt">// Wakes up sender</span>
+        <span class="kw">return</span> packet;
+    }
+}
+
+<span class="kw">public class</span> <span class="typ">SenderReceiverTest</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Data</span> sharedData = <span class="kw">new</span> <span class="typ">Data</span>();
+        <span class="kw">new</span> <span class="typ">Thread</span>(() -> {
+            <span class="typ">String</span>[] packets = { <span class="str">"Packet 1"</span>, <span class="str">"Packet 2"</span>, <span class="str">"End"</span> };
+            <span class="kw">for</span> (<span class="typ">String</span> p : packets) sharedData.send(p);
+        }).start();
+
+        <span class="kw">new</span> <span class="typ">Thread</span>(() -> {
+            <span class="typ">String</span> p = sharedData.receive();
+            <span class="kw">while</span> (!<span class="str">"End"</span>.equals(p)) {
+                <span class="typ">System</span>.out.println(<span class="str">"Received: "</span> + p);
+                p = sharedData.receive();
+            }
+        }).start();
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Producer-Consumer wait() / notifyAll() State Synchronization</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Shared Monitor Lock</span>
+                <span>Both <code>send()</code> and <code>receive()</code> are synchronized on the same shared <code>Data</code> object instance, preventing concurrent read/write corruption.</span>
+              </li>
+              <li>
+                <span class="step-badge">Flag-Driven Wait Condition</span>
+                <span>The boolean <code>transfer</code> toggles back and forth. Sender waits when <code>!transfer</code> is true; Receiver waits when <code>transfer</code> is true. <code>notifyAll()</code> signals the other waiting thread to proceed.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Thread Join Demo from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_MultiThreading_Demos/.../ThreadJoinDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.threading.sample;
+
+<span class="kw">public class</span> <span class="typ">ThreadJoinDemo</span> <span class="kw">extends</span> <span class="typ">Thread</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>() {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+            <span class="typ">System</span>.out.println(<span class="str">"Worker thread computing step: "</span> + i);
+            <span class="kw">try</span> { <span class="typ">Thread</span>.sleep(<span class="num">500</span>); } <span class="kw">catch</span> (<span class="typ">InterruptedException</span> e) {}
+        }
+        <span class="typ">System</span>.out.println(<span class="str">"Worker thread finished!"</span>);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">InterruptedException</span> {
+        <span class="typ">ThreadJoinDemo</span> worker = <span class="kw">new</span> <span class="typ">ThreadJoinDemo</span>();
+        worker.start();
+
+        <span class="cmt">// join() forces the calling thread (main) to wait until 'worker' terminates!</span>
+        worker.join();
+
+        <span class="typ">System</span>.out.println(<span class="str">"Main thread resumes after worker completed!"</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Thread.join() Lifecycle Synchronization Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">join() Blocks the Caller</span>
+                <span>Line 19: When the <code>main</code> thread calls <code>worker.join()</code>, <code>main</code> moves from RUNNABLE to the <strong>WAITING</strong> state.</span>
+              </li>
+              <li>
+                <span class="step-badge">Automatic Wakeup on Termination</span>
+                <span>When <code>worker</code> completes its <code>run()</code> method and enters <strong>TERMINATED</strong>, the JVM automatically wakes the waiting <code>main</code> thread to resume execution.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: ExecutorService Thread Pool -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; ExecutorServicePoolDemo.java &mdash; Production Thread Pool Reuse</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.concurrent.*;
+
+<span class="kw">public class</span> <span class="typ">ExecutorServicePoolDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Reusable Fixed Pool of 3 threads processing 6 submitted tasks</span>
+        <span class="typ">ExecutorService</span> pool = <span class="typ">Executors</span>.newFixedThreadPool(<span class="num">3</span>);
+        <span class="kw">try</span> {
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">6</span>; i++) {
+                <span class="kw">final int</span> taskId = i;
+                pool.submit(() -> {
+                    <span class="typ">System</span>.out.println(<span class="str">"Task "</span> + taskId + <span class="str">" running on worker: "</span> + <span class="typ">Thread</span>.currentThread().getName());
+                });
+            }
+        } <span class="kw">finally</span> {
+            pool.shutdown(); <span class="cmt">// Always shutdown pools to prevent thread leaks!</span>
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Production Thread Pools & Lifecycle Management</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Thread Reuse</span>
+                <span>Creating a thread requires allocating 1MB of memory and making an OS kernel system call. Thread pools maintain a fixed pool of live worker threads that pick tasks from an internal <code>BlockingQueue</code>, eliminating thread creation latency.</span>
+              </li>
+              <li>
+                <span class="step-badge">Lifecycle (shutdown vs shutdownNow)</span>
+                <span><code>shutdown()</code> allows currently running and queued tasks to finish, but refuses new submissions. <code>shutdownNow()</code> attempts to stop actively executing tasks by sending <code>Thread.interrupt()</code>. Always call shutdown in a <code>finally</code> block to prevent JVM shutdown hangs.</span>
+              </li>
+              <li>
+                <span class="step-badge">ThreadPoolExecutor Configuration</span>
+                <span>In production Spring Boot backends, avoid unbounded <code>newCachedThreadPool()</code> which can spawn 10,000 threads and crash your server. Configure explicit <code>corePoolSize</code>, <code>maxPoolSize</code>, and a bounded <code>ArrayBlockingQueue</code> with a <code>RejectedExecutionHandler</code>.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase07-functional-streams.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Functional Programming, Lambdas & Modern Streams</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase09-jvm-memory.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">JVM Architecture, Memory Management & GC Tuning</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,228 +1,328 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Spring JPA & MVC Learning Hub — Tokyo Night Edition</title>
-  <meta name="description"
-    content="A modern visual portal for Spring MVC, Spring Data JPA, and Transaction Management study guides with Tokyo Night theme, interactive diagrams, and vibrant code sandboxes.">
-  <link rel="stylesheet" href="css/main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Java Enterprise Learning Roadmap &amp; Progress Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
+<body>
 
-<body id="top">
-
-  <!-- TOP NAVIGATION -->
-  <nav class="landing-nav">
-    <div class="nav-inner">
-      <a class="logo" href="#top">
-        <svg class="spring-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28" height="28">
-          <path fill="#8bc34a"
-            d="M43.982,23.635c0.069-4.261-0.891-9.328-2.891-15.273l-1.568-4.662l-2.13,4.433 c-0.114,0.237-0.244,0.469-0.38,0.698C33.514,5.827,28.974,4,24,4C12.954,4,4,12.954,4,24c0,11.046,8.954,20,20,20s20-8.954,20-20 C44,23.877,43.984,23.758,43.982,23.635z">
-          </path>
-          <path fill="#fff"
-            d="M39.385 32.558c-3.123 4.302-8.651 4.533-13.854 4.442H18.75h-1.938c4.428-1.593 7.063-1.972 9.754-3.4 5.068-2.665 10.078-8.496 11.121-14.562-1.93 5.836-7.779 10.85-13.109 12.889-3.652 1.393-10.248 2.745-10.248 2.745l-.267-.145C9.573 32.268 9.437 22.214 17.6 18.968c3.574-1.423 6.993-.641 10.854-1.593 4.122-1.012 8.89-4.208 10.83-8.375C41.456 15.667 44.07 26.106 39.385 32.558L39.385 32.558zM15.668 38.445C15.386 38.795 14.955 39 14.505 39c-.823 0-1.495-.677-1.495-1.5s.677-1.5 1.495-1.5c.341 0 .677.118.941.336C16.086 36.855 16.186 37.805 15.668 38.445L15.668 38.445z">
-          </path>
-        </svg>
-        <span>Spring<b>Hub</b></span>
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
       </a>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-pressed="false">
-          <span id="themeIcon">☀</span>
-          <span id="themeText">Light</span>
-        </button>
-      </div>
+      <span class="brand-badge">Accenture Enterprise Edition</span>
     </div>
-  </nav>
-
-  <!-- HERO SECTION -->
-  <header class="hero-landing">
-    <div class="container">
-      <div class="hero">
-        <div class="eyebrow">✨ Java · Spring MVC · Spring Data JPA · Architecture Guides</div>
-
-        <h1>Learn it.<br><span>See it.</span><br>Build it.</h1>
-
-        <p class="subtitle">
-          Your centralized visual learning hub for Spring Framework, JPA ORM, and enterprise architecture.
-          Packed with high-resolution interactive Mermaid diagrams, scenario-based interview questions,
-          and colorful, copy-ready code sandboxes in a stunning Tokyo Night theme.
-        </p>
-
-        <div class="buttons">
-          <a class="button primary" href="#topics">Explore Guides ↓</a>
-        </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
       </div>
+      <a href="phase01-fundamentals.html" class="nav-btn primary">Start Learning &rarr;</a>
     </div>
   </header>
 
-  <!-- LEARNING LIBRARY SECTION -->
-  <section id="topics" class="topics-section">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <h2>Learning Library</h2>
+  <!-- Hero Banner -->
+  <section class="dashboard-hero">
+    <div class="hero-badge">&#128640; Production-Grade Core Java Curriculum</div>
+    <h1 class="hero-title">Core Java Enterprise Mastery Portal</h1>
+    <p class="hero-subtitle">
+      A structured, interactive learning roadmap covering JVM internals, modern LTS features (Java 8 through 21), concurrent memory models, GoF design patterns, and robust persistence with line-by-line code annotations.
+    </p>
+
+    <!-- Master Progress Summary Banner -->
+    <div class="stats-banner">
+      <div class="stat-card">
+        <div class="stat-value" id="dashMasteredCount">0</div>
+        <div class="stat-label">Topics Mastered (out of 35)</div>
+        <div class="stat-progress-bar">
+          <div id="dashProgressFill" class="stat-progress-fill" style="width: 0%;"></div>
         </div>
-        <p>
-          Select a guide to open the visual walkthrough or use <strong>+ Add Page</strong> to index your custom HTML
-          files.
-        </p>
       </div>
-
-      <!-- SEARCH BAR & ADD PAGE CONTROLS -->
-      <div class="controls-bar">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="librarySearch"
-            placeholder="Search guides by title, keyword, or filename (e.g. jpa, mvc, crud)..." autocomplete="off" />
+      <div class="stat-card">
+        <div class="stat-value" id="dashPctCount">0%</div>
+        <div class="stat-label">Overall Completion Rate</div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill" style="width: 100%; background: var(--primary);"></div>
         </div>
-        <button type="button" class="add-page-btn primary open-add-page-modal">
-          + Add New Page
-        </button>
       </div>
-
-      <!-- CARDS GRID -->
-      <div class="grid" id="topicsGrid">
-        <a class="card" href="jpa_bootstrapping_complete_crud_interview_guide.html">
-          <div class="num">01</div>
-          <div style="flex: 1;">
-            <h3>Unit 17: JPA ORM CRUD & Bootstrapping</h3>
-            <p>Entity lifecycle, persistence.xml, EntityManager, SessionFactory, dirty checking, and complete CRUD
-              operations.</p>
-            <span class="file-tag">jpa_bootstrapping_complete_crud_interview_guide.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="spring-jpa-concepts-theory-diagrams-complete-code-v2.html">
-          <div class="num">02</div>
-          <div style="flex: 1;">
-            <h3>Unit 20: Transaction Management & Custom Repository</h3>
-            <p>Declarative @Transactional, Propagation behaviors, Isolation levels, rollback rules, and custom Spring
-              Data repositories.</p>
-            <span class="file-tag">spring-jpa-concepts-theory-diagrams-complete-code-v2.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="spring-mvc-interview-guide.html">
-          <div class="num">03</div>
-          <div style="flex: 1;">
-            <h3>Unit 23: Spring MVC Architecture & Interview Guide</h3>
-            <p>DispatcherServlet request lifecycle, WebApplicationContext hierarchy, form handling, controllers, and
-              interview traps.</p>
-            <span class="file-tag">spring-mvc-interview-guide.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="spring-mvc-forms.html">
-          <div class="num">04</div>
-          <div style="flex: 1;">
-            <h3>Unit 24: Spring MVC Forms, Validation & Exception Handling</h3>
-            <p>Form taglib (&lt;form:form&gt;), @ModelAttribute, Bean Validation (@Valid &amp; BindingResult), custom
-              validators, and @ControllerAdvice exception handling.</p>
-            <span class="file-tag">spring-mvc-forms.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <!-- ── LAYMAN CONCEPT GUIDES ── -->
-        <a class="card" href="unit17-jpa-concepts-layman.html" style="border-color: rgba(100,255,180,0.2);">
-          <div class="num" style="color:#64ffb4;">05</div>
-          <div style="flex: 1;">
-            <h3>Unit 17: JPA ORM &amp; CRUD — Layman Concepts Guide ✨</h3>
-            <p>ORM explained with analogies, EntityManagerFactory vs EntityManager, 4 entity states,
-              persist/find/JPQL/dirty-checking/merge/remove, all in plain English with interview Q&amp;A.</p>
-            <span class="file-tag">unit17-jpa-concepts-layman.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="unit20-transactions-concepts-layman.html" style="border-color: rgba(121,192,255,0.2);">
-          <div class="num" style="color:#79c0ff;">06</div>
-          <div style="flex: 1;">
-            <h3>Unit 20: Transactions &amp; Custom Repositories — Layman Concepts Guide ✨</h3>
-            <p>ACID, @Transactional proxy magic, all 7 propagation modes with analogies, rollback rules traps, isolation
-              levels, Spring Data JPA, custom repositories — all in layman terms.</p>
-            <span class="file-tag">unit20-transactions-concepts-layman.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="unit23-spring-mvc-concepts-layman.html" style="border-color: rgba(210,168,255,0.2);">
-          <div class="num" style="color:#d2a8ff;">07</div>
-          <div style="flex: 1;">
-            <h3>Unit 23: Spring MVC Architecture — Layman Concepts Guide ✨</h3>
-            <p>MVC pattern, DispatcherServlet step-by-step, HandlerMapping, ViewResolver, Root vs Servlet context
-              hierarchy, XML vs Java config — everything explained plainly with interview Q&amp;A.</p>
-            <span class="file-tag">unit23-spring-mvc-concepts-layman.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="unit24-forms-validation-concepts-layman.html" style="border-color: rgba(255,166,87,0.2);">
-          <div class="num" style="color:#ffa657;">08</div>
-          <div style="flex: 1;">
-            <h3>Unit 24: Forms, Validation &amp; Exception Handling — Layman Concepts Guide ✨</h3>
-            <p>Spring form taglib, @ModelAttribute binding, @Valid + BindingResult, Bean Validation annotations, custom
-              validators, @ExceptionHandler vs @ControllerAdvice — all in layman terms.</p>
-            <span class="file-tag">unit24-forms-validation-concepts-layman.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="spring-rest-concepts-layman.html" style="border-color: rgba(121,192,255,0.2);">
-          <div class="num" style="color:#79c0ff;">09</div>
-          <div style="flex: 1;">
-            <h3>Spring REST — Layman Concepts Guide ✨</h3>
-            <p>@RestController, all REST annotations, Spring Data JPA integration, Producer-Consumer with RestTemplate,
-              HTTP methods, ResponseEntity, status codes &mdash; all in plain English with full code examples.</p>
-            <span class="file-tag">spring-rest-concepts-layman.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="card" href="microservices-producer-consumer-demo.html" style="border-color: rgba(210,168,255,0.2);">
-          <div class="num" style="color:#d2a8ff;">10</div>
-          <div style="flex: 1;">
-            <h3>Microservices Producer-Consumer Demo ✨</h3>
-            <p>Two complete Spring Boot apps — Producer (REST API + JPA + MySQL) and Consumer (RestTemplate + CommandLineRunner) — with every file explained line-by-line in comments. Full request trace, how-to-run guide, and interview Q&amp;A.</p>
-            <span class="file-tag">microservices-producer-consumer-demo.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-
-
-        <a class="card" href="qwen.html" style="border-color: rgba(210,168,255,0.2);">
-          <div class="num" style="color:#d2a8ff;">09</div>
-          <div style="flex: 1;">
-            <h3>JPA &amp; Hibernate — Simple Guide &amp; Interview Prep</h3>
-            <p>ELI5 breakdown of JPA concepts, entity lifecycle states, dirty checking, top 10 scenario-based questions with scripts, and rapid-fire cheat sheets.</p>
-            <span class="file-tag">qwen.html</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-      </div>
-
-      <!-- PAGINATION BAR -->
-      <div class="pagination-container" id="paginationContainer">
-        <div class="pagination-info" id="paginationInfo">Showing 1-9 of 9 guides</div>
-        <div class="pagination-controls" id="paginationControls">
-          <!-- Dynamically populated by js/main.js -->
+      <div class="stat-card">
+        <div class="stat-value">60</div>
+        <div class="stat-label">Annotated Code Snippets</div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill" style="width: 100%; background: var(--accent-cyan);"></div>
         </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">13</div>
+        <div class="stat-label">Modular Study Phases</div>
+        <div class="stat-progress-bar">
+          <div class="stat-progress-fill" style="width: 100%; background: var(--accent-amber);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Topic Search Bar -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="phaseSearchInput" class="search-input" placeholder="Search topics, algorithms, or code patterns (e.g. Virtual Threads, PECS, String Pool, TimSort, JDBC)...">
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      Spring Learning Hub · Tokyo Night Edition · Modular CSS & JS · Fast & Offline Ready
-    </div>
+  <!-- Roadmap Phases Grid -->
+  <main class="phases-grid">
+    
+    <a href="phase01-fundamentals.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 1: Fundamentals</span>
+          <span class="difficulty-badge diff-easy">Beginner &bull; 4-5 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Java Fundamentals & JVM Execution Model</h2>
+        <p class="roadmap-card-desc">Master the JVM bytecode lifecycle, strict pass-by-value proof, primitive datatypes, bitwise operations, modern switch pattern matching, and memory allocation.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">JVM & Bytecode</span><span class="topic-tag">Pass-by-Value Proof</span><span class="topic-tag">Type Casting</span><span class="topic-tag">Pattern Matching Switch</span><span class="topic-tag">Array Internals</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase02-oop.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 2: OOP & Class Design</span>
+          <span class="difficulty-badge diff-med">Intermediate &bull; 6-8 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Object-Oriented Programming (OOP) & Modern Class Design</h2>
+        <p class="roadmap-card-desc">Deep-dive into constructor chaining, Composition vs Aggregation, dynamic binding with vtables, interface default methods, Java 17 Sealed classes, and Java 16 Records.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Constructor Chaining</span><span class="topic-tag">Composition vs Aggregation</span><span class="topic-tag">Dynamic Binding</span><span class="topic-tag">Java 17 Sealed Classes</span><span class="topic-tag">Java 16 Records</span><span class="topic-tag">Cloning & Deep Copy</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase03-strings-objects.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 3: Strings & Memory</span>
+          <span class="difficulty-badge diff-med">Intermediate &bull; 4 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Strings, Object Contract & Memory Internals</h2>
+        <p class="roadmap-card-desc">Understand the String Constant Pool (SCP), immutability proofs, equals() & hashCode() contracts, defensive copying, Java 11 strip() vs trim(), and Text Blocks.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">String Constant Pool</span><span class="topic-tag">equals() & hashCode()</span><span class="topic-tag">Defensive Copying</span><span class="topic-tag">Java 11 String Suite</span><span class="topic-tag">Text Blocks</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase04-exceptions.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 4: Exception Handling</span>
+          <span class="difficulty-badge diff-med">Intermediate &bull; 4-5 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Exception Handling & Diagnostic Resilience Architecture</h2>
+        <p class="roadmap-card-desc">Throwable hierarchy, Checked vs Unchecked exceptions, Try-with-resources AutoCloseable mechanics, custom checked exceptions, and java.util.logging enterprise trace levels.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Throwable Hierarchy</span><span class="topic-tag">Try-With-Resources</span><span class="topic-tag">Custom Checked Exceptions</span><span class="topic-tag">Finally Guarantees</span><span class="topic-tag">Enterprise Logger</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase05-collections.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 5: Collections Framework</span>
+          <span class="difficulty-badge diff-hard">Advanced &bull; 7-9 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Collections Framework & Low-Level Data Structures</h2>
+        <p class="roadmap-card-desc">Pointers vs Array memory, custom LinkedList vs java.util.LinkedList, ArrayList resizing math, HashMap treeification & collision handling, fail-fast iterators, and Comparable vs Comparator.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Low-Level Linked Nodes</span><span class="topic-tag">ArrayList Growth Math</span><span class="topic-tag">HashMap Treeification</span><span class="topic-tag">Fail-Fast Iterators</span><span class="topic-tag">Comparable vs Comparator</span><span class="topic-tag">Map keySet vs entrySet</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase06-generics.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 6: Generics & PECS</span>
+          <span class="difficulty-badge diff-med">Intermediate &bull; 4 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Generics & Compile-Time Type Safety</h2>
+        <p class="roadmap-card-desc">Master the PECS Principle (? extends Producer, ? super Consumer), Type Erasure bytecode mechanics, Type Invariance, and generic bounded repository patterns.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">PECS Principle</span><span class="topic-tag">Wildcard Invariance</span><span class="topic-tag">Type Erasure</span><span class="topic-tag">Bounded Type Parameters</span><span class="topic-tag">Generic Repository</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase07-functional-streams.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 7: Lambdas & Streams</span>
+          <span class="difficulty-badge diff-hard">Advanced &bull; 6-8 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Functional Programming, Lambdas & Modern Streams</h2>
+        <p class="roadmap-card-desc">Functional interfaces (Predicate, Consumer, Function, Supplier), method references (Class::new, instance::method), lazy stream pipelines, Collectors.groupingBy, and Optional.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Functional Interfaces</span><span class="topic-tag">Constructor Method References</span><span class="topic-tag">Lazy Pipeline Execution</span><span class="topic-tag">Collectors.groupingBy</span><span class="topic-tag">Optional Anti-Patterns</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase08-multithreading.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 8: Multithreading</span>
+          <span class="difficulty-badge diff-hard">Expert &bull; 10-12 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Java Multithreading, Concurrency & Virtual Threads</h2>
+        <p class="roadmap-card-desc">OS processes vs Java threads, thread states, race conditions & synchronized, wait() & notifyAll() producer-consumer, Thread.join(), ExecutorService, and Java 21 Virtual Threads.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Process vs Thread</span><span class="topic-tag">Thread.join() Lifecycle</span><span class="topic-tag">wait() & notifyAll()</span><span class="topic-tag">ExecutorService Pools</span><span class="topic-tag">Java 21 Virtual Threads</span><span class="topic-tag">Deadlock Detection</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase09-jvm-memory.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 9: JVM & Memory</span>
+          <span class="difficulty-badge diff-hard">Expert &bull; 6-8 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">JVM Architecture, Memory Management & GC Tuning</h2>
+        <p class="roadmap-card-desc">Runtime data areas (Heap, Stack, Metaspace, PC), ClassLoader parent delegation security, generational GC (Eden, S0, S1, Old Gen), and troubleshooting OutOfMemoryError.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">ClassLoader Delegation</span><span class="topic-tag">Heap vs Metaspace</span><span class="topic-tag">Generational GC Hypothesis</span><span class="topic-tag">OutOfMemoryError Diagnostics</span><span class="topic-tag">Memory Leaks</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase10-io-serialization.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 10: File I/O & NIO.2</span>
+          <span class="difficulty-badge diff-med">Intermediate &bull; 4 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Modern File I/O, NIO.2 & Object Serialization</h2>
+        <p class="roadmap-card-desc">Java 11 Files.writeString() / readString(), NIO.2 non-blocking channels, Java Serialization & transient security, and avoiding BigDecimal financial precision traps.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Files.writeString()</span><span class="topic-tag">NIO.2 vs Classic IO</span><span class="topic-tag">Serialization & transient</span><span class="topic-tag">serialVersionUID</span><span class="topic-tag">BigDecimal Financial Trap</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase11-jdbc-persistence.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 11: JDBC Persistence</span>
+          <span class="difficulty-badge diff-hard">Advanced &bull; 6-8 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Enterprise Persistence, JDBC & Database Architecture</h2>
+        <p class="roadmap-card-desc">JDBC architecture, PreparedStatement SQL injection defense, ACID transaction demarcation (commit & rollback), DBUtility connection pooling, and Reflection API dynamic inspection.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">PreparedStatement Defense</span><span class="topic-tag">ACID Transactions</span><span class="topic-tag">Connection Pooling DBUtility</span><span class="topic-tag">Reflection API setAccessible</span><span class="topic-tag">Dynamic Invocation</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="phase12-design-patterns.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Phase 12: Design Patterns</span>
+          <span class="difficulty-badge diff-hard">Advanced &bull; 8-10 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">SOLID Design Principles, GoF Patterns & Architecture</h2>
+        <p class="roadmap-card-desc">5 SOLID principles with real-world analogies, GoF patterns (Double-Checked Locking Singleton, Factory Method, Builder, Observer, Strategy), and JUnit 5 unit testing.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">SOLID Principles</span><span class="topic-tag">Thread-Safe Singleton</span><span class="topic-tag">Factory Method Pattern</span><span class="topic-tag">Builder Pattern</span><span class="topic-tag">Observer Pattern</span><span class="topic-tag">Strategy Pattern</span><span class="topic-tag">JUnit 5 Testing</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+    <a href="projects-stages.html" class="roadmap-card">
+      <div class="roadmap-card-top">
+        <div class="roadmap-card-badge-row">
+          <span class="phase-number-pill">Practice Projects & Stages</span>
+          <span class="difficulty-badge diff-med">Practical Milestone &bull; 15-20 Hours</span>
+        </div>
+        <h2 class="roadmap-card-title">Learning Stages, 5 Capstone Projects & Master Checklist</h2>
+        <p class="roadmap-card-desc">Four recommended progression stages and five end-to-end hands-on capstone projects designed to cement enterprise Java backend proficiency.</p>
+        <div class="topic-tags-row">
+          <span class="topic-tag">Stage 1: Fundamentals</span><span class="topic-tag">Stage 2: Collections</span><span class="topic-tag">Stage 3: Concurrency</span><span class="topic-tag">Stage 4: Practical Java</span><span class="topic-tag">5 Capstone Projects</span>
+        </div>
+      </div>
+      <div class="roadmap-card-footer">
+        <span>Explore Module &amp; Demos</span>
+        <span class="card-cta-arrow">&rarr;</span>
+      </div>
+    </a>
+  
+  </main>
+
+  <footer style="text-align: center; padding: 3rem 1.5rem; border-top: 1px solid var(--border-subtle); color: var(--text-dim); font-size: 0.85rem;">
+    <p>&copy; 2026 Core Java Enterprise Roadmap &bull; Mapped to Horstmann Core Java &amp; ACC Backend Training Modules</p>
   </footer>
+
+  <div id="appToast" class="toast"></div>
 
   <script src="js/main.js"></script>
 </body>
-
 </html>

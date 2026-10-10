@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Functional Programming, Lambdas & Modern Streams &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 7: Lambdas & Streams</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase08-multithreading.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="7.1 Core Functional Interfaces, Lambdas & Method References">
+            <span>7.1 Core Functional Interfaces, La...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="7.2 Stream API Pipeline, Laziness & Grouping Collectors">
+            <span>7.2 Stream API Pipeline, Laziness ...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link active">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 7: Lambdas & Streams</span>
+          <span class="module-tag">&#128194; Module 2_ Java LTS Features \ 01_Java8_Demos</span>
+        </div>
+        <h1 class="page-title">Functional Programming, Lambdas & Modern Streams</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 6: Interfaces and Lambda Expressions &bull; Volume II — Chapter 1: Streams</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-7">Phase 7</span>
+            <h2 class="section-title">Java 8+ Functional Programming & Stream Architecture</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 2_ Java LTS Features \ 01_Java8_Demos & 01_Java17_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 1: Streams &bull; Chapter 6: The Date and Time API &bull; Volume I — Chapter 6: Lambdas</span>
+        </div>
+
+        <!-- 7.1 Functional Interfaces & Lambdas -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">7.1 Core Functional Interfaces, Lambdas & Method References</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p7-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Passing Code as Data</div>
+            <div class="analogy-content">
+              In Java 7, if you wanted to pass a piece of logic (like "how to sort employees"), you had to create an entire class or bulky anonymous inner class just to wrap <strong>one method</strong>.
+              <br/>With <strong>Lambdas (Java 8)</strong>, you can treat behavior directly as data! You can pass a piece of code (<code>employee -> employee.getSalary() > 50000</code>) straight into a method just like you pass an integer or string.
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Interface</th>
+                  <th>SAM Descriptor</th>
+                  <th>Input & Output</th>
+                  <th>Lambda Syntax</th>
+                  <th>Real-World Backend Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>Predicate&lt;T&gt;</code></td>
+                  <td><code>boolean test(T t)</code></td>
+                  <td>Takes <code>T</code>, returns <code>boolean</code></td>
+                  <td><code>emp -> emp.isActive()</code></td>
+                  <td>Filtering active accounts, validating user inputs</td>
+                </tr>
+                <tr>
+                  <td><code>Function&lt;T, R&gt;</code></td>
+                  <td><code>R apply(T t)</code></td>
+                  <td>Takes <code>T</code>, transforms to <code>R</code></td>
+                  <td><code>user -> user.toDTO()</code></td>
+                  <td>Entity to DTO mapping in Spring Boot services</td>
+                </tr>
+                <tr>
+                  <td><code>Consumer&lt;T&gt;</code></td>
+                  <td><code>void accept(T t)</code></td>
+                  <td>Takes <code>T</code>, returns <code>void</code></td>
+                  <td><code>msg -> kafkaProducer.send(msg)</code></td>
+                  <td>Sending events, logging, printing audit trails</td>
+                </tr>
+                <tr>
+                  <td><code>Supplier&lt;T&gt;</code></td>
+                  <td><code>T get()</code></td>
+                  <td>Takes nothing, returns <code>T</code></td>
+                  <td><code>() -> new OrderNotFoundException()</code></td>
+                  <td>Lazy error generation: <code>repo.findById(id).orElseThrow(...)</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: Predicate Chaining from Module 2 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2.../Tester1007Predicate.java &mdash; Predicate Composition</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.functional;
+
+<span class="kw">import</span> java.util.function.Predicate;
+
+<span class="kw">public class</span> <span class="typ">Tester1007Predicate</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. Define individual reusable validation rules</span>
+        <span class="typ">Predicate</span>&lt;<span class="typ">String</span>&gt; hasMinLength = s -> s.length() >= <span class="num">8</span>;
+        <span class="typ">Predicate</span>&lt;<span class="typ">String</span>&gt; startsWithAdmin = s -> s.startsWith(<span class="str">"ADMIN-"</span>);
+
+        <span class="cmt">// 2. Compose complex business rules using default methods: and(), or(), negate()</span>
+        <span class="typ">Predicate</span>&lt;<span class="typ">String</span>&gt; validAdminId = hasMinLength.and(startsWithAdmin);
+
+        <span class="typ">System</span>.out.println(<span class="str">"ADMIN-1002 valid? "</span> + validAdminId.test(<span class="str">"ADMIN-1002"</span>)); <span class="cmt">// true</span>
+        <span class="typ">System</span>.out.println(<span class="str">"USER-505 valid? "</span> + validAdminId.test(<span class="str">"USER-505"</span>));     <span class="cmt">// false</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Functional Interface Predicate Composition Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">java.util.function.Predicate&lt;T&gt;</span>
+                <span>Represents a boolean-valued function of one argument: <code>T -> boolean</code>. Abstract method is <code>test(T t)</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Predicate Composition (.and(), .or(), .negate())</span>
+                <span>Default methods like <code>.and()</code> allow chaining modular validation rules together like Lego bricks without messy nested <code>if</code> blocks.</span>
+              </li>
+              <li>
+                <span class="step-badge">Senior Rule: Reusable Business Rules</span>
+                <span>Define predicates as static constants in your domain services (e.g. <code>IS_ACTIVE_USER</code>, <code>HAS_VALID_KYC</code>) so they can be reused across Stream filters and REST validation endpoints.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 7.2 Stream API Lifecycle & Collector Aggregations -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">7.2 Stream API Pipeline, Laziness & Grouping Collectors</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p7-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Assembly Line (Streams are Lazy!)</div>
+            <div class="analogy-content">
+              Imagine an automated car manufacturing conveyor belt.
+              <br/>• Adding <code>filter()</code> is like bolting on a sensor that detects defective car frames.
+              <br/>• Adding <code>map()</code> is like bolting on a robotic arm that sprays red paint on the car.
+              <br/><strong>DOES ANY CAR GET PAINTED YET? NO!</strong> The conveyor belt is switched OFF until you press the big green "START" button at the end. That big green button is the <strong>Terminal Operation</strong> (<code>collect()</code>, <code>reduce()</code>, <code>count()</code>). Once pressed, items flow through in one unified pass!
+            </div>
+          </div>
+
+          <!-- Mermaid Stream Pipeline -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Flow: Lazy Stream Pipeline Execution [Core Java Vol II Ch 1]</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph LR
+    DataSource["Data Source<br/>List&lt;Employee&gt;"] --> Intermediate1["filter(e -> e.salary > 50k)<br/>(Lazy Intermediate Op)"]
+    Intermediate1 --> Intermediate2["map(Employee::getDepartment)<br/>(Lazy Intermediate Op)"]
+    Intermediate2 --> Terminal["collect(Collectors.groupingBy(...))<br/>(TERMINAL OP: Turns on pipeline!)"]
+            </div>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase06-generics.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Generics & Compile-Time Type Safety</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase08-multithreading.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Java Multithreading, Concurrency & Virtual Threads</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

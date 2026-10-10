@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern File I/O, NIO.2 & Object Serialization &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 10: File I/O & NIO.2</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase11-jdbc-persistence.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="10.1 java.io vs java.nio, Serialization & Files API">
+            <span>10.1 java.io vs java.nio, Serializ...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link active">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 10: File I/O & NIO.2</span>
+          <span class="module-tag">&#128194; Module 2_ Java 11 Files Demos \ Modern Core Java</span>
+        </div>
+        <h1 class="page-title">Modern File I/O, NIO.2 & Object Serialization</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 2: Input/Output &bull; Chapter 3: XML & Object Serialization</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-10">Phase 10</span>
+            <h2 class="section-title">File Handling, java.io & Modern java.nio.file</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1... \ FileHandling_Demos & Module 2 \ 01_Java11_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 2: Input and Output (Streams, Paths, Files, and Memory-Mapped Files)</span>
+        </div>
+
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">10.1 java.io vs java.nio, Serialization & Files API</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-10')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Classic java.io vs Modern java.nio</div>
+            <div class="analogy-content">
+              • <strong>Classic java.io (Sipping through a straw):</strong> Stream-oriented. You read byte-by-byte or line-by-line. While waiting for data, your thread is completely blocked and frozen.
+              <br/>• <strong>Modern java.nio (Freight Train Cargo Containers):</strong> Buffer and Channel oriented. You load large blocks of data into memory buffers directly with zero-copy kernel transfers. Highly scalable for high-concurrency web servers.
+            </div>
+          </div>
+
+          <!-- Code Box: Java 11 Files Additions -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2.../File_Additions.java &mdash; Modern 1-Line File Operations</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.zeleven;
+
+<span class="kw">import</span> java.nio.file.*;
+<span class="kw">import</span> java.io.IOException;
+
+<span class="kw">public class</span> <span class="typ">File_Additions</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">IOException</span> {
+        <span class="typ">Path</span> path = <span class="typ">Path</span>.of(<span class="str">"orders.log"</span>);
+
+        <span class="cmt">// Modern Java 11 Files API: 1 line write!</span>
+        <span class="typ">Files</span>.writeString(path, <span class="str">"ORDER_PLACED: 1002 | STATUS: APPROVED"</span>);
+
+        <span class="cmt">// Modern Java 11 Files API: 1 line read!</span>
+        <span class="typ">String</span> content = <span class="typ">Files</span>.readString(path);
+        <span class="typ">System</span>.out.println(<span class="str">"Log Content: "</span> + content);
+
+        <span class="cmt">// Cleanup</span>
+        <span class="typ">Files</span>.deleteIfExists(path);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Modern java.nio.file.Files API (Java 11+) Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Files.writeString()</span>
+                <span>Line 8: One atomic method call handles file creation, character encoding (UTF-8 by default), stream buffering, and guaranteed resource closing. Replaces 15 lines of legacy <code>FileWriter</code> boilerplate.</span>
+              </li>
+              <li>
+                <span class="step-badge">Files.readString()</span>
+                <span>Line 11: Reads an entire file directly into a <code>java.lang.String</code> in a single line. Ideal for loading configuration files, templates, and certificates.</span>
+              </li>
+              <li>
+                <span class="step-badge">Path.of()</span>
+                <span>Introduced in Java 11 as a convenient alias for <code>Paths.get()</code>. Represents an immutable, hierarchical, platform-independent file system path.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Serialization & transient Sensitive Protection -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; SerializationTransientDemo.java &mdash; Java Serialization & transient</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.io.*;
+
+<span class="kw">public class</span> <span class="typ">SerializationTransientDemo</span> {
+
+    <span class="kw">static class</span> <span class="typ">UserSession</span> <span class="kw">implements</span> <span class="typ">Serializable</span> {
+        <span class="kw">private static final long</span> serialVersionUID = <span class="num">1L</span>; <span class="cmt">// Guards against class version mismatch!</span>
+        
+        <span class="typ">String</span> username;
+        <span class="kw">transient</span> <span class="typ">String</span> passwordHash; <span class="cmt">// TRANSIENT: Excluded from serialization! Never written to disk!</span>
+
+        <span class="typ">UserSession</span>(<span class="typ">String</span> username, <span class="typ">String</span> passwordHash) {
+            <span class="kw">this</span>.username = username;
+            <span class="kw">this</span>.passwordHash = passwordHash;
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="typ">UserSession</span> session = <span class="kw">new</span> <span class="typ">UserSession</span>(<span class="str">"admin"</span>, <span class="str">"super_secret_hash_999"</span>);
+
+        <span class="cmt">// 1. Serialization (Object -> Byte Stream)</span>
+        <span class="typ">ByteArrayOutputStream</span> baos = <span class="kw">new</span> <span class="typ">ByteArrayOutputStream</span>();
+        <span class="kw">try</span> (<span class="typ">ObjectOutputStream</span> oos = <span class="kw">new</span> <span class="typ">ObjectOutputStream</span>(baos)) {
+            oos.writeObject(session);
+        }
+
+        <span class="cmt">// 2. Deserialization (Byte Stream -> Object)</span>
+        <span class="typ">ByteArrayInputStream</span> bais = <span class="kw">new</span> <span class="typ">ByteArrayInputStream</span>(baos.toByteArray());
+        <span class="kw">try</span> (<span class="typ">ObjectInputStream</span> ois = <span class="kw">new</span> <span class="typ">ObjectInputStream</span>(bais)) {
+            <span class="typ">UserSession</span> restored = (<span class="typ">UserSession</span>) ois.readObject();
+            <span class="typ">System</span>.out.println(<span class="str">"Restored Username: "</span> + restored.username);
+            <span class="typ">System</span>.out.println(<span class="str">"Restored Password (transient): "</span> + restored.passwordHash); <span class="cmt">// Prints null! Safe!</span>
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Java Serialization, serialVersionUID & the transient Keyword</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Serializable Interface</span>
+                <span>A marker interface (0 methods) that signals to the JVM that the class's object graph can be flattened into a binary byte stream for disk storage or network transmission.</span>
+              </li>
+              <li>
+                <span class="step-badge">serialVersionUID Guard</span>
+                <span>Line 4: A unique 64-bit version identifier. If you modify class fields later without declaring <code>serialVersionUID</code>, the compiler calculates a new hash and deserializing old saved files crashes with <code>InvalidClassException</code>!</span>
+              </li>
+              <li>
+                <span class="step-badge">The transient Keyword</span>
+                <span>Line 7: <code>transient String passwordHash;</code> &mdash; Tells the serialization engine to completely skip this field. During deserialization, transient fields are reset to their default value (<code>null</code> for objects, <code>0</code> for primitives), preventing sensitive credentials or security tokens from leaking into files or logs.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase09-jvm-memory.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">JVM Architecture, Memory Management & GC Tuning</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase11-jdbc-persistence.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Enterprise Persistence, JDBC & Database Architecture</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

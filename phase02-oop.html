@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object-Oriented Programming (OOP) & Modern Class Design &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 2: OOP & Class Design</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase03-strings-objects.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="2.1 Classes, Objects, Constructors, this Keyword & Chaining">
+            <span>2.1 Classes, Objects, Constructors...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="2.2 Encapsulation, Inheritance & Why Java Bans Multiple Class Inheritance">
+            <span>2.2 Encapsulation, Inheritance & W...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="2.2b Class Relationships: Composition (Strong Has-A) vs Aggregation (Weak Has-A)">
+            <span>2.2b Class Relationships: Composit...</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-4" class="toc-link" title="2.3 Polymorphism, Dynamic Method Dispatch & The Virtual Table (vtable)">
+            <span>2.3 Polymorphism, Dynamic Method D...</span>
+            <span class="toc-badge">4</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-5" class="toc-link" title="2.4 Modern Interfaces: Why Java 8 Added Default Methods & Java 9 Added Private Methods">
+            <span>2.4 Modern Interfaces: Why Java 8 ...</span>
+            <span class="toc-badge">5</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-6" class="toc-link" title="2.5 Modern Java: Records (Java 16) & Sealed Classes (Java 17)">
+            <span>2.5 Modern Java: Records (Java 16)...</span>
+            <span class="toc-badge">6</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link active">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 2: OOP & Class Design</span>
+          <span class="module-tag">&#128194; Module 1_ Class Relationship & Binding Demos \ Module 2_ Java LTS Features</span>
+        </div>
+        <h1 class="page-title">Object-Oriented Programming (OOP) & Modern Class Design</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 4: Objects and Classes &bull; Chapter 5: Inheritance &bull; Chapter 6: Interfaces, Lambda Expressions, and Inner Classes</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-2">Phase 2</span>
+            <h2 class="section-title">Object-Oriented Programming (OOP) & Modern Class Design</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1_ Problem Solving & Java programming \ Module 2_ Java LTS Features</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 4: Objects and Classes &bull; Chapter 5: Inheritance &bull; Chapter 6: Interfaces, Lambda Expressions, and Inner Classes</span>
+        </div>
+
+        <!-- 2.1 Classes, Objects, Constructors & Chaining -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.1 Classes, Objects, Constructors, this Keyword & Chaining</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Blueprint vs Physical Building</div>
+            <div class="analogy-content">
+              • <strong>Class (The Architectural Blueprint):</strong> Drawn on paper. It defines that a house has 3 bedrooms, 2 bathrooms, and a front door. You cannot live inside a blueprint! It consumes almost no physical space.
+              <br/>• <strong>Object (The Physical House on 42 Elm Street):</strong> A tangible, physical reality built from that blueprint. It takes up actual space on land (Heap memory) and has its own distinct address (reference pointer). You can build 500 distinct houses from one blueprint.
+            </div>
+          </div>
+
+          <div class="def-box">
+            <div class="def-title">&#128214; Why Constructor Chaining via this() Exists</div>
+            <div class="def-content">
+              Instead of duplicating field initialization logic across 5 overloaded constructors, Java allows one constructor to call another using <code>this(args)</code>.
+              <br/><strong>CRITICAL COMPILER RULE:</strong> The call to <code>this()</code> (or <code>super()</code>) <strong>MUST be the very first statement</strong> in the constructor body. You cannot execute custom logic before the parent or primary constructor establishes the object's fundamental state!
+            </div>
+          </div>
+
+          <!-- Code Box: Account Constructor Chaining from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Account.java &mdash; Constructor Chaining & Initialization Sequence</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.oop;
+
+<span class="kw">public class</span> <span class="typ">Account</span> {
+    <span class="kw">private final</span> <span class="typ">String</span> accountId;
+    <span class="kw">private double</span> balance;
+    <span class="kw">private static double</span> defaultInterestRate;
+
+    <span class="cmt">// 1. Static Initialization Block: Runs ONCE when class is first loaded by ClassLoader</span>
+    <span class="kw">static</span> {
+        defaultInterestRate = <span class="num">0.045</span>; <span class="cmt">// 4.5% interest</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Step 1: Static block executed (Only once per class!)"</span>);
+    }
+
+    <span class="cmt">// 2. Instance Initialization Block: Runs before EVERY constructor</span>
+    {
+        <span class="typ">System</span>.out.println(<span class="str">"Step 2: Instance initialization block executed"</span>);
+    }
+
+    <span class="cmt">// 3. Overloaded Constructor 1: Takes only accountId, defaults balance to 0.0</span>
+    <span class="kw">public</span> <span class="fn">Account</span>(<span class="typ">String</span> accountId) {
+        <span class="kw">this</span>(accountId, <span class="num">0.0</span>); <span class="cmt">// Chaining to Constructor 2! MUST BE LINE 1</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Step 4: Finished single-arg constructor for: "</span> + accountId);
+    }
+
+    <span class="cmt">// 4. Overloaded Constructor 2: Master constructor initializing all fields</span>
+    <span class="kw">public</span> <span class="fn">Account</span>(<span class="typ">String</span> accountId, <span class="kw">double</span> initialBalance) {
+        <span class="kw">this</span>.accountId = accountId; <span class="cmt">// 'this.accountId' resolves ambiguity with parameter 'accountId'</span>
+        <span class="kw">this</span>.balance = initialBalance;
+        <span class="typ">System</span>.out.println(<span class="str">"Step 3: Master constructor executed. ID: "</span> + accountId + <span class="str">", Balance: $"</span> + balance);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Object Initialization Execution Order (Very Common Interview Question!)</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">1st</span>
+                <span><strong>Static variables and static blocks:</strong> Execute once when the class is loaded by the ClassLoader into Metaspace.</span>
+              </li>
+              <li>
+                <span class="step-badge">2nd</span>
+                <span><strong>Parent constructor:</strong> <code>super()</code> executes to construct parent fields.</span>
+              </li>
+              <li>
+                <span class="step-badge">3rd</span>
+                <span><strong>Instance variables & instance blocks:</strong> Execute in textual order top-to-bottom.</span>
+              </li>
+              <li>
+                <span class="step-badge">4th</span>
+                <span><strong>Constructor body:</strong> The remaining code in the invoked constructor completes.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2.2 Encapsulation, Inheritance & The Diamond Problem -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.2 Encapsulation, Inheritance & Why Java Bans Multiple Class Inheritance</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Diamond Problem</div>
+            <div class="analogy-content">
+              Imagine you have a biological Mom and a biological Dad, both of whom have an eye color gene.
+              <br/>• If Mom's gene says <em>Blue</em> and Dad's gene says <em>Brown</em>, your body has to follow complex genetic dominance rules.
+              <br/>• In C++, if Class D inherits from both Class B and Class C, and both override a method <code>doWork()</code> from Class A, which <code>doWork()</code> does Class D inherit?
+              <br/>• In Java, James Gosling and the designers said: <strong>"No ambiguity, no confusion."</strong> A class can extend <strong>EXACTLY ONE parent class</strong>. To inherit multiple behaviors, you use <strong>Interfaces</strong> because interfaces define contracts, not conflicting state!
+            </div>
+          </div>
+
+          <!-- Mermaid Diamond Problem Diagram -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Comparison: The Diamond Problem in Classes vs Clean Interface Implementation</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    subgraph ForbiddenInJava ["BANNED in Java: Multiple Class Inheritance"]
+        ClassA["Class A<br/>+execute()"]
+        ClassB["Class B extends A<br/>Overrides: +execute() -> 'Option B'"]
+        ClassC["Class C extends A<br/>Overrides: +execute() -> 'Option C'"]
+        ClassD["Class D extends B, C<br/>COMPILE ERROR: Diamond Problem Ambiguity!"]
+        ClassA --> ClassB
+        ClassA --> ClassC
+        ClassB -.->|ILLEGAL| ClassD
+        ClassC -.->|ILLEGAL| ClassD
+    end
+
+    subgraph SolutionInJava ["LEGAL in Java: Multiple Interface Implementation"]
+        Flyable["interface Flyable<br/>void fly();"]
+        Swimmable["interface Swimmable<br/>void swim();"]
+        Duck["class Duck implements Flyable, Swimmable<br/>Provides concrete fly() and swim() methods"]
+        Flyable --> Duck
+        Swimmable --> Duck
+    end
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.2b Class Relationships: Composition vs Aggregation (Module 1) -->
+        <div id="concept-3" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.2b Class Relationships: Composition (Strong Has-A) vs Aggregation (Weak Has-A)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-2b')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Human Heart vs Car Passenger</div>
+            <div class="analogy-content">
+              • <strong>Composition (The Heart):</strong> A human body has a heart. If the human body dies, the heart dies with it (death relationship / lifetime dependency). In code, the parent class instantiates the child object inside its own constructor: <code>account = new Account();</code>.
+              <br/>• <strong>Aggregation (The Passenger):</strong> A car has a passenger. If the car is driven to the junkyard and scrapped, the passenger simply steps out and continues living. The child object is created independently and passed into the parent via setter or constructor: <code>dept.setFaculty(faculty);</code>.
+            </div>
+          </div>
+
+          <!-- Code Box: Composition from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Demo100_Composition/src/com/accenture/ltt/CompositionTester.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="cmt">// Customer owns Account's entire lifecycle (Composition)</span>
+<span class="kw">class</span> <span class="typ">Customer</span> {
+    <span class="kw">private String</span> customerName;
+    <span class="kw">private</span> <span class="typ">Account</span> account;
+
+    <span class="kw">public</span> <span class="fn">Customer</span>() {
+        <span class="cmt">// Composition: Account object is instantiated INSIDE Customer constructor!</span>
+        <span class="kw">this</span>.account = <span class="kw">new</span> <span class="typ">Account</span>();
+        <span class="kw">this</span>.account.setAccountNo(<span class="num">9001</span>);
+        <span class="kw">this</span>.account.setAmount(<span class="num">5000.0</span>);
+    }
+
+    <span class="kw">public String</span> <span class="fn">getCustomerName</span>() { <span class="kw">return</span> customerName; }
+    <span class="kw">public void</span> <span class="fn">setCustomerName</span>(<span class="typ">String</span> name) { <span class="kw">this</span>.customerName = name; }
+    <span class="kw">public</span> <span class="typ">Account</span> <span class="fn">getAccount</span>() { <span class="kw">return</span> account; }
+}
+
+<span class="kw">public class</span> <span class="typ">CompositionTester</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Customer</span> customer = <span class="kw">new</span> <span class="typ">Customer</span>();
+        customer.setCustomerName(<span class="str">"John"</span>);
+
+        <span class="typ">System</span>.out.println(<span class="str">"Customer Name: "</span> + customer.getCustomerName());
+        <span class="typ">System</span>.out.println(<span class="str">"Account Number: "</span> + customer.getAccount().getAccountNo());
+        <span class="typ">System</span>.out.println(<span class="str">"Balance Amount: $"</span> + customer.getAccount().getAmount());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Composition (Strong Has-A) Architecture Explained</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Internal Instantiation</span>
+                <span>Line 9: <code>this.account = new Account();</code> &mdash; The Customer directly instantiates the Account. External code cannot inject an arbitrary pre-existing account.</span>
+              </li>
+              <li>
+                <span class="step-badge">Shared Lifecycle (Death Dependency)</span>
+                <span>When <code>customer</code> goes out of scope and is collected by JVM Garbage Collection, its internal <code>Account</code> instance has no other references and is reclaimed from the Heap simultaneously.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Aggregation from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Demo101_Aggregation/src/com/accenture/ltt/AggregationTester.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">class</span> <span class="typ">Faculty</span> {
+    <span class="kw">private int</span> facultyId;
+    <span class="kw">private String</span> facultyName;
+
+    <span class="kw">public int</span> <span class="fn">getFacultyId</span>() { <span class="kw">return</span> facultyId; }
+    <span class="kw">public void</span> <span class="fn">setFacultyId</span>(<span class="kw">int</span> id) { <span class="kw">this</span>.facultyId = id; }
+    <span class="kw">public String</span> <span class="fn">getFacultyName</span>() { <span class="kw">return</span> facultyName; }
+    <span class="kw">public void</span> <span class="fn">setFacultyName</span>(<span class="typ">String</span> name) { <span class="kw">this</span>.facultyName = name; }
+}
+
+<span class="kw">class</span> <span class="typ">Department</span> {
+    <span class="kw">private String</span> departmentName;
+    <span class="kw">private</span> <span class="typ">Faculty</span> faculty; <span class="cmt">// Weak reference: injected from outside!</span>
+
+    <span class="kw">public void</span> <span class="fn">setDepartmentName</span>(<span class="typ">String</span> name) { <span class="kw">this</span>.departmentName = name; }
+    <span class="kw">public String</span> <span class="fn">getDepartmentName</span>() { <span class="kw">return</span> departmentName; }
+    <span class="kw">public void</span> <span class="fn">setFaculty</span>(<span class="typ">Faculty</span> f) { <span class="kw">this</span>.faculty = f; }
+    <span class="kw">public</span> <span class="typ">Faculty</span> <span class="fn">getFaculty</span>() { <span class="kw">return</span> faculty; }
+}
+
+<span class="kw">public class</span> <span class="typ">AggregationTester</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Department</span> department = <span class="kw">new</span> <span class="typ">Department</span>();
+        department.setDepartmentName(<span class="str">"Computer Science"</span>);
+
+        <span class="cmt">// Faculty exists independently on the Heap BEFORE Department assigns it:</span>
+        <span class="typ">Faculty</span> faculty = <span class="kw">new</span> <span class="typ">Faculty</span>();
+        faculty.setFacultyId(<span class="num">1001</span>);
+        faculty.setFacultyName(<span class="str">"Dr. Smith"</span>);
+
+        department.setFaculty(faculty); <span class="cmt">// Loose aggregation association</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Dept: "</span> + department.getDepartmentName() + <span class="str">" | Faculty: "</span> + department.getFaculty().getFacultyName());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Aggregation (Weak Has-A) Architecture Explained</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Independent Existence</span>
+                <span>Lines 27-31: <code>Faculty</code> is instantiated as a standalone object on the Heap. It does not rely on <code>Department</code> to exist.</span>
+              </li>
+              <li>
+                <span class="step-badge">Loose Association</span>
+                <span>If <code>department = null</code> is executed, the <code>Department</code> object is GC'd, but the <code>Faculty</code> object remains safely alive and referenced on the Heap.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2.3 Polymorphism & Dynamic Method Dispatch -->
+        <div id="concept-4" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.3 Polymorphism, Dynamic Method Dispatch & The Virtual Table (vtable)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-3')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Universal Remote Control</div>
+            <div class="analogy-content">
+              Imagine you have a universal remote control labeled <strong>"EntertainmentDevice"</strong> with a button labeled <strong>"powerOn()"</strong>.
+              <br/>• If your remote points at a <strong>Television</strong> and you press powerOn(), a bright screen turns on.
+              <br/>• If your remote points at a <strong>Surround Sound Receiver</strong> and you press powerOn(), music starts playing through the speakers.
+              <br/>Your hand holds the exact same remote reference (<code>EntertainmentDevice dev</code>), but the physical device on the shelf (the <strong>Heap Object</strong>) dictates the actual behavior. That is <strong>Runtime Polymorphism</strong>!
+            </div>
+          </div>
+
+          <!-- Code Box: Polymorphism & Dynamic Dispatch -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; PolymorphicDispatchDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">PolymorphicDispatchDemo</span> {
+
+    <span class="kw">abstract static class</span> <span class="typ">PaymentService</span> {
+        <span class="kw">abstract void</span> <span class="fn">process</span>(<span class="kw">double</span> amount);
+    }
+
+    <span class="kw">static class</span> <span class="typ">CreditCardPayment</span> <span class="kw">extends</span> <span class="typ">PaymentService</span> {
+        <span class="ann">@Override</span>
+        <span class="kw">void</span> <span class="fn">process</span>(<span class="kw">double</span> amount) {
+            <span class="typ">System</span>.out.println(<span class="str">"Charging $"</span> + amount + <span class="str">" to Visa Card via Payment Gateway"</span>);
+        }
+    }
+
+    <span class="kw">static class</span> <span class="typ">UpiPayment</span> <span class="kw">extends</span> <span class="typ">PaymentService</span> {
+        <span class="ann">@Override</span>
+        <span class="kw">void</span> <span class="fn">process</span>(<span class="kw">double</span> amount) {
+            <span class="typ">System</span>.out.println(<span class="str">"Transferring $"</span> + amount + <span class="str">" instantly via UPI Virtual ID"</span>);
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Reference type is parent PaymentService, but heap object is CreditCardPayment</span>
+        <span class="typ">PaymentService</span> service = <span class="kw">new</span> <span class="typ">CreditCardPayment</span>();
+        
+        <span class="cmt">// Under the hood: JVM uses 'invokevirtual' opcode and consults the vtable of CreditCardPayment!</span>
+        service.process(<span class="num">150.0</span>);
+
+        <span class="cmt">// Swapping the heap instance to UpiPayment</span>
+        service = <span class="kw">new</span> <span class="typ">UpiPayment</span>();
+        service.process(<span class="num">75.0</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; How Dynamic Method Dispatch Works Under the Hood (vtable)</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Compile Time</span>
+                <span>The compiler checks: Does the class <code>PaymentService</code> have a method called <code>process(double)</code>? Yes. Compilation succeeds. The bytecode emitted is <code>invokevirtual</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Runtime</span>
+                <span>The JVM inspects the actual object on the Heap that <code>service</code> points to. It finds that the object is a <code>CreditCardPayment</code> instance.</span>
+              </li>
+              <li>
+                <span class="step-badge">vtable Lookup</span>
+                <span>Every class in memory has a <strong>Virtual Method Table (vtable)</strong> containing pointers to its method implementations. The JVM looks up the <code>process</code> entry in <code>CreditCardPayment</code>'s vtable and jumps directly to its machine code.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Dynamic Binding from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../Demo103_DynamicBinding/src/com/accenture/ltt/DynamicBindingTester.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">class</span> <span class="typ">Employee</span> {
+    <span class="kw">private String</span> employeeName;
+    <span class="kw">private int</span> employeeId;
+
+    <span class="kw">public</span> <span class="fn">Employee</span>(<span class="typ">String</span> name, <span class="kw">int</span> id) {
+        <span class="kw">this</span>.employeeName = name;
+        <span class="kw">this</span>.employeeId = id;
+    }
+
+    <span class="kw">public void</span> <span class="fn">displayDetails</span>() {
+        <span class="typ">System</span>.out.println(<span class="str">"Employee: "</span> + employeeName + <span class="str">" | ID: "</span> + employeeId);
+    }
+}
+
+<span class="kw">class</span> <span class="typ">Manager</span> <span class="kw">extends</span> <span class="typ">Employee</span> {
+    <span class="kw">private int</span> numberOfReportees;
+
+    <span class="kw">public</span> <span class="fn">Manager</span>(<span class="typ">String</span> name, <span class="kw">int</span> id, <span class="kw">int</span> reportees) {
+        <span class="kw">super</span>(name, id);
+        <span class="kw">this</span>.numberOfReportees = reportees;
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">displayDetails</span>() {
+        <span class="typ">System</span>.out.println(<span class="str">"Manager with "</span> + numberOfReportees + <span class="str">" reportees!"</span>);
+    }
+
+    <span class="kw">public int</span> <span class="fn">getNumberOfReportees</span>() { <span class="kw">return</span> numberOfReportees; }
+}
+
+<span class="kw">public class</span> <span class="typ">DynamicBindingTester</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Reference is parent Employee, object on heap is Manager</span>
+        <span class="typ">Employee</span> emp = <span class="kw">new</span> <span class="typ">Manager</span>(<span class="str">"Cooper"</span>, <span class="num">3001</span>, <span class="num">4</span>);
+
+        <span class="cmt">// Dynamic Binding: At runtime, JVM calls Manager's displayDetails()!</span>
+        emp.displayDetails();
+
+        <span class="cmt">// COMPILE ERROR if uncommented: Reference type 'Employee' does not declare getNumberOfReportees()!</span>
+        <span class="cmt">// System.out.println(emp.getNumberOfReportees());</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Reference Type vs Heap Object Type Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Compiler Check (Left Hand Side)</span>
+                <span>The compiler checks the reference type <code>Employee</code>. If a method like <code>getNumberOfReportees()</code> is not defined on <code>Employee</code>, the compiler rejects the code even though the underlying object is a <code>Manager</code>!</span>
+              </li>
+              <li>
+                <span class="step-badge">Runtime Execution (Right Hand Side)</span>
+                <span>When <code>emp.displayDetails()</code> is invoked, the JVM looks at the heap object (<code>Manager</code>) and dynamically executes the overridden method.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2.4 Modern Interfaces: Default, Static & Private Methods -->
+        <div id="concept-5" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.4 Modern Interfaces: Why Java 8 Added Default Methods & Java 9 Added Private Methods</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-4')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Why Default Methods Were Added in Java 8 (The Backward Compatibility Crisis)</div>
+            <div class="analogy-content">
+              In Java 8, Oracle wanted to add the awesome new <code>stream()</code> method to the existing <code>java.util.Collection</code> interface.
+              <br/><strong>The massive problem:</strong> In Java 7 and earlier, every class that implements an interface MUST provide an implementation for EVERY abstract method. Millions of Java enterprise projects had custom collections (like Hibernate, Apache Commons, Guava).
+              <br/>If Oracle added an abstract <code>stream()</code> method to <code>Collection</code>, <strong>every Java application in the world would break upon updating to Java 8!</strong>
+              <br/><strong>The Solution:</strong> <strong>Default Methods (<code>default</code>)</strong>. It allows an interface to provide a default fallback implementation. Existing classes automatically inherit the default implementation without breaking!
+            </div>
+          </div>
+
+          <!-- Code Box: Modern Interface Demo from Module 2 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/ModernOrderService.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.oop;
+
+<span class="ann">@FunctionalInterface</span>
+<span class="kw">public interface</span> <span class="typ">ModernOrderService</span> {
+
+    <span class="cmt">// 1. Single Abstract Method (SAM): Makes it eligible for Lambdas!</span>
+    <span class="kw">boolean</span> <span class="fn">processOrder</span>(<span class="typ">String</span> orderId, <span class="kw">double</span> amount);
+
+    <span class="cmt">// 2. Java 8 Default Method: Backward-compatible business logic</span>
+    <span class="kw">default void</span> <span class="fn">logAuditTrail</span>(<span class="typ">String</span> orderId, <span class="typ">String</span> status) {
+        formatAndPrintAudit(<span class="str">"AUDIT"</span>, orderId, status);
+    }
+
+    <span class="cmt">// 3. Java 8 Static Method: Utility helper bound to the interface</span>
+    <span class="kw">static boolean</span> <span class="fn">isValidOrderId</span>(<span class="typ">String</span> orderId) {
+        <span class="kw">return</span> orderId != <span class="kw">null</span> && orderId.startsWith(<span class="str">"ORD-"</span>);
+    }
+
+    <span class="cmt">// 4. Java 9 Private Method: Encapsulates shared logic between default methods</span>
+    <span class="kw">private void</span> <span class="fn">formatAndPrintAudit</span>(<span class="typ">String</span> prefix, <span class="typ">String</span> orderId, <span class="typ">String</span> status) {
+        <span class="typ">System</span>.out.println(<span class="str">"["</span> + prefix + <span class="str">"] Order "</span> + orderId + <span class="str">" status updated to: "</span> + status);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Modern Interface Evolution Breakdown (Java 8 & 9)</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">SAM & @FunctionalInterface</span>
+                <span>Line 3: <code>@FunctionalInterface</code> tells the compiler this interface has exactly <strong>one</strong> abstract method (SAM: <code>processOrder</code>). This allows developers to instantiate it using clean Lambda expressions: <code>(id, amt) -> amt > 0</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Default Methods (Java 8)</span>
+                <span>Line 9: <code>default void logAuditTrail(...)</code> &mdash; Provides a default body. Implementing classes inherit this method automatically without being forced to implement it. Critical for API library maintainers adding new features without breaking existing client code.</span>
+              </li>
+              <li>
+                <span class="step-badge">Static Interface Methods (Java 8)</span>
+                <span>Line 14: <code>static boolean isValidOrderId(...)</code> &mdash; Utility method directly attached to the interface namespace. Called as <code>ModernOrderService.isValidOrderId("ORD-1")</code> without needing external utility helper classes like <code>OrderUtils</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Private Interface Methods (Java 9)</span>
+                <span>Line 19: <code>private void formatAndPrintAudit(...)</code> &mdash; Solves code duplication between multiple default methods inside the interface while keeping internal helper logic hidden from external consumers.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 2.5 Records & Sealed Classes -->
+        <div id="concept-6" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">2.5 Modern Java: Records (Java 16) & Sealed Classes (Java 17)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p2-5')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Modern Construct</th>
+                  <th>Traditional Pain Point</th>
+                  <th>How Modern Java Solves It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Records (Java 16+)</strong></td>
+                  <td>Writing 60 lines of boilerplate (private final fields, constructor, getters, <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code>) just to carry data.</td>
+                  <td>A 1-line immutable data carrier: <code>record UserDTO(Long id, String email) {}</code>. The compiler writes all boilerplate automatically!</td>
+                </tr>
+                <tr>
+                  <td><strong>Sealed Classes (Java 17+)</strong></td>
+                  <td>You want a class hierarchy, but you want to tightly restrict WHO can subclass it, preventing third parties from creating rogue subclasses.</td>
+                  <td><code>sealed class Shape permits Circle, Square {}</code>. The compiler guarantees that only <code>Circle</code> and <code>Square</code> can ever inherit from <code>Shape</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: Sealed Product from Module 2 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/01_Java17_Demos/.../Product.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.sampleclasses;
+
+<span class="cmt">/**
+ * Java 17 Sealed Class: Restricts hierarchy to strictly permitted subclasses.
+ * Enables exhaustive pattern matching switch in modern backend systems.
+ */</span>
+<span class="kw">public sealed abstract class</span> <span class="typ">Product</span> 
+    <span class="kw">permits</span> <span class="typ">ElectronicsProducts</span>, <span class="typ">KidsProducts</span>, <span class="typ">BeautyProducts</span> {
+
+    <span class="kw">abstract public</span> <span class="typ">String</span> <span class="fn">getProductDescription</span>();
+}
+
+<span class="cmt">// Subclasses MUST explicitly declare their inheritance posture:</span>
+<span class="cmt">// - 'final': Cannot be extended any further</span>
+<span class="cmt">// - 'sealed': Extends the sealed hierarchy to another set of permitted subclasses</span>
+<span class="cmt">// - 'non-sealed': Opens the class up for general inheritance</span>
+<span class="kw">public final class</span> <span class="typ">ElectronicsProducts</span> <span class="kw">extends</span> <span class="typ">Product</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">getProductDescription</span>() {
+        <span class="kw">return</span> <span class="str">"Certified Enterprise Electronic Device"</span>;
+    }
+}</code></pre>
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Sealed Classes Compiler Rules</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">permits</span>
+                <span>Declares which specific subclasses can extend this class. All permitted subclasses must reside in the same package (or module).</span>
+              </li>
+              <li>
+                <span class="step-badge">Exhaustiveness</span>
+                <span>Enables compiler-enforced exhaustiveness in pattern matching switch statements. You don't need a default clause if every permitted subclass is handled!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Records in Java 16 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; UserRecordDemo.java &mdash; Java 16 Immutable Records</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">UserRecordDemo</span> {
+
+    <span class="cmt">// Modern Java 16 Record: A 1-line immutable data carrier!</span>
+    <span class="cmt">// Automatically generates: private final fields, constructor, getters (id(), email()), equals(), hashCode(), toString()</span>
+    <span class="kw">public record</span> <span class="typ">UserDTO</span>(<span class="typ">Long</span> id, <span class="typ">String</span> username, <span class="typ">String</span> email) {
+        
+        <span class="cmt">// Compact Constructor: Used for validation without repeating 'this.x = x' boilerplate</span>
+        <span class="kw">public</span> <span class="fn">UserDTO</span> {
+            <span class="kw">if</span> (email == <span class="kw">null</span> || !email.contains(<span class="str">"@"</span>)) {
+                <span class="kw">throw new</span> <span class="typ">IllegalArgumentException</span>(<span class="str">"Invalid email format: "</span> + email);
+            }
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">UserDTO</span> user = <span class="kw">new</span> <span class="typ">UserDTO</span>(<span class="num">101L</span>, <span class="str">"john_doe"</span>, <span class="str">"john@accenture.com"</span>);
+
+        <span class="cmt">// Accessor methods use field name (id(), not getId())</span>
+        <span class="typ">System</span>.out.println(<span class="str">"User Email: "</span> + user.email());
+        <span class="typ">System</span>.out.println(<span class="str">"Auto toString(): "</span> + user);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Java 16 Records & Compact Constructor Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">What Java Generates</span>
+                <span>Line 3: <code>public record UserDTO(Long id, String username, String email)</code> &mdash; In just ONE line, the Java compiler automatically synthesizes: (1) <code>private final</code> instance fields, (2) Canonical constructor, (3) Getter methods named after fields (<code>user.email()</code> instead of <code>getEmail()</code>), (4) Field-based <code>equals()</code> and <code>hashCode()</code>, and (5) Formatted <code>toString()</code>!</span>
+              </li>
+              <li>
+                <span class="step-badge">Immutability by Design</span>
+                <span>Records are shallowly immutable and implicitly <code>final</code> (cannot be extended). Their state cannot be modified after construction, making them thread-safe DTOs for REST APIs and messaging queues.</span>
+              </li>
+              <li>
+                <span class="step-badge">Compact Constructor</span>
+                <span>Lines 6-10: <code>public UserDTO { ... }</code> &mdash; Special record constructor without a parameter list. Used strictly for input validation and normalization. Notice you do NOT write <code>this.email = email;</code> &mdash; Java assigns fields automatically after the compact block finishes!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Enums with Fields, Constructor & Methods -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; OrderStatusEnumDemo.java &mdash; Enterprise Enums with Fields & Logic</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">OrderStatusEnumDemo</span> {
+
+    <span class="kw">public enum</span> <span class="typ">OrderStatus</span> {
+        PENDING(<span class="num">100</span>, <span class="str">"Awaiting Payment"</span>),
+        PROCESSING(<span class="num">200</span>, <span class="str">"Packing in Warehouse"</span>),
+        SHIPPED(<span class="num">300</span>, <span class="str">"In Transit"</span>),
+        DELIVERED(<span class="num">400</span>, <span class="str">"Delivered to Customer"</span>);
+
+        <span class="kw">private final int</span> statusCode;
+        <span class="kw">private final</span> <span class="typ">String</span> description;
+
+        <span class="cmt">// Enum constructor is always private</span>
+        <span class="typ">OrderStatus</span>(<span class="kw">int</span> statusCode, <span class="typ">String</span> description) {
+            <span class="kw">this</span>.statusCode = statusCode;
+            <span class="kw">this</span>.description = description;
+        }
+
+        <span class="kw">public int</span> <span class="fn">getStatusCode</span>() { <span class="kw">return</span> statusCode; }
+        <span class="kw">public</span> <span class="typ">String</span> <span class="fn">getDescription</span>() { <span class="kw">return</span> description; }
+
+        <span class="kw">public boolean</span> <span class="fn">isTerminal</span>() {
+            <span class="kw">return this</span> == DELIVERED;
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">OrderStatus</span> status = <span class="typ">OrderStatus</span>.PROCESSING;
+        <span class="typ">System</span>.out.println(<span class="str">"Status Code: "</span> + status.getStatusCode() + <span class="str">" -> "</span> + status.getDescription());
+        <span class="typ">System</span>.out.println(<span class="str">"Is complete? "</span> + status.isTerminal());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Enterprise Java Enums Architecture Explained</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Under the Hood</span>
+                <span>In Java, an <code>enum</code> is actually a full class that implicitly extends <code>java.lang.Enum&lt;E&gt;</code>. Each declared constant (<code>PENDING</code>, <code>PROCESSING</code>, etc.) is a <code>public static final</code> instance created once during class loading.</span>
+              </li>
+              <li>
+                <span class="step-badge">Custom Fields & Constructor</span>
+                <span>Lines 7-13: Enums can possess state and behaviors! The constructor is strictly <code>private</code> (invoked only by the JVM when initializing constants). You can never call <code>new OrderStatus(...)</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Thread-Safe Singletons</span>
+                <span>Because enum constants are created by the ClassLoader during initialization, they are guaranteed by the JVM specification to be strictly thread-safe singletons and immune to reflection/serialization attacks.</span>
+              </li>
+              <li>
+                <span class="step-badge">Business Methods</span>
+                <span>Line 18: <code>isTerminal()</code> &mdash; Enums can embed domain business rules, eliminating sprawling <code>if-else</code> checks across your service layer.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Shallow Copy vs Deep Copy -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; CloningDeepCopyDemo.java &mdash; Shallow Copy vs Deep Copy Proof</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">CloningDeepCopyDemo</span> {
+
+    <span class="kw">static class</span> <span class="typ">Address</span> {
+        <span class="typ">String</span> city;
+        <span class="typ">Address</span>(<span class="typ">String</span> city) { <span class="kw">this</span>.city = city; }
+    }
+
+    <span class="kw">static class</span> <span class="typ">Customer</span> <span class="kw">implements</span> <span class="typ">Cloneable</span> {
+        <span class="typ">String</span> name;
+        <span class="typ">Address</span> address;
+
+        <span class="typ">Customer</span>(<span class="typ">String</span> name, <span class="typ">Address</span> address) {
+            <span class="kw">this</span>.name = name;
+            <span class="kw">this</span>.address = address;
+        }
+
+        <span class="cmt">// Shallow Copy: Default Object.clone() only copies primitive values & address references!</span>
+        <span class="kw">public</span> <span class="typ">Customer</span> <span class="fn">shallowCopy</span>() <span class="kw">throws</span> <span class="typ">CloneNotSupportedException</span> {
+            <span class="kw">return</span> (<span class="typ">Customer</span>) <span class="kw">super</span>.clone();
+        }
+
+        <span class="cmt">// Deep Copy: Explicitly duplicates nested objects so modifications don't corrupt original!</span>
+        <span class="kw">public</span> <span class="typ">Customer</span> <span class="fn">deepCopy</span>() {
+            <span class="kw">return new</span> <span class="typ">Customer</span>(<span class="kw">this</span>.name, <span class="kw">new</span> <span class="typ">Address</span>(<span class="kw">this</span>.address.city));
+        }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="typ">Customer</span> original = <span class="kw">new</span> <span class="typ">Customer</span>(<span class="str">"Alice"</span>, <span class="kw">new</span> <span class="typ">Address</span>(<span class="str">"New York"</span>));
+
+        <span class="cmt">// 1. Shallow Copy Test</span>
+        <span class="typ">Customer</span> shallow = original.shallowCopy();
+        shallow.address.city = <span class="str">"London"</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"Shallow copy changed original city to: "</span> + original.address.city); <span class="cmt">// London! Shared object corrupted!</span>
+
+        <span class="cmt">// 2. Deep Copy Test</span>
+        <span class="typ">Customer</span> deep = original.deepCopy();
+        deep.address.city = <span class="str">"Tokyo"</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"Deep copy changed its city to Tokyo, original stays: "</span> + original.address.city); <span class="cmt">// London! Safe!</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Shallow Copy vs Deep Copy Memory Trap Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">The Cloneable Flaw</span>
+                <span>In Java, calling <code>super.clone()</code> performs a <strong>shallow bitwise copy</strong>. It copies primitive fields (<code>int</code>, <code>boolean</code>), but for reference fields (<code>Address address</code>), it copies ONLY the 64-bit memory pointer!</span>
+              </li>
+              <li>
+                <span class="step-badge">The Shallow Copy Trap</span>
+                <span>In Step 1: Both <code>original</code> and <code>shallow</code> have distinct Customer objects on the Heap, BUT both point to the exact same <code>Address</code> object in memory. Mutating <code>shallow.address.city = "London"</code> quietly corrupts the original customer's data!</span>
+              </li>
+              <li>
+                <span class="step-badge">The Deep Copy Solution</span>
+                <span>Line 20: <code>new Customer(this.name, new Address(this.address.city))</code> creates a brand new <code>Address</code> object on the Heap with duplicated values. Modifying the copy has zero effect on the original.</span>
+              </li>
+              <li>
+                <span class="step-badge">Modern Best Practice</span>
+                <span>Joshua Bloch (Effective Java) explicitly advises: <strong>Avoid <code>Cloneable</code>!</strong> Prefer <strong>Copy Constructors</strong> (<code>public Customer(Customer other)</code>) or factory methods instead.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase01-fundamentals.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Java Fundamentals & JVM Execution Model</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase03-strings-objects.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Strings, Object Contract & Memory Internals</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JVM Architecture, Memory Management & GC Tuning &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 9: JVM & Memory</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase10-io-serialization.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="9.1 JVM Architecture, Class Loading Subsystem & Runtime Memory Areas">
+            <span>9.1 JVM Architecture, Class Loadin...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="9.2 Garbage Collection Generations & Troubleshooting Memory Leaks">
+            <span>9.2 Garbage Collection Generations...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link active">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 9: JVM & Memory</span>
+          <span class="module-tag">&#128194; Module 4_ Performance Monitoring \ 01_Performance_Monitoring_Demos</span>
+        </div>
+        <h1 class="page-title">JVM Architecture, Memory Management & GC Tuning</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 10: Compiling and Scripting (ClassLoader & Bytecode) &bull; Volume I — Chapter 4: Memory Management</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-9">Phase 9</span>
+            <h2 class="section-title">JVM Architecture, Memory Management & GC Tuning</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 4_ Performance Monitoring \ 01_Performance_Monitoring_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume II — Chapter 10: Compiling and Scripting (ClassLoader & Bytecode) &bull; Volume I — Chapter 4: Memory Management</span>
+        </div>
+
+        <!-- 9.1 JVM Architecture & Runtime Data Areas -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">9.1 JVM Architecture, Class Loading Subsystem & Runtime Memory Areas</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p9-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The ClassLoader Security Guard (Parent Delegation)</div>
+            <div class="analogy-content">
+              Imagine you run a bank. A stranger walks in and hands the cashier a handwritten piece of paper that says: <em>"I am the President of the United States. Give me all the money."</em>
+              <br/>Does the cashier believe them? <strong>NO!</strong> The cashier delegates up the chain of authority to their manager, who calls headquarters.
+              <br/>In Java, when a class named <code>java.lang.String</code> is requested:
+              <br/>• The <strong>Application ClassLoader</strong> delegates UP to the <strong>Platform ClassLoader</strong>, which delegates UP to the <strong>Bootstrap ClassLoader</strong>.
+              <br/>• The Bootstrap ClassLoader loads the official, authentic <code>String</code> class from the core JDK.
+              <br/>• This prevents malicious hackers from sneaking a counterfeit <code>java.lang.String</code> class into your application!
+            </div>
+          </div>
+
+          <!-- Mermaid JVM Architecture -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Diagram: JVM Runtime Data Areas & Execution Engine</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    subgraph ClassLoaderSubsystem ["Class Loader Subsystem"]
+        Loading["1. Loading (Bootstrap -> Platform -> App)"]
+        Linking["2. Linking (Verify -> Prepare -> Resolve)"]
+        Init["3. Initialization (&lt;clinit&gt; static blocks)"]
+        Loading --> Linking --> Init
+    end
+
+    subgraph MemoryAreas ["JVM Runtime Data Areas"]
+        subgraph SharedMemory ["Shared Across All Threads"]
+            Heap["Java Heap (Eden, S0, S1, Old Gen)"]
+            Metaspace["Metaspace (Off-Heap Class Metadata)"]
+        end
+        subgraph PerThreadMemory ["Private Per-Thread Memory"]
+            Stack["Thread Stack (Stack Frames)"]
+            PC["Program Counter (PC) Registers"]
+            NativeStack["Native Method Stacks (JNI)"]
+        end
+    end
+
+    subgraph ExecEngine ["Execution Engine"]
+        JITComp["HotSpot JIT Compiler (C1 / C2)"]
+        InterpreterSub["Bytecode Interpreter"]
+        GCSub["Garbage Collector (G1 / ZGC)"]
+    end
+
+    ClassLoaderSubsystem --> MemoryAreas
+    MemoryAreas --> ExecEngine
+            </div>
+          </div>
+        </div>
+
+        <!-- 9.2 Garbage Collection Generations & Memory Leaks -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">9.2 Garbage Collection Generations & Troubleshooting Memory Leaks</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p9-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Generational Garbage Collection Hypothesis</div>
+            <div class="analogy-content">
+              Empirical studies proved that in 98% of Java programs, <strong>most objects die young</strong> (e.g. temporary loop variables, DTOs converted in a controller, string buffers).
+              <br/>• <strong>Eden Space (The Nursery):</strong> All new objects are born here. When Eden gets full, a lightning-fast <strong>Minor GC</strong> sweeps through. 90%+ of objects are dead and deleted in milliseconds!
+              <br/>• <strong>Survivor Spaces (S0 & S1):</strong> Objects that survive Minor GC get copied here and their age counter increments.
+              <br/>• <strong>Old / Tenured Generation (The Retirement Home):</strong> If an object survives 15 GC cycles (e.g. Spring singletons, connection pools, caches), it gets promoted to Old Gen. Old Gen is cleaned much less frequently (Major / Full GC).
+            </div>
+          </div>
+
+          <!-- Code Box: OutOfMemoryError Demo from Module 4 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 4.../OutOfMemoryErrorDemo.java &mdash; Diagnosing Memory Leaks</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.performance;
+
+<span class="kw">import</span> java.util.*;
+
+<span class="cmt">/**
+ * Simulates JVM Heap exhaustion causing java.lang.OutOfMemoryError: Java heap space.
+ * Run with production diagnostic flags:
+ * -Xms64m -Xmx64m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./heapdump.hprof
+ */</span>
+<span class="kw">public class</span> <span class="typ">OutOfMemoryErrorDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Static or long-lived collections that hold references prevent GC reclamation!</span>
+        <span class="typ">List</span>&lt;<span class="kw">byte</span>[]&gt; memoryLeakList = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+        <span class="kw">try</span> {
+            <span class="kw">while</span> (<span class="kw">true</span>) {
+                <span class="cmt">// Allocate 1MB chunks continuously</span>
+                memoryLeakList.add(<span class="kw">new byte</span>[<span class="num">1024</span> * <span class="num">1024</span>]);
+            }
+        } <span class="kw">catch</span> (<span class="typ">OutOfMemoryError</span> e) {
+            <span class="typ">System</span>.err.println(<span class="str">"OOM Caught! Heap dump generated for VisualVM inspection."</span>);
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; OutOfMemoryError, Memory Leaks & Production Heap Dumps</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">What Causes Java Heap Leaks?</span>
+                <span>The Garbage Collector removes objects only when they are <strong>unreachable from GC Roots</strong> (static fields, active thread stacks, JNI handles). Holding strong references inside long-lived static lists or caches prevents GC reclamation, leading to <code>java.lang.OutOfMemoryError: Java heap space</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Diagnostic JVM Flags</span>
+                <span>In production, always start your microservices with: <code>-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/logs/dumps/</code>. When OOM strikes, the JVM captures a full binary snapshot (<code>.hprof</code>) before dying.</span>
+              </li>
+              <li>
+                <span class="step-badge">VisualVM & Eclipse Memory Analyzer (MAT)</span>
+                <span>Open the <code>.hprof</code> file in Eclipse MAT or VisualVM. Inspect the "Dominator Tree" to instantly pinpoint the exact class and collection instance holding 90% of heap memory.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: StackOverflowError Simulation -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; StackOverflowErrorDemo.java &mdash; Stack Memory Exhaustion</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">StackOverflowErrorDemo</span> {
+    <span class="kw">private static int</span> depth = <span class="num">0</span>;
+
+    <span class="cmt">// Infinite recursion without base case rapidly exhausts the ~1MB Thread Stack!</span>
+    <span class="kw">public static void</span> <span class="fn">recurseEndlessly</span>() {
+        depth++;
+        recurseEndlessly(); <span class="cmt">// Pushes stack frame continuously until stack limit reached</span>
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="kw">try</span> {
+            recurseEndlessly();
+        } <span class="kw">catch</span> (<span class="typ">StackOverflowError</span> e) {
+            <span class="typ">System</span>.err.println(<span class="str">"StackOverflowError caught at recursive depth: "</span> + depth);
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Stack Memory Exhaustion vs Heap Exhaustion</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Thread Stack Size (-Xss)</span>
+                <span>Each thread is assigned a dedicated call stack (default 1MB on 64-bit JVMs via <code>-Xss1m</code>). Each method call pushes a <strong>Stack Frame</strong> containing local variables, operand stack, and return address.</span>
+              </li>
+              <li>
+                <span class="step-badge">StackOverflowError Mechanics</span>
+                <span>Infinite recursion without an exit condition pushes thousands of stack frames consecutively. When the call stack depth exceeds the 1MB allocated boundary, the CPU page guard hits and the JVM raises <code>java.lang.StackOverflowError</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Heap OOM vs StackOverflow</span>
+                <span>OOM occurs on the shared <strong>Heap</strong> when data volume is too large. StackOverflow occurs on an individual <strong>Thread Stack</strong> when execution call depth is too deep.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase08-multithreading.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Java Multithreading, Concurrency & Virtual Threads</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase10-io-serialization.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Modern File I/O, NIO.2 & Object Serialization</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

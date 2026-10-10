@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Stages, 5 Capstone Projects & Master Checklist &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Practice Projects & Stages</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="Stage 1 — Fundamentals and OOP">
+            <span>Stage 1 — Fundamentals and OOP</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="Stage 2 — Collections and Modern Java">
+            <span>Stage 2 — Collections and Modern J...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="Stage 3 — Concurrency and JVM">
+            <span>Stage 3 — Concurrency and JVM</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-4" class="toc-link" title="Stage 4 — Practical Java">
+            <span>Stage 4 — Practical Java</span>
+            <span class="toc-badge">4</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link active">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Practice Projects & Stages</span>
+          <span class="module-tag">&#128194; All ACC Modules Consolidated Milestone Mapping</span>
+        </div>
+        <h1 class="page-title">Learning Stages, 5 Capstone Projects & Master Checklist</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I & II Comprehensive Production Synthesis</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">Roadmap Strategy</span>
+            <h2 class="section-title">Recommended Learning Order & Mastery Milestones</h2>
+          </div>
+        </div>
+
+        <div class="stage-card">
+          <div class="stage-header">
+            <span class="stage-title">Stage 1 — Fundamentals and OOP</span>
+            <span class="priority-tag priority-critical">Priority: Critical</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Variables, control flow, methods, arrays, classes, inheritance, polymorphism, interfaces, strings, immutability, and exception handling.
+          </p>
+        </div>
+
+        <div class="stage-card">
+          <div class="stage-header">
+            <span class="stage-title">Stage 2 — Collections and Modern Java</span>
+            <span class="priority-tag priority-critical">Priority: Critical</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            HashMap internals & bucket treeification, generics & PECS, lambdas, Streams, Optional, comparators, and modern Date/Time API.
+          </p>
+        </div>
+
+        <div class="stage-card">
+          <div class="stage-header">
+            <span class="stage-title">Stage 3 — Concurrency and JVM</span>
+            <span class="priority-tag priority-high">Priority: High</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Threads, synchronization, executors, CompletableFuture, memory model, garbage collection, and VisualVM troubleshooting.
+          </p>
+        </div>
+
+        <div class="stage-card">
+          <div class="stage-header">
+            <span class="stage-title">Stage 4 — Practical Java</span>
+            <span class="priority-tag priority-high">Priority: High</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            File I/O, JDBC persistence, JUnit 5 testing, design patterns, SOLID architecture, and enterprise project integration.
+          </p>
+        </div>
+
+<div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill" style="background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4);">Hands-On Projects</span>
+            <h2 class="section-title">5 Practice Projects Mapped to ACC Backend Repository</h2>
+          </div>
+        </div>
+
+        <div class="project-grid">
+          <div class="project-card">
+            <div>
+              <div class="project-num">Project 01</div>
+              <h4 class="project-title">Student Course Management System</h4>
+              <p class="project-desc">
+                OOP architecture, Collections framework, Comparable and Comparator sorting strategies, and Exception Handling.
+              </p>
+            </div>
+            <div class="project-repo-link">
+              &#128194; Module 1.../Collections part1 demos/ATCILTT_Collection_Faculty/.../CourseComparableTester.java
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-num">Project 02</div>
+              <h4 class="project-title">Employee Directory Analytics</h4>
+              <p class="project-desc">
+                Stream API aggregations, generics, custom checked exceptions, and JUnit 5 regression test suites.
+              </p>
+            </div>
+            <div class="project-repo-link">
+              &#128194; Module 3_ Unit Testing with Junit 5/01_Junit5_Demos/Demo1001_Junit/.../EmployeeServiceTest01.java
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-num">Project 03</div>
+              <h4 class="project-title">Banking Transaction Core</h4>
+              <p class="project-desc">
+                Encapsulation, synchronized transactions, race condition prevention, and BigDecimal financial accuracy.
+              </p>
+            </div>
+            <div class="project-repo-link">
+              &#128194; Module 1.../01_MultiThreading_Demos/.../SavingAccount.java & Module 9.../Demo1001_BankDDD
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-num">Project 04</div>
+              <h4 class="project-title">Multithreaded Order Pipeline</h4>
+              <p class="project-desc">
+                ExecutorService thread pools, BlockingQueue producer-consumer patterns, and CompletableFuture pipelines.
+              </p>
+            </div>
+            <div class="project-repo-link">
+              &#128194; Module 1.../01_MultiThreading_Demos/.../SenderReceiverTest.java & Module 5.../Demo1004
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-num">Project 05</div>
+              <h4 class="project-title">JDBC Inventory & Asset System</h4>
+              <p class="project-desc">
+                PreparedStatement CRUD, connection management, transaction rollbacks, and SQL Injection prevention.
+              </p>
+            </div>
+            <div class="project-repo-link">
+              &#128194; Module 6_ Database and ORM/01_JDBC_Demos/Demo1001_JDBC_Statement_CRUD/.../EmployeeDAOImpl.java
+            </div>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase12-design-patterns.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">SOLID Design Principles, GoF Patterns & Architecture</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        <div style="flex:1;"></div>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

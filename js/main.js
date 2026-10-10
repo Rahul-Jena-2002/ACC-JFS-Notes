@@ -1,985 +1,230 @@
-/**
- * Spring Learning Hub & Visual Guides - Main JavaScript Controller (Tokyo Night Theme)
- * - Mobile-First Navigation with Slide-out Tokyo Night "Jump to Topic" Drawer
- * - Real-time Search and Filter across all topics & library guides
- * - Zero Drag/Scroll Trapping on Diagrams (Smooth Native Scrolling)
- * - Mermaid diagram initialization & high-resolution viewer
- * - Colorful Code Sandbox Enhancement & Syntax Highlighting (Tokyo Night Tokens)
- * - Copy-to-clipboard buttons with animation
- * - Light/Dark Theme Switcher (Tokyo Night / Tokyo Day)
- */
+/* ==========================================================================
+   CORE JAVA ENTERPRISE ROADMAP - UNIFIED INTERACTION ENGINE
+   Handles LocalStorage state, mobile drawers, live progress & copy toasts
+   ========================================================================== */
 
-(function () {
+(function() {
   'use strict';
 
-  /* ==========================================================================
-     1. TOKYO NIGHT MERMAID DIAGRAM INITIALIZATION
-     ========================================================================== */
+  const STORAGE_PREFIX = 'java_mastery_';
+
+  // Total items registered in the full syllabus
+  const TOTAL_CHECKLIST_ITEMS = 35;
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    initChecklistState();
+    initCopyButtons();
+    initMobileDrawer();
+    initDashboardSearch();
+    initMermaid();
+    updateGlobalProgressDisplay();
+  });
+
+  /* --------------------------------------------------------------------------
+     1. Checklist & Mastery State (localStorage)
+     -------------------------------------------------------------------------- */
+  function initChecklistState() {
+    const buttons = document.querySelectorAll('.checklist-btn');
+    buttons.forEach(btn => {
+      const onclickAttr = btn.getAttribute('onclick');
+      let itemId = null;
+      if (onclickAttr) {
+        const match = onclickAttr.match(/toggleCompleted\(this,\s*'([^']+)'\)/);
+        if (match) itemId = match[1];
+      }
+      if (!itemId) {
+        itemId = btn.getAttribute('data-item-id');
+      }
+
+      if (itemId) {
+        btn.setAttribute('data-item-id', itemId);
+        const isDone = localStorage.getItem(STORAGE_PREFIX + itemId) === 'true';
+        if (isDone) {
+          btn.classList.add('completed');
+          const icon = btn.querySelector('.check-icon');
+          if (icon) icon.innerHTML = '&#9679;';
+        }
+      }
+    });
+  }
+
+  window.toggleCompleted = function(btn, itemId) {
+    if (!itemId) itemId = btn.getAttribute('data-item-id');
+    const isCompleted = btn.classList.toggle('completed');
+    localStorage.setItem(STORAGE_PREFIX + itemId, isCompleted ? 'true' : 'false');
+
+    const icon = btn.querySelector('.check-icon');
+    if (icon) {
+      icon.innerHTML = isCompleted ? '&#9679;' : '&#9675;';
+    }
+
+    showToast(isCompleted ? '&#10003; Topic marked as Mastered!' : 'Topic reset to In Progress');
+    updateGlobalProgressDisplay();
+  };
+
+  /* --------------------------------------------------------------------------
+     2. Global & Page Progress Calculations
+     -------------------------------------------------------------------------- */
+  function updateGlobalProgressDisplay() {
+    let completedCount = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(STORAGE_PREFIX) && localStorage.getItem(key) === 'true') {
+        completedCount++;
+      }
+    }
+
+    const pct = Math.min(100, Math.round((completedCount / TOTAL_CHECKLIST_ITEMS) * 100));
+
+    // Update global tracker pill if present in header
+    const pillCount = document.getElementById('globalProgressCount');
+    if (pillCount) pillCount.textContent = completedCount + ' / ' + TOTAL_CHECKLIST_ITEMS + ' (' + pct + '%)';
+
+    // Update dashboard stat card if on index.html
+    const statMastered = document.getElementById('dashMasteredCount');
+    if (statMastered) statMastered.textContent = completedCount;
+
+    const statPct = document.getElementById('dashPctCount');
+    if (statPct) statPct.textContent = pct + '%';
+
+    const statFill = document.getElementById('dashProgressFill');
+    if (statFill) statFill.style.width = pct + '%';
+  }
+
+  /* --------------------------------------------------------------------------
+     3. Code Copy with Toast Notification
+     -------------------------------------------------------------------------- */
+  function initCopyButtons() {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const codeBox = this.closest('.code-box');
+        if (!codeBox) return;
+        const codeElem = codeBox.querySelector('pre code');
+        if (!codeElem) return;
+
+        const textToCopy = codeElem.innerText || codeElem.textContent;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showToast('&#128203; Code copied to clipboard!');
+          const orig = this.textContent;
+          this.textContent = 'Copied!';
+          setTimeout(() => { this.textContent = orig; }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy', err);
+        });
+      });
+    });
+  }
+
+  window.copySnippet = function(btn) {
+    const codeBox = btn.closest('.code-box');
+    if (!codeBox) return;
+    const codeElem = codeBox.querySelector('pre code');
+    if (!codeElem) return;
+    const textToCopy = codeElem.innerText || codeElem.textContent;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      showToast('&#128203; Code copied to clipboard!');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  };
+
+  function showToast(msg) {
+    let toast = document.getElementById('appToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'appToast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  /* --------------------------------------------------------------------------
+     4. Mobile Navigation Drawer
+     -------------------------------------------------------------------------- */
+  function initMobileDrawer() {
+    const toggleBtn = document.getElementById('menuToggle');
+    const sidebar = document.querySelector('.sidebar-toc');
+    const backdrop = document.getElementById('sidebarBackdrop');
+
+    if (!toggleBtn || !sidebar) return;
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      if (backdrop) backdrop.classList.toggle('show');
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('show');
+      });
+    }
+
+    // Close on navigation link click on mobile
+    sidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 860) {
+          sidebar.classList.remove('open');
+          if (backdrop) backdrop.classList.remove('show');
+        }
+      });
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     5. Dashboard Search & Filter
+     -------------------------------------------------------------------------- */
+  function initDashboardSearch() {
+    const searchInput = document.getElementById('phaseSearchInput');
+    if (!searchInput) return;
+
+    const cards = document.querySelectorAll('.roadmap-card');
+
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      cards.forEach(card => {
+        const title = card.querySelector('.roadmap-card-title')?.textContent.toLowerCase() || '';
+        const desc = card.querySelector('.roadmap-card-desc')?.textContent.toLowerCase() || '';
+        const tags = card.querySelector('.topic-tags-row')?.textContent.toLowerCase() || '';
+
+        if (!q || title.includes(q) || desc.includes(q) || tags.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     6. Mermaid Diagrams Initialization
+     -------------------------------------------------------------------------- */
   function initMermaid() {
-    if (typeof window.mermaid !== 'undefined') {
+    if (typeof mermaid !== 'undefined') {
       try {
-        window.mermaid.initialize({
+        mermaid.initialize({
           startOnLoad: true,
-          securityLevel: 'loose',
           theme: 'dark',
           themeVariables: {
             darkMode: true,
-            background: '#000000',
-            mainBkg: '#0d0e15',
-            primaryColor: '#161926',
-            primaryTextColor: '#ffffff',
-            primaryBorderColor: '#7aa2f7',
-            lineColor: '#7aa2f7',
-            secondaryColor: '#12141f',
-            tertiaryColor: '#08090e',
-            edgeLabelBackground: '#12141f',
-            textColor: '#ffffff',
-            nodeBorder: '#7aa2f7',
-            nodeTextColor: '#ffffff',
-            titleColor: '#bb9af7',
-            arrowheadColor: '#7aa2f7',
-            fontFamily: 'Inter, system-ui, sans-serif'
-          },
-          flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
-          sequence: { useMaxWidth: true, wrap: true },
-          state: { useMaxWidth: true },
-          er: { useMaxWidth: true }
+            background: '#0f172a',
+            primaryColor: '#6366f1',
+            primaryTextColor: '#f8fafc',
+            lineColor: '#06b6d4'
+          }
         });
-      } catch (err) {
-        console.warn('Mermaid initialization warning:', err);
+      } catch (e) {
+        console.warn('Mermaid initialization deferred', e);
       }
     }
   }
-
-  /* ==========================================================================
-     2. UNIVERSAL TOKYO NIGHT "JUMP TO TOPIC" DRAWER & STICKY HEADER
-     ========================================================================== */
-  function setupTopicDrawer() {
-    const isLandingPage = document.querySelector('.hero-landing') !== null;
-    if (isLandingPage) return; // Landing page has its own top navigation
-
-    // Check if guide header bar exists, if not create a sleek sticky header bar
-    let headerBar = document.querySelector('.guide-header-bar');
-    if (!headerBar) {
-      headerBar = document.createElement('div');
-      headerBar.className = 'guide-header-bar';
-      headerBar.innerHTML = `
-        <div class="guide-header-inner">
-          <div class="nav-actions-left">
-            <a class="home-button" href="index.html" title="Back to Hub" style="display:flex; align-items:center; gap:8px;">
-              <svg class="spring-logo-svg" style="width:20px; height:20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-                <path fill="#8bc34a" d="M43.982,23.635c0.069-4.261-0.891-9.328-2.891-15.273l-1.568-4.662l-2.13,4.433 c-0.114,0.237-0.244,0.469-0.38,0.698C33.514,5.827,28.974,4,24,4C12.954,4,4,12.954,4,24c0,11.046,8.954,20,20,20s20-8.954,20-20 C44,23.877,43.984,23.758,43.982,23.635z"></path>
-                <path fill="#fff" d="M39.385 32.558c-3.123 4.302-8.651 4.533-13.854 4.442H18.75h-1.938c4.428-1.593 7.063-1.972 9.754-3.4 5.068-2.665 10.078-8.496 11.121-14.562-1.93 5.836-7.779 10.85-13.109 12.889-3.652 1.393-10.248 2.745-10.248 2.745l-.267-.145C9.573 32.268 9.437 22.214 17.6 18.968c3.574-1.423 6.993-.641 10.854-1.593 4.122-1.012 8.89-4.208 10.83-8.375C41.456 15.667 44.07 26.106 39.385 32.558L39.385 32.558zM15.668 38.445C15.386 38.795 14.955 39 14.505 39c-.823 0-1.495-.677-1.495-1.5s.677-1.5 1.495-1.5c.341 0 .677.118.941.336C16.086 36.855 16.186 37.805 15.668 38.445L15.668 38.445z"></path>
-              </svg>
-              <span>Hub</span>
-            </a>
-          </div>
-          <div class="nav-actions-right">
-            <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme">
-              <span id="themeIcon">☾</span>
-              <span id="themeText" style="display:none;">Theme</span>
-            </button>
-            <button type="button" class="jump-topic-btn" id="openDrawerBtn" aria-label="Open Topics Menu">
-              <div class="hamburger-icon">
-                <span></span><span></span><span></span>
-              </div>
-              <span>Jump to Topic</span>
-            </button>
-          </div>
-        </div>
-      `;
-      document.body.insertBefore(headerBar, document.body.firstChild);
-    }
-
-    // Collect all sections / topics across the page
-    const topics = [];
-    const sectionNodes = document.querySelectorAll('section[id], .section[id], .card[id], .codefile[id]');
-    
-    if (sectionNodes.length > 0) {
-      sectionNodes.forEach((sec, idx) => {
-        const id = sec.getAttribute('id');
-        if (!id) return;
-        const heading = sec.querySelector('h2, h3, .badge') || sec;
-        let text = heading.textContent.trim().replace(/^[\d.—\s]+/, '');
-        if (!text) text = `Topic ${id}`;
-        topics.push({ id: id, title: text, num: String(idx + 1).padStart(2, '0') });
-      });
-    } else {
-      // Fallback: check sidebar nav or existing anchor links
-      const navLinks = document.querySelectorAll('nav.sidebar-nav a, nav.toc a, nav a[href^="#"]');
-      navLinks.forEach((link, idx) => {
-        const href = link.getAttribute('href');
-        if (href && href.startsWith('#') && href.length > 1) {
-          const id = href.substring(1);
-          topics.push({ id: id, title: link.textContent.trim(), num: String(idx + 1).padStart(2, '0') });
-        }
-      });
-    }
-
-    // Build the Slide-out Drawer
-    let drawerOverlay = document.getElementById('topicDrawerOverlay');
-    if (!drawerOverlay) {
-      drawerOverlay = document.createElement('div');
-      drawerOverlay.id = 'topicDrawerOverlay';
-      drawerOverlay.className = 'topic-drawer-overlay';
-      drawerOverlay.innerHTML = `
-        <div class="topic-drawer">
-          <div class="drawer-header">
-            <h3><span>📑</span> Jump to Topic</h3>
-            <button type="button" class="drawer-close-btn" id="closeDrawerBtn">✕</button>
-          </div>
-          <div class="drawer-search-wrap">
-            <input type="text" id="drawerSearchInput" placeholder="Filter topics (e.g. crud, rollback, proxy)..." autocomplete="off" />
-          </div>
-          <div class="drawer-list" id="drawerList"></div>
-        </div>
-      `;
-      document.body.appendChild(drawerOverlay);
-
-      const drawerList = document.getElementById('drawerList');
-      const closeBtn = document.getElementById('closeDrawerBtn');
-      const searchInput = document.getElementById('drawerSearchInput');
-
-      const closeDrawer = () => drawerOverlay.classList.remove('open');
-      const openDrawer = () => {
-        drawerOverlay.classList.add('open');
-        setTimeout(() => { if (searchInput) searchInput.focus(); }, 100);
-      };
-
-      closeBtn.onclick = closeDrawer;
-      drawerOverlay.onclick = (e) => {
-        if (e.target === drawerOverlay) closeDrawer();
-      };
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && drawerOverlay.classList.contains('open')) closeDrawer();
-      });
-
-      const openBtn = document.getElementById('openDrawerBtn');
-      if (openBtn) openBtn.onclick = openDrawer;
-
-      // Populate topics list in drawer
-      topics.forEach((t) => {
-        const item = document.createElement('a');
-        item.className = 'drawer-item';
-        item.href = `#${t.id}`;
-        item.dataset.title = t.title.toLowerCase();
-        item.innerHTML = `
-          <span class="item-num">${t.num}</span>
-          <span>${escapeHtml(t.title)}</span>
-        `;
-        item.onclick = (e) => {
-          closeDrawer();
-          const target = document.getElementById(t.id);
-          if (target) {
-            e.preventDefault();
-            const yOffset = -70;
-            const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-            history.pushState(null, null, `#${t.id}`);
-          }
-        };
-        drawerList.appendChild(item);
-      });
-
-      // Topic Drawer Search / Filter
-      if (searchInput) {
-        searchInput.addEventListener('input', () => {
-          const q = searchInput.value.toLowerCase().trim();
-          const items = drawerList.querySelectorAll('.drawer-item');
-          items.forEach((item) => {
-            const title = item.dataset.title || '';
-            if (!q || title.includes(q)) {
-              item.style.display = 'flex';
-            } else {
-              item.style.display = 'none';
-            }
-          });
-        });
-      }
-    }
-  }
-
-  /* ==========================================================================
-     3. COLORFUL CODE HIGHLIGHTING & CODE SANDBOX (TOKYO NIGHT)
-     ========================================================================== */
-  function escapeHtml(text) {
-    if (text === null || text === undefined) return '';
-    return String(text)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function detectLanguage(codeText, currentClass) {
-    if (currentClass) {
-      const match = currentClass.match(/language-([a-z0-9_-]+)/i);
-      if (match) return match[1].toLowerCase();
-    }
-
-    const trimmed = codeText.trim();
-    if (/^<\?xml|^<beans|^<project|^<web-app|^<servlet|^<filter/i.test(trimmed)) {
-      return 'xml';
-    }
-    if (/^<!DOCTYPE html|^<html|^<body|^<div|^<form|^<table|^<p>|^<span|^<header|^<footer|^<main|^<section|^<nav|^<input|^<button/i.test(trimmed)) {
-      return 'html';
-    }
-    if (/^<%@\s*page|^<jsp:|^<form:|^<spring:/i.test(trimmed)) {
-      return 'jsp';
-    }
-    if (/^<\/?[a-z0-9_:-]+(\s|>)/i.test(trimmed)) {
-      return 'html';
-    }
-    if (/\b(SELECT|INSERT\s+INTO|UPDATE\s+\w+\s+SET|DELETE\s+FROM|CREATE\s+TABLE|ALTER\s+TABLE|DROP\s+TABLE)\b/i.test(trimmed)) {
-      return 'sql';
-    }
-    if (/^[a-z0-9_.-]+\s*[:=]\s*.+$/m.test(trimmed) && !trimmed.includes('class ') && !trimmed.includes(';') && !trimmed.includes('{') && !trimmed.includes('}')) {
-      return 'properties';
-    }
-    if (/\b(package\s+[a-z0-9_.]+|import\s+java|public\s+class|@Entity|@Table|@Id|@Transactional|@Autowired|@Service|@Controller|@RequestMapping|@GetMapping|@PostMapping|@RequestParam|@ResponseBody|public\s+void|private\s+|protected\s+)\b/.test(trimmed)) {
-      return 'java';
-    }
-    return 'java';
-  }
-
-  function highlightTag(tagStr) {
-    // Tokenizes a single tag: <tag attr="val" required />
-    const tagPartsRegex = /(<\/?[a-zA-Z0-9_:-]+)|([a-zA-Z0-9_:-]+)(?:\s*(=)\s*("[^"]*"|'[^']*'|[^\s"'>]+))?|(\/?>)|(\s+)/g;
-    let out = '';
-    let m;
-    while ((m = tagPartsRegex.exec(tagStr)) !== null) {
-      if (m[1]) {
-        out += `<span class="token tag">${escapeHtml(m[1])}</span>`;
-      } else if (m[2]) {
-        out += `<span class="token attr-name">${escapeHtml(m[2])}</span>`;
-        if (m[3]) {
-          out += `<span class="token punctuation">=</span>`;
-        }
-        if (m[4]) {
-          out += `<span class="token string">${escapeHtml(m[4])}</span>`;
-        }
-      } else if (m[5]) {
-        out += `<span class="token tag">${escapeHtml(m[5])}</span>`;
-      } else if (m[6]) {
-        out += m[6];
-      } else {
-        out += escapeHtml(m[0]);
-      }
-    }
-    return out;
-  }
-
-  function highlightXml(code) {
-    const tokenRegex = /(<!--[\s\S]*?-->|<%@?[\s\S]*?%>|<!(?:DOCTYPE|doctype)[^>]*>|<\?xml[^>]*\?>|<\/?[a-zA-Z0-9_:-]+(?:\s+[^"'>]*(?:"[^"]*"|'[^']*')*)*\s*\/?>|&[a-zA-Z0-9#]+;)/g;
-    let result = '';
-    let lastIndex = 0;
-    let match;
-
-    while ((match = tokenRegex.exec(code)) !== null) {
-      if (match.index > lastIndex) {
-        result += escapeHtml(code.slice(lastIndex, match.index));
-      }
-      const token = match[0];
-      if (token.startsWith('<!--')) {
-        result += `<span class="token comment">${escapeHtml(token)}</span>`;
-      } else if (token.startsWith('<%')) {
-        result += `<span class="token annotation">${escapeHtml(token)}</span>`;
-      } else if (token.startsWith('<!') || token.startsWith('<?')) {
-        result += `<span class="token doctype">${escapeHtml(token)}</span>`;
-      } else if (token.startsWith('&') && token.endsWith(';')) {
-        result += `<span class="token entity">${token}</span>`;
-      } else if (token.startsWith('<')) {
-        result += highlightTag(token);
-      } else {
-        result += escapeHtml(token);
-      }
-      lastIndex = tokenRegex.lastIndex;
-    }
-    if (lastIndex < code.length) {
-      result += escapeHtml(code.slice(lastIndex));
-    }
-    return result;
-  }
-
-  function highlightJava(code) {
-    const javaRegex = /(\/\*[\s\S]*?\*\/)|(\/\/.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(@[a-zA-Z0-9_]+)|(\b(?:abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while|record|sealed|permits|var|yield)\b)|(\b(?:true|false|null)\b)|(\b[A-Z][a-zA-Z0-9_]*\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*(?=\s*\())|(\b\d+(?:\.\d+)?(?:[fFdDlL])?\b)|([{}()\[\];,.:+\-*/%=&|!<>~^?]+)/g;
-
-    let result = '';
-    let lastIndex = 0;
-    let match;
-
-    while ((match = javaRegex.exec(code)) !== null) {
-      if (match.index > lastIndex) {
-        result += escapeHtml(code.slice(lastIndex, match.index));
-      }
-      const [full, blockComment, lineComment, str, ann, kw, constVal, typeName, fnName, num, punc] = match;
-      if (blockComment || lineComment) {
-        result += `<span class="token comment">${escapeHtml(blockComment || lineComment)}</span>`;
-      } else if (str) {
-        result += `<span class="token string">${escapeHtml(str)}</span>`;
-      } else if (ann) {
-        result += `<span class="token annotation">${escapeHtml(ann)}</span>`;
-      } else if (kw) {
-        result += `<span class="token keyword">${escapeHtml(kw)}</span>`;
-      } else if (constVal) {
-        result += `<span class="token constant">${escapeHtml(constVal)}</span>`;
-      } else if (typeName) {
-        result += `<span class="token class-name">${escapeHtml(typeName)}</span>`;
-      } else if (fnName) {
-        if (['if', 'for', 'while', 'switch', 'catch', 'synchronized'].includes(fnName)) {
-          result += `<span class="token keyword">${escapeHtml(fnName)}</span>`;
-        } else {
-          result += `<span class="token function">${escapeHtml(fnName)}</span>`;
-        }
-      } else if (num) {
-        result += `<span class="token number">${escapeHtml(num)}</span>`;
-      } else if (punc) {
-        result += `<span class="token punctuation">${escapeHtml(punc)}</span>`;
-      } else {
-        result += escapeHtml(full);
-      }
-      lastIndex = javaRegex.lastIndex;
-    }
-    if (lastIndex < code.length) {
-      result += escapeHtml(code.slice(lastIndex));
-    }
-    return result;
-  }
-
-  function highlightSql(code) {
-    const sqlRegex = /(\/\*[\s\S]*?\*\/)|(--.*)|('(?:''|[^'\\]|\\.)*')|(\b(?:SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|DROP|ALTER|ADD|CONSTRAINT|PRIMARY|KEY|FOREIGN|REFERENCES|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|GROUP|BY|ORDER|ASC|DESC|HAVING|LIMIT|OFFSET|UNION|ALL|AND|OR|NOT|NULL|IS|IN|LIKE|AS|ON|DISTINCT|COUNT|SUM|AVG|MIN|MAX|VARCHAR|VARCHAR2|INT|INTEGER|BIGINT|BOOLEAN|DATE|TIMESTAMP|AUTO_INCREMENT|DEFAULT|CASCADE|CHECK|UNIQUE|INDEX|VIEW|TRIGGER|PROCEDURE|BEGIN|END|COMMIT|ROLLBACK|SAVEPOINT)\b)|(\b\d+(?:\.\d+)?\b)|([(),;=<>!+*/-]+)/gi;
-
-    let result = '';
-    let lastIndex = 0;
-    let match;
-
-    while ((match = sqlRegex.exec(code)) !== null) {
-      if (match.index > lastIndex) {
-        result += escapeHtml(code.slice(lastIndex, match.index));
-      }
-      const [full, blockComment, lineComment, str, kw, num, punc] = match;
-      if (blockComment || lineComment) {
-        result += `<span class="token comment">${escapeHtml(blockComment || lineComment)}</span>`;
-      } else if (str) {
-        result += `<span class="token string">${escapeHtml(str)}</span>`;
-      } else if (kw) {
-        result += `<span class="token sql-keyword">${escapeHtml(kw)}</span>`;
-      } else if (num) {
-        result += `<span class="token number">${escapeHtml(num)}</span>`;
-      } else if (punc) {
-        result += `<span class="token punctuation">${escapeHtml(punc)}</span>`;
-      } else {
-        result += escapeHtml(full);
-      }
-      lastIndex = sqlRegex.lastIndex;
-    }
-    if (lastIndex < code.length) {
-      result += escapeHtml(code.slice(lastIndex));
-    }
-    return result;
-  }
-
-  function highlightProperties(code) {
-    const lines = code.split('\n');
-    return lines.map((line) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith('#') || trimmed.startsWith('!')) {
-        return `<span class="token comment">${escapeHtml(line)}</span>`;
-      }
-      const match = line.match(/^(\s*)([a-zA-Z0-9_.-]+)(\s*[:=]\s*)(.*)$/);
-      if (match) {
-        const [, indent, key, delim, val] = match;
-        return `${escapeHtml(indent)}<span class="token attr-name">${escapeHtml(key)}</span><span class="token punctuation">${escapeHtml(delim)}</span><span class="token string">${escapeHtml(val)}</span>`;
-      }
-      return escapeHtml(line);
-    }).join('\n');
-  }
-
-  function highlightSnippet(code, lang) {
-    if (!code) return '';
-    const normLang = (lang || '').toLowerCase();
-
-    if (['xml', 'html', 'jsp', 'svg'].includes(normLang)) {
-      return highlightXml(code);
-    }
-    if (normLang === 'sql') {
-      return highlightSql(code);
-    }
-    if (['properties', 'props', 'ini', 'env'].includes(normLang)) {
-      return highlightProperties(code);
-    }
-    return highlightJava(code);
-  }
-
-  function setupCodeSandboxes() {
-    const preBlocks = document.querySelectorAll('pre');
-
-    preBlocks.forEach((pre) => {
-      if (pre.classList.contains('mermaid') || pre.closest('.diagram')) return;
-      if (pre.dataset.sandboxReady) return;
-      pre.dataset.sandboxReady = 'true';
-
-      const codeElem = pre.querySelector('code') || pre;
-      const rawText = codeElem.textContent || '';
-      if (!rawText.trim()) return;
-
-      const lang = detectLanguage(rawText, codeElem.className || pre.className);
-
-      const sandbox = document.createElement('div');
-      sandbox.className = 'code-sandbox';
-
-      const header = document.createElement('div');
-      header.className = 'code-header';
-      header.innerHTML = `
-        <div class="code-header-left">
-          <div class="code-dots">
-            <span class="code-dot red"></span>
-            <span class="code-dot yellow"></span>
-            <span class="code-dot green"></span>
-          </div>
-          <span class="code-lang-badge">${lang.toUpperCase()}</span>
-        </div>
-        <button type="button" class="code-copy-btn" title="Copy code">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <span>Copy</span>
-        </button>
-      `;
-
-      const copyBtn = header.querySelector('.code-copy-btn');
-      copyBtn.onclick = () => {
-        const copySuccess = () => {
-          copyBtn.classList.add('copied');
-          copyBtn.querySelector('span').textContent = 'Copied! ✓';
-          setTimeout(() => {
-            copyBtn.classList.remove('copied');
-            copyBtn.querySelector('span').textContent = 'Copy';
-          }, 2000);
-        };
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(rawText).then(copySuccess).catch(() => {
-            fallbackCopy(rawText, copySuccess);
-          });
-        } else {
-          fallbackCopy(rawText, copySuccess);
-        }
-      };
-
-      pre.parentNode.insertBefore(sandbox, pre);
-      sandbox.appendChild(header);
-      sandbox.appendChild(pre);
-
-      const highlightedHtml = highlightSnippet(rawText, lang);
-      if (pre.querySelector('code')) {
-        pre.querySelector('code').innerHTML = highlightedHtml;
-      } else {
-        pre.innerHTML = `<code>${highlightedHtml}</code>`;
-      }
-    });
-  }
-
-  function fallbackCopy(text, callback) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-      document.execCommand('copy');
-      if (callback) callback();
-    } catch (e) {
-      console.warn('Copy command failed:', e);
-    }
-    document.body.removeChild(ta);
-  }
-
-  /* ==========================================================================
-     4. CLEAN DIAGRAM VIEWER (FULL VIEW MODAL ONLY - NO DRAG TRAPPING)
-     ========================================================================== */
-  function initDiagramViewer() {
-    let modal = document.getElementById('diagram-modal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'diagram-modal';
-      modal.innerHTML = `
-        <div class="modal-backdrop"></div>
-        <div class="modal-box">
-          <div class="modal-bar">
-            <span class="modal-title">🔍 High-Resolution Diagram</span>
-            <div class="modal-actions">
-              <button class="m-btn m-close" id="m-close" title="Close (Esc)">✕ Close</button>
-            </div>
-          </div>
-          <div class="modal-view" id="modal-view">
-            <div class="modal-stage" id="modal-stage"></div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-
-      document.getElementById('m-close').onclick = () => modal.classList.remove('open');
-      modal.querySelector('.modal-backdrop').onclick = () => modal.classList.remove('open');
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('open')) {
-          modal.classList.remove('open');
-        }
-      });
-    }
-
-    const targets = document.querySelectorAll('.diagram, pre.mermaid');
-    targets.forEach((container) => {
-      if (container.dataset.zoomReady) return;
-      const svg = container.querySelector('svg');
-      if (!svg) return;
-
-      container.dataset.zoomReady = 'true';
-
-      const toolbar = document.createElement('div');
-      toolbar.className = 'diagram-ctrl-bar';
-      toolbar.innerHTML = `
-        <button type="button" class="d-btn d-modal" title="Fullscreen View">⛶ Full View</button>
-      `;
-
-      toolbar.querySelector('.d-modal').onclick = (e) => {
-        e.stopPropagation();
-        const stage = document.getElementById('modal-stage');
-        stage.innerHTML = svg.outerHTML;
-        modal.classList.add('open');
-      };
-
-      container.insertBefore(toolbar, container.firstChild);
-    });
-  }
-
-  /* ==========================================================================
-     5. DYNAMIC PAGE MANAGER & PAGINATION WITH SEARCH INDEXING
-     ========================================================================== */
-  const STORAGE_KEY = 'springHubCustomPages_v1';
-  const PAGE_SIZE = 6; // Cards per page in library view
-  let currentPage = 1;
-  let currentSearchQuery = '';
-
-  function getCustomPages() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function saveCustomPages(pages) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
-  }
-
-  function renderCustomPages() {
-    const grid = document.getElementById('topicsGrid');
-    if (!grid) return;
-
-    const existingCustom = grid.querySelectorAll('.custom-card');
-    existingCustom.forEach(card => card.remove());
-
-    const customPages = getCustomPages();
-    const totalBuiltin = grid.querySelectorAll('a.card:not(.custom-card)').length;
-
-    customPages.forEach((page, idx) => {
-      const cardNum = String(totalBuiltin + idx + 1).padStart(2, '0');
-      const card = document.createElement('a');
-      card.className = 'card custom-card';
-      card.href = page.fileName;
-      card.dataset.title = (page.title || '').toLowerCase();
-      card.dataset.desc = (page.description || '').toLowerCase();
-      card.dataset.file = (page.fileName || '').toLowerCase();
-
-      card.innerHTML = `
-        <div class="num">${cardNum}</div>
-        <div style="flex: 1;">
-          <h3>${escapeHtml(page.title)}</h3>
-          <p>${escapeHtml(page.description || 'Custom added guide')}</p>
-          <span class="file-tag">${escapeHtml(page.fileName)}</span>
-        </div>
-        <button type="button" class="card-delete-btn" title="Remove page from list">✕ Remove</button>
-        <span class="arrow">↗</span>
-      `;
-
-      const delBtn = card.querySelector('.card-delete-btn');
-      delBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (confirm(`Remove "${page.title}" from your library list?`)) {
-          const current = getCustomPages();
-          const filtered = current.filter(p => p.id !== page.id);
-          saveCustomPages(filtered);
-          renderCustomPages();
-        }
-      };
-
-      grid.appendChild(card);
-    });
-
-    updateCardNumbers();
-    applySearchAndPagination();
-  }
-
-  function updateCardNumbers() {
-    const grid = document.getElementById('topicsGrid');
-    if (!grid) return;
-    const cards = grid.querySelectorAll('a.card');
-    cards.forEach((card, idx) => {
-      const numElem = card.querySelector('.num');
-      if (numElem) {
-        numElem.textContent = String(idx + 1).padStart(2, '0');
-      }
-    });
-  }
-
-  function applySearchAndPagination() {
-    const grid = document.getElementById('topicsGrid');
-    const paginationContainer = document.getElementById('paginationContainer');
-    const paginationInfo = document.getElementById('paginationInfo');
-    const paginationControls = document.getElementById('paginationControls');
-    if (!grid) return;
-
-    const cards = Array.from(grid.querySelectorAll('a.card'));
-    const tokens = currentSearchQuery.split(/\s+/).filter(t => t.length > 0);
-
-    // 1. Search Indexing Filter
-    const matchedCards = cards.filter((card) => {
-      if (tokens.length === 0) return true;
-
-      const title = (card.querySelector('h3')?.textContent || card.dataset.title || '').toLowerCase();
-      const desc = (card.querySelector('p')?.textContent || card.dataset.desc || '').toLowerCase();
-      const file = (card.getAttribute('href') || card.dataset.file || '').toLowerCase();
-      const textCorpus = `${title} ${desc} ${file}`;
-
-      return tokens.every(token => textCorpus.includes(token));
-    });
-
-    // 2. Pagination Calculations
-    const totalMatched = matchedCards.length;
-    const totalPages = Math.max(1, Math.ceil(totalMatched / PAGE_SIZE));
-
-    if (currentPage > totalPages) {
-      currentPage = totalPages;
-    }
-
-    const startIndex = (currentPage - 1) * PAGE_SIZE;
-    const endIndex = startIndex + PAGE_SIZE;
-
-    // 3. Render visible cards
-    cards.forEach((card) => {
-      const isMatched = matchedCards.includes(card);
-      const matchIndex = matchedCards.indexOf(card);
-      const isCurrentPage = matchIndex >= startIndex && matchIndex < endIndex;
-
-      if (isMatched && isCurrentPage) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-
-    // 4. Update No-match message
-    let noMatchMsg = document.getElementById('noMatchMessage');
-    if (totalMatched === 0) {
-      if (!noMatchMsg) {
-        noMatchMsg = document.createElement('div');
-        noMatchMsg.id = 'noMatchMessage';
-        noMatchMsg.className = 'note';
-        noMatchMsg.style.gridColumn = '1 / -1';
-        noMatchMsg.style.textAlign = 'center';
-        noMatchMsg.style.padding = '32px 16px';
-        noMatchMsg.innerHTML = `
-          <p style="margin:0; font-size:1.05rem; color:var(--text-bright);">No topics found matching "<strong>${escapeHtml(currentSearchQuery)}</strong>"</p>
-          <p style="margin:8px 0 0; font-size:0.88rem; color:var(--muted);">Try another keyword or click <strong>+ Add Page</strong> to create a new guide card.</p>
-        `;
-        grid.appendChild(noMatchMsg);
-      }
-    } else if (noMatchMsg) {
-      noMatchMsg.remove();
-    }
-
-    // 5. Render Pagination Bar
-    if (paginationContainer && paginationInfo && paginationControls) {
-      if (totalMatched === 0) {
-        paginationContainer.style.display = 'none';
-        return;
-      }
-
-      paginationContainer.style.display = 'flex';
-      const rangeStart = startIndex + 1;
-      const rangeEnd = Math.min(endIndex, totalMatched);
-      paginationInfo.innerHTML = `Showing <strong>${rangeStart}-${rangeEnd}</strong> of <strong>${totalMatched}</strong> guides`;
-
-      paginationControls.innerHTML = '';
-
-      if (totalPages > 1) {
-        // Prev Button
-        const prevBtn = document.createElement('button');
-        prevBtn.type = 'button';
-        prevBtn.className = 'pagination-btn';
-        prevBtn.innerHTML = '‹ Prev';
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.onclick = () => {
-          if (currentPage > 1) {
-            currentPage--;
-            applySearchAndPagination();
-            grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        };
-        paginationControls.appendChild(prevBtn);
-
-        // Page Number Buttons
-        for (let p = 1; p <= totalPages; p++) {
-          const pageBtn = document.createElement('button');
-          pageBtn.type = 'button';
-          pageBtn.className = `pagination-btn ${p === currentPage ? 'active' : ''}`;
-          pageBtn.textContent = p;
-          pageBtn.onclick = () => {
-            currentPage = p;
-            applySearchAndPagination();
-            grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          };
-          paginationControls.appendChild(pageBtn);
-        }
-
-        // Next Button
-        const nextBtn = document.createElement('button');
-        nextBtn.type = 'button';
-        nextBtn.className = 'pagination-btn';
-        nextBtn.innerHTML = 'Next ›';
-        nextBtn.disabled = currentPage === totalPages;
-        nextBtn.onclick = () => {
-          if (currentPage < totalPages) {
-            currentPage++;
-            applySearchAndPagination();
-            grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        };
-        paginationControls.appendChild(nextBtn);
-      }
-    }
-  }
-
-  function setupAddPageModal() {
-    let overlay = document.getElementById('addPageModal');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'addPageModal';
-      overlay.className = 'page-modal-overlay';
-      overlay.innerHTML = `
-        <div class="page-modal-card">
-          <div class="modal-header">
-            <h3>+ Add New Guide / Topic Page</h3>
-            <button type="button" class="modal-close-btn" id="closeAddModal">✕</button>
-          </div>
-          <form id="addPageForm">
-            <div class="form-group">
-              <label for="pageTitle">Heading / Title *</label>
-              <input type="text" id="pageTitle" placeholder="e.g. Unit 25: Spring Security & JWT" required />
-            </div>
-            <div class="form-group">
-              <label for="pageFileName">File Name or Path in Workspace *</label>
-              <input type="text" id="pageFileName" placeholder="e.g. spring-security-guide.html" required />
-              <div class="hint">Specify the HTML filename in your project root.</div>
-            </div>
-            <div class="form-group">
-              <label for="pageDescription">Description</label>
-              <textarea id="pageDescription" placeholder="Brief summary of concepts, architecture, and interview prep topics..."></textarea>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="button" id="cancelAddModal">Cancel</button>
-              <button type="submit" class="button primary">Add to Library</button>
-            </div>
-          </form>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-
-      const closeBtn = document.getElementById('closeAddModal');
-      const cancelBtn = document.getElementById('cancelAddModal');
-      const form = document.getElementById('addPageForm');
-
-      const closeModal = () => overlay.classList.remove('open');
-      closeBtn.onclick = closeModal;
-      cancelBtn.onclick = closeModal;
-      overlay.onclick = (e) => {
-        if (e.target === overlay) closeModal();
-      };
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
-      });
-
-      form.onsubmit = (e) => {
-        e.preventDefault();
-        const title = document.getElementById('pageTitle').value.trim();
-        let fileName = document.getElementById('pageFileName').value.trim();
-        const description = document.getElementById('pageDescription').value.trim();
-
-        if (!title || !fileName) {
-          alert('Please provide both a Title and File Name.');
-          return;
-        }
-
-        if (!fileName.endsWith('.html') && !fileName.includes('#') && !fileName.includes('://')) {
-          fileName += '.html';
-        }
-
-        const newPage = {
-          id: Date.now().toString(),
-          title: title,
-          fileName: fileName,
-          description: description
-        };
-
-        const pages = getCustomPages();
-        pages.push(newPage);
-        saveCustomPages(pages);
-
-        renderCustomPages();
-        form.reset();
-        closeModal();
-      };
-    }
-
-    const triggerBtns = document.querySelectorAll('.open-add-page-modal');
-    triggerBtns.forEach((btn) => {
-      btn.onclick = (e) => {
-        e.preventDefault();
-        overlay.classList.add('open');
-        setTimeout(() => {
-          const input = document.getElementById('pageTitle');
-          if (input) input.focus();
-        }, 50);
-      };
-    });
-  }
-
-  function setupSearchFilter() {
-    const searchInput = document.getElementById('librarySearch');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', () => {
-      currentSearchQuery = searchInput.value.toLowerCase().trim();
-      currentPage = 1;
-      applySearchAndPagination();
-    });
-  }
-
-  /* ==========================================================================
-     6. SEGMENTED STUDY / INTERVIEW TAB SWITCHER (ON FORMS & GUIDES)
-     ========================================================================== */
-  function setupContentSwitcher() {
-    const sw = document.getElementById('contentSwitcher');
-    const a = document.getElementById('studyTab');
-    const b = document.getElementById('interviewTab');
-    const p1 = document.getElementById('studyPanel');
-    const p2 = document.getElementById('interviewPanel');
-
-    if (!sw || !a || !b || !p1 || !p2) return;
-
-    function show(which) {
-      const interview = which === 'interview';
-      sw.classList.toggle('interview-active', interview);
-      a.classList.toggle('active', !interview);
-      b.classList.toggle('active', interview);
-      a.setAttribute('aria-selected', String(!interview));
-      b.setAttribute('aria-selected', String(interview));
-      p1.classList.toggle('active', !interview);
-      p2.classList.toggle('active', interview);
-
-      // Re-render Mermaid flowcharts and initialize toolbar on newly visible panel
-      setTimeout(() => {
-        if (typeof window.mermaid !== 'undefined' && window.mermaid.run) {
-          try {
-            window.mermaid.run({ querySelector: '.mermaid, pre.mermaid', suppressErrors: true });
-          } catch (e) {
-            console.warn('Mermaid re-run notice:', e);
-          }
-        }
-        initDiagramViewer();
-      }, 60);
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    a.addEventListener('click', () => show('study'));
-    b.addEventListener('click', () => show('interview'));
-    if (location.hash === '#interview-mode') show('interview');
-  }
-
-  /* ==========================================================================
-     7. THEME TOGGLE (TOKYO NIGHT DARK / DAY)
-     ========================================================================== */
-  function setupThemeToggle() {
-    const toggleBtns = document.querySelectorAll('.theme-toggle, #themeToggle');
-
-    function applyTheme(isDark) {
-      document.body.classList.toggle('light', !isDark);
-      toggleBtns.forEach((btn) => {
-        btn.setAttribute('aria-pressed', String(!isDark));
-        const icon = btn.querySelector('#themeIcon') || btn.querySelector('span:first-child');
-        const text = btn.querySelector('#themeText');
-        if (icon) icon.textContent = isDark ? '☀' : '☾';
-        if (text) text.textContent = isDark ? 'Light' : 'Dark';
-      });
-      localStorage.setItem('springHubTheme', isDark ? 'dark' : 'light');
-
-      // Re-trigger Mermaid diagram render if available
-      if (window.mermaid && typeof window.mermaid.run === 'function') {
-        try {
-          window.mermaid.run();
-        } catch (e) {}
-      }
-    }
-
-    const savedTheme = localStorage.getItem('springHubTheme') || localStorage.getItem('springMvcTheme');
-    if (savedTheme === 'light') {
-      applyTheme(false);
-    } else {
-      applyTheme(true);
-    }
-
-    toggleBtns.forEach((btn) => {
-      btn.onclick = () => {
-        const isCurrentlyLight = document.body.classList.contains('light');
-        applyTheme(isCurrentlyLight);
-      };
-    });
-  }
-
-  /* ==========================================================================
-     8. BOOTSTRAP ON LOAD
-     ========================================================================== */
-  function init() {
-    initMermaid();
-    setupTopicDrawer();
-    setupCodeSandboxes();
-    setupContentSwitcher();
-    setupAddPageModal();
-    renderCustomPages();
-    setupSearchFilter();
-    setupThemeToggle();
-
-    setTimeout(initDiagramViewer, 400);
-    setTimeout(initDiagramViewer, 1200);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.addEventListener('load', () => {
-    setTimeout(initDiagramViewer, 500);
-  });
 
 })();

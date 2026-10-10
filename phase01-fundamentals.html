@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Fundamentals & JVM Execution Model &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 1: Fundamentals</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase02-oop.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="1.1 What is Java? The "Write Once, Run Anywhere" (WORA) Architecture">
+            <span>1.1 What is Java? The "Write Once,...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-2" class="toc-link" title="1.2 Structure of a Java Program, the main() Method & Naming Conventions">
+            <span>1.2 Structure of a Java Program, t...</span>
+            <span class="toc-badge">2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-3" class="toc-link" title="1.3 Variables, Data Types, Memory Allocation & The Pass-By-Value Proof">
+            <span>1.3 Variables, Data Types, Memory ...</span>
+            <span class="toc-badge">3</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-4" class="toc-link" title="1.4 Operators, Bitwise Shifts & Precedence Hierarchy">
+            <span>1.4 Operators, Bitwise Shifts & Pr...</span>
+            <span class="toc-badge">4</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-5" class="toc-link" title="1.5 Control Flow, Loops, Labeled Breaks & Switch Pattern Matching">
+            <span>1.5 Control Flow, Loops, Labeled B...</span>
+            <span class="toc-badge">5</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-6" class="toc-link" title="1.6 Methods, Arrays, Jagged Matrices & Variable-Length Arguments (Varargs)">
+            <span>1.6 Methods, Arrays, Jagged Matric...</span>
+            <span class="toc-badge">6</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="#concept-7" class="toc-link" title="1.7 Method Overloading, Recursion & Call Stack Lifecycle">
+            <span>1.7 Method Overloading, Recursion ...</span>
+            <span class="toc-badge">7</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link active">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link ">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 1: Fundamentals</span>
+          <span class="module-tag">&#128194; Module 1_ Problem Solving & Java programming \ 01_Java_Introduction_Demos</span>
+        </div>
+        <h1 class="page-title">Java Fundamentals & JVM Execution Model</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 3: Fundamental Programming Structures &bull; Chapter 4: Objects and Classes (Pass-by-Value Mechanics)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-1">Phase 1</span>
+            <h2 class="section-title">Java Fundamentals & JVM Execution Model</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1_ Problem Solving & Java programming \ 01_Java_Introduction_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 1: An Introduction to Java &bull; Chapter 2: The Java Programming Environment &bull; Chapter 3: Fundamental Programming Structures in Java</span>
+        </div>
+
+        <!-- 1.1 Java Introduction, WORA & Compilation Lifecycle -->
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.1 What is Java? The "Write Once, Run Anywhere" (WORA) Architecture</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Universal Translator</div>
+            <div class="analogy-content">
+              Imagine you write a book in English. If you want people in Germany, Japan, and France to read it:
+              <br/>• <strong>The C/C++ Way:</strong> You hire three separate translators to translate your book into German, Japanese, and French beforehand. If you change one paragraph, you must re-translate all three native books from scratch!
+              <br/>• <strong>The Java Way (WORA):</strong> You translate your English book into an intermediate, universal language called <strong>Bytecode</strong>. Then, anyone who has a local interpreter (the <strong>JVM</strong>) on their computer can read that same Bytecode instantly! You compile your code only once, and it runs anywhere a JVM exists.
+            </div>
+          </div>
+
+          <div class="def-box">
+            <div class="def-title">&#128214; Formal Definition: Java Platform Independence</div>
+            <div class="def-content">
+              <strong>Java</strong> is a high-level, class-based, object-oriented, concurrent language. Platform independence is achieved not by compiling to machine-specific native assembly (like x86_64 or ARM64 machine code), but by translating source code (<code>.java</code>) into an intermediate, architecture-neutral instruction set called <strong>Java Bytecode</strong> (<code>.class</code> files). The <strong>Java Virtual Machine (JVM)</strong> translates this bytecode into CPU-specific native instructions at runtime.
+            </div>
+          </div>
+
+          <!-- Mermaid Architectural Flow -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Flow: Source Code &rarr; Bytecode &rarr; JVM Execution [Core Java Vol I Ch 1-2]</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph TD
+    Source["Java Source File (.java)<br/>Human-readable OOP code"]
+    Compiler["javac Compiler<br/>(Compiles to architecture-neutral Bytecode)"]
+    Bytecode["Java Bytecode (.class file)<br/>Portable OpCodes"]
+    
+    subgraph JVM ["JVM Runtime Environment (Platform Dependent)"]
+        ClassLoader["Class Loader Subsystem<br/>(Loads, Links & Initializes classes)"]
+        Verifier["Bytecode Verifier<br/>(Validates memory safety & security)"]
+        subgraph Engine ["Execution Engine"]
+            Interpreter["Interpreter<br/>(Fast line-by-line initial execution)"]
+            JIT["JIT Compiler (HotSpot C1 / C2)<br/>(Compiles hot loops into native machine code)"]
+            GC["Garbage Collector<br/>(Reclaims unused heap memory)"]
+        end
+    end
+    
+    OS_HW["Target CPU Architecture & Operating System<br/>(Windows x64, Linux ARM64, macOS Apple Silicon)"]
+
+    Source -->|javac Hello.java| Compiler
+    Compiler --> Bytecode
+    Bytecode -->|java Hello| ClassLoader
+    ClassLoader --> Verifier
+    Verifier --> Interpreter
+    Interpreter -.->|Hot code detected| JIT
+    JIT --> OS_HW
+    Interpreter --> OS_HW
+            </div>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: JDK vs JRE vs JVM (The Restaurant Kitchen)</div>
+            <div class="analogy-content">
+              • <strong>JVM (The Chef):</strong> The actual cook who reads the recipe (bytecode) and cooks the meal on the spot. Without the chef, no cooking happens.<br/>
+              • <strong>JRE (The Dining Restaurant):</strong> The Chef (JVM) + the kitchen tools, standard spices, and plates (Java Class Libraries). It has everything needed to serve meals to customers, but you cannot invent or develop new recipes here.<br/>
+              • <strong>JDK (The Culinary School & Recipe Lab):</strong> The entire restaurant (JRE) + chef training tools, recipe notebooks, knives, and measuring instruments (<code>javac</code>, <code>jshell</code>, <code>jdb</code> debugger). Developers need the JDK to build software.
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Full Name</th>
+                  <th>What it Contains</th>
+                  <th>Who Needs It?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>JVM</strong></td>
+                  <td>Java Virtual Machine</td>
+                  <td>Execution engine (Interpreter + JIT Compiler + Garbage Collector) and runtime data areas (Heap, Stack, Metaspace).</td>
+                  <td>Target machine executing bytecode.</td>
+                </tr>
+                <tr>
+                  <td><strong>JRE</strong></td>
+                  <td>Java Runtime Environment</td>
+                  <td>JVM + Java Core Class Libraries (<code>java.base</code>, <code>java.util</code>, etc.) and configuration files.</td>
+                  <td>End users who only want to run pre-compiled Java applications.</td>
+                </tr>
+                <tr>
+                  <td><strong>JDK</strong></td>
+                  <td>Java Development Kit</td>
+                  <td>JRE + Developer tools: <code>javac</code> (compiler), <code>jshell</code> (REPL), <code>jdb</code> (debugger), <code>javap</code> (disassembler), <code>jar</code> (archiver).</td>
+                  <td>Software engineers writing, debugging, and compiling Java code.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Interview Accordion -->
+          <div class="interview-card">
+            <div class="interview-header" onclick="toggleAccordion(this)">
+              <span class="interview-q">&#10067; Interview Question: Is Java 100% compiled or 100% interpreted?</span>
+              <span class="interview-icon">&#9660;</span>
+            </div>
+            <div class="interview-body">
+              <strong>Simple Explanation:</strong> Java is <strong>both</strong>!
+              <br/>1. <strong>First step (Compilation):</strong> The <code>javac</code> compiler translates human-written <code>.java</code> code into <code>.class</code> bytecode.
+              <br/>2. <strong>Second step (Interpretation & JIT):</strong> When you run the program, the JVM's interpreter starts executing bytecode instructions line-by-line right away so your app boots up quickly.
+              <br/>3. <strong>HotSpot Optimization:</strong> As your application runs, the JVM monitors which methods or loops run thousands of times (called "hot spots"). The <strong>Just-In-Time (JIT) compiler</strong> compiles those hot spots directly into native CPU machine code so they run at blistering, near-native C++ speeds.
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.2 Structure of a Java Program, main() & Coding Standards -->
+        <div id="concept-2" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.2 Structure of a Java Program, the main() Method & Naming Conventions</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Why is main() declared as "public static void main(String[] args)"?</div>
+            <div class="analogy-content">
+              Think of the JVM as a security guard outside your building. When you tell the guard to launch your application:
+              <br/>• <strong>public:</strong> The guard is standing outside your package. If the entrance is marked <code>private</code> or <code>protected</code>, the guard is locked out and cannot start the program!
+              <br/>• <strong>static:</strong> The guard does NOT have to construct an instance of your building in memory just to ring the doorbell. A <code>static</code> method exists at class-level and can be invoked immediately without creating an object on the heap.
+              <br/>• <strong>void:</strong> When the program finishes, it doesn't return a value to the caller. Process exit codes are communicated via <code>System.exit(code)</code>.
+              <br/>• <strong>String[] args:</strong> The parameters you pass from the command terminal (e.g. <code>java App dev 8080</code>) are captured as an array of strings.
+            </div>
+          </div>
+
+          <!-- Code Box: Production PasswordValidator from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_Java_Introduction_Demos/JavaIntroductionDemos/src/com/accenture/ltt/codingstandards/PasswordValidator.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.codingstandards;
+
+<span class="cmt">/**
+ * Standard Production Class Demonstrating Java Naming Conventions:
+ * - UpperCamelCase for Classes and Interfaces (PasswordValidator)
+ * - lowerCamelCase for Methods and Variables (validatePassword, userPassword)
+ * - UPPER_SNAKE_CASE for Constants (MIN_PASSWORD_LENGTH)
+ */</span>
+<span class="kw">public class</span> <span class="typ">PasswordValidator</span> {
+
+    <span class="cmt">// Constant: static final in UPPER_SNAKE_CASE</span>
+    <span class="kw">private static final int</span> <span class="num">MIN_PASSWORD_LENGTH</span> = <span class="num">8</span>;
+
+    <span class="cmt">/**
+     * Validates if a password string meets length criteria.
+     * @param password the password input to check
+     * @return true if valid, false otherwise
+     */</span>
+    <span class="kw">public boolean</span> <span class="fn">validatePassword</span>(<span class="typ">String</span> password) {
+        <span class="cmt">// Always defend against NullPointerException</span>
+        <span class="kw">if</span> (password == <span class="kw">null</span>) {
+            <span class="kw">return false</span>;
+        }
+        <span class="kw">return</span> password.length() >= <span class="num">MIN_PASSWORD_LENGTH</span>;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">PasswordValidator</span> validator = <span class="kw">new</span> <span class="typ">PasswordValidator</span>();
+        
+        <span class="cmt">// Read from command-line argument if provided, otherwise use fallback</span>
+        <span class="typ">String</span> testPassword = (args.length > <span class="num">0</span>) ? args[<span class="num">0</span>] : <span class="str">"Secur3P@ssw0rd"</span>;
+        
+        <span class="kw">boolean</span> isValid = validator.validatePassword(testPassword);
+        <span class="typ">System</span>.out.println(<span class="str">"Password valid? "</span> + isValid);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Line-by-Line Code Breakdown & Explanation</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Line 1</span>
+                <span><code>package com.accenture.ltt.codingstandards;</code> &mdash; Defines the namespace package. Prevents class naming collisions across large enterprise codebases.</span>
+              </li>
+              <li>
+                <span class="step-badge">Line 12</span>
+                <span><code>private static final int MIN_PASSWORD_LENGTH = 8;</code> &mdash; A class constant. <code>static</code> means only 1 copy exists in memory. <code>final</code> means its value can never be reassigned.</span>
+              </li>
+              <li>
+                <span class="step-badge">Line 20</span>
+                <span><code>if (password == null) { return false; }</code> &mdash; <strong>Defensive Programming</strong>. Calling <code>.length()</code> on a null reference would crash your server with a <code>NullPointerException</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">Line 30</span>
+                <span><code>(args.length > 0) ? args[0] : "..."</code> &mdash; Uses the ternary operator to check if command-line arguments were supplied in <code>args</code> before attempting array indexing.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.3 Variables, Data Types & The Strict Pass-By-Value Proof -->
+        <div id="concept-3" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.3 Variables, Data Types, Memory Allocation & The Pass-By-Value Proof</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-3')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Stack Memory vs Heap Memory</div>
+            <div class="analogy-content">
+              • <strong>Stack Memory (The Sticky Notepad on your desk):</strong> Fast, organized, temporary. Every time a method is called, Java slaps a fresh sticky note (Stack Frame) on your notepad. Local variables (<code>int x = 5</code>) are written right on the note. When the method finishes, the sticky note is ripped off and thrown in the trash instantly!
+              <br/>• <strong>Heap Memory (The Big Storage Warehouse):</strong> Large, flexible, shared. Whenever you say <code>new Employee()</code>, a large box is placed in the warehouse. Your sticky note (Stack) doesn't hold the whole box; it only writes down the warehouse aisle address (e.g. <code>Aisle 4, Shelf 12</code>) &mdash; that's an <strong>Object Reference</strong>.
+            </div>
+          </div>
+
+          <!-- Mermaid Stack vs Heap Allocation -->
+          <div class="diagram-container">
+            <div class="diagram-header">
+              <span class="diagram-title">&#128394; Architectural Memory Model: Stack Call Frames vs Heap Objects</span>
+              <span class="diagram-badge">Mermaid Diagram</span>
+            </div>
+            <div class="mermaid">
+graph LR
+    subgraph StackSpace ["Thread Stack (LIFO per Method Call)"]
+        Frame1["Stack Frame: main()<br/>- int age = 28<br/>- double salary = 95000.0<br/>- Employee empRef = 0x55AA (Memory Address)"]
+    end
+
+    subgraph HeapSpace ["Java Heap Space (Shared Object Storage)"]
+        EmpObject["Employee Object @ 0x55AA<br/>- String name = 'Alice'<br/>- int id = 101"]
+    end
+
+    Frame1 -->|Reference Address Pointer| EmpObject
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- DEEP DIVE: PASS-BY-VALUE EXPLANATION -->
+          <!-- ============================================== -->
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;">
+            <h4 style="color: var(--accent-blue); font-size: 1.15rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>&#128214; Master Class: Why Java is ALWAYS Strictly Pass-by-Value (Explained Simply)</span>
+            </h4>
+            <p style="color: #e2e8f0; font-size: 0.93rem; line-height: 1.7; margin-bottom: 1rem;">
+              One of the most failed interview questions in Java is: <em>"Does Java pass objects by reference or by value?"</em>
+              <br/>Many developers answer: <em>"Primitives are passed by value, but objects are passed by reference."</em>
+              <br/><strong style="color: var(--accent-red); font-size: 1rem;">THIS ANSWER IS 100% WRONG!</strong> In Java, <strong>everything is strictly passed by value, with zero exceptions</strong>.
+            </p>
+
+            <div class="analogy-box" style="background: rgba(0,0,0,0.4); border-left-color: var(--accent-yellow);">
+              <div class="analogy-title" style="color: var(--accent-yellow);">&#128273; The Hotel Key Card Analogy (Understand this once, remember forever)</div>
+              <div class="analogy-content" style="color: #fef08a;">
+                Imagine you check into a hotel room (Room 101).
+                <br/>• The <strong>Hotel Room</strong> itself is the <strong>Object living on the Heap</strong>.
+                <br/>• The <strong>Plastic Key Card</strong> in your wallet is the <strong>Reference Variable on your Stack</strong>. The key card holds the address code to Room 101.
+                <br/><br/>
+                Now, you call a method: <code>cleanRoom(keyCard)</code>. What does Java do?
+                <br/>1. <strong>Java makes a PHOTOCOPY of your key card!</strong> It gives the copy to the cleaner.
+                <br/>2. The cleaner takes their copy, goes to Room 101, opens the door, and repaints the walls blue (<code>room.setColor("blue")</code>).
+                <br/>3. When the method finishes, you walk back to Room 101 with your original key card. Are the walls blue? <strong>YES!</strong> Because both key cards unlocked the exact same physical room.
+                <br/>4. <strong>NOW HERE IS THE CRUCIAL TEST:</strong> Suppose while in the method, the cleaner throws their key card in the bin and gets a brand-new key card to Room 202 (<code>room = new Room(202)</code>).
+                <br/><strong>Does YOUR key card back in main() suddenly change to Room 202?</strong>
+                <br/><span style="color: #4ade80; font-weight: 700; font-size: 1rem;">OF COURSE NOT!</span> Your key card still opens Room 101! The cleaner only changed <em>their copy</em> of the key card.
+                <br/><br/>
+                <strong>Conclusion:</strong> Java did NOT pass the room by reference. Java copied the key card (the address value) and passed the copy by value!
+              </div>
+            </div>
+
+            <!-- Code Example Demonstrating Pass-By-Value Proof -->
+            <div class="code-box">
+              <div class="code-box-header">
+                <span class="code-filepath">&#128194; PassByValueProof.java &mdash; The Definitive Code Proof</span>
+                <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+              </div>
+              <pre><code><span class="kw">public class</span> <span class="typ">PassByValueProof</span> {
+
+    <span class="kw">static class</span> <span class="typ">Dog</span> {
+        <span class="typ">String</span> name;
+        <span class="typ">Dog</span>(<span class="typ">String</span> name) { <span class="kw">this</span>.name = name; }
+    }
+
+    <span class="kw">public static void</span> <span class="fn">modifyDog</span>(<span class="typ">Dog</span> d) {
+        <span class="cmt">// 1. Mutating the object through the copied reference</span>
+        d.name = <span class="str">"Max (Renamed)"</span>;
+
+        <span class="cmt">// 2. Attempting to reassign the reference to a brand new object</span>
+        d = <span class="kw">new</span> <span class="typ">Dog</span>(<span class="str">"Rocky (New Dog)"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"Inside method, dog name is: "</span> + d.name);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Dog</span> myDog = <span class="kw">new</span> <span class="typ">Dog</span>(<span class="str">"Buddy"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"1. Before method call: "</span> + myDog.name);
+
+        modifyDog(myDog);
+
+        <span class="cmt">// What will myDog.name print here?</span>
+        <span class="typ">System</span>.out.println(<span class="str">"2. After method call: "</span> + myDog.name);
+    }
+}</code></pre>
+            </div>
+
+            <div class="code-explanation-box">
+              <div class="explanation-title">&#128065; Output & Step-by-Step Execution Proof</div>
+              <p style="color: #93c5fd; font-family: var(--font-mono); margin-bottom: 0.75rem;">
+                Console Output:<br/>
+                1. Before method call: Buddy<br/>
+                Inside method, dog name is: Rocky (New Dog)<br/>
+                2. After method call: Max (Renamed)  &lt;--- NOT Rocky!
+              </p>
+              <ul class="explanation-list">
+                <li>
+                  <span class="step-badge">Step 1</span>
+                  <span>In <code>main()</code>, <code>myDog</code> is created. It holds the address <code>0x100</code> on the stack pointing to the Dog object named "Buddy" on the heap.</span>
+                </li>
+                <li>
+                  <span class="step-badge">Step 2</span>
+                  <span>When <code>modifyDog(myDog)</code> is called, Java makes a copy of address <code>0x100</code> and puts it into parameter variable <code>d</code> in a new stack frame.</span>
+                </li>
+                <li>
+                  <span class="step-badge">Step 3</span>
+                  <span><code>d.name = "Max (Renamed)"</code> follows address <code>0x100</code> to the heap and updates the name field. That change is visible everywhere.</span>
+                </li>
+                <li>
+                  <span class="step-badge">Step 4</span>
+                  <span><code>d = new Dog("Rocky")</code> creates a new object at address <code>0x200</code>. Variable <code>d</code> on the method's stack frame now points to <code>0x200</code>. But <code>myDog</code> back in <code>main()</code> STILL holds <code>0x100</code>!</span>
+                </li>
+                <li>
+                  <span class="step-badge">Step 5</span>
+                  <span>When <code>modifyDog()</code> exits, its stack frame is discarded. <code>myDog</code> in <code>main()</code> is completely untouched by the reassignment. That is conclusive proof that Java is pass-by-value!</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Primitive Data Types Table -->
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Primitive Type</th>
+                  <th>Bit Width</th>
+                  <th>Byte Size</th>
+                  <th>Value Range</th>
+                  <th>Default Value</th>
+                  <th>Wrapper Class</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>byte</code></td><td>8-bit</td><td>1 byte</td><td>-128 to 127</td><td><code>0</code></td><td><code>java.lang.Byte</code></td></tr>
+                <tr><td><code>short</code></td><td>16-bit</td><td>2 bytes</td><td>-32,768 to 32,767</td><td><code>0</code></td><td><code>java.lang.Short</code></td></tr>
+                <tr><td><code>int</code></td><td>32-bit</td><td>4 bytes</td><td>-2<sup>31</sup> to 2<sup>31</sup>-1 (~ &plusmn;2.14B)</td><td><code>0</code></td><td><code>java.lang.Integer</code></td></tr>
+                <tr><td><code>long</code></td><td>64-bit</td><td>8 bytes</td><td>-2<sup>63</sup> to 2<sup>63</sup>-1 (suffix <code>L</code>)</td><td><code>0L</code></td><td><code>java.lang.Long</code></td></tr>
+                <tr><td><code>float</code></td><td>32-bit</td><td>4 bytes</td><td>IEEE 754 floating point (suffix <code>f</code>)</td><td><code>0.0f</code></td><td><code>java.lang.Float</code></td></tr>
+                <tr><td><code>double</code></td><td>64-bit</td><td>8 bytes</td><td>IEEE 754 64-bit double precision</td><td><code>0.0d</code></td><td><code>java.lang.Double</code></td></tr>
+                <tr><td><code>char</code></td><td>16-bit</td><td>2 bytes</td><td>0 to 65,535 (Unicode UTF-16 code units)</td><td><code>'\u0000'</code></td><td><code>java.lang.Character</code></td></tr>
+                <tr><td><code>boolean</code></td><td>JVM-dep</td><td>1 bit logical</td><td><code>true</code> or <code>false</code></td><td><code>false</code></td><td><code>java.lang.Boolean</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Box: DatatypeDemo from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_Java_Introduction_Demos/JavaIntroductionDemos/src/com/accenture/ltt/DatatypeDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">public class</span> <span class="typ">DatatypeDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="kw">int</span> number = <span class="num">25</span>;             <span class="cmt">// 32-bit integer</span>
+        <span class="kw">double</span> price = <span class="num">19.99</span>;        <span class="cmt">// 64-bit IEEE 754 float</span>
+        <span class="kw">char</span> letter = <span class="str">'A'</span>;           <span class="cmt">// 16-bit Unicode character</span>
+        <span class="kw">boolean</span> flag = <span class="kw">true</span>;         <span class="cmt">// 1-bit boolean flag</span>
+
+        <span class="cmt">// Widening Type Casting (Implicit conversion: int -> double, no precision loss)</span>
+        <span class="kw">double</span> widenedVal = number;
+
+        <span class="cmt">// Narrowing Type Casting (Explicit cast: truncates decimal 19.99 to 19)</span>
+        <span class="kw">int</span> truncatedPrice = (<span class="kw">int</span>) price;
+
+        <span class="cmt">// Autoboxing (Primitive int automatically wrapped in java.lang.Integer)</span>
+        <span class="typ">Integer</span> boxed = number;
+
+        <span class="cmt">// Unboxing (Object unwrapped back to primitive)</span>
+        <span class="kw">int</span> unboxed = boxed;
+
+        <span class="cmt">// Local Variable Type Inference (Java 10+ var keyword)</span>
+        <span class="kw">var</span> message = <span class="str">"Inferred as java.lang.String at compile time"</span>;
+
+        <span class="typ">System</span>.out.println(<span class="str">"Widened: "</span> + widenedVal + <span class="str">" | Truncated: "</span> + truncatedPrice);
+        <span class="typ">System</span>.out.println(<span class="str">"Boxed: "</span> + boxed + <span class="str">" | Inferred: "</span> + message);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Type Casting & Conversions Explained</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Widening (Implicit)</span>
+                <span>Moving from smaller type to larger type (e.g. <code>int</code> &rarr; <code>double</code>). Like pouring water from a 1-liter bottle into a 5-liter bucket: guaranteed safe, no overflow, handled automatically by the compiler.</span>
+              </li>
+              <li>
+                <span class="step-badge">Narrowing (Explicit)</span>
+                <span>Moving from larger type to smaller type (e.g. <code>double</code> &rarr; <code>int</code>). Like pouring a 5-liter bucket of water into a 1-liter bottle: water will spill! Java forces you to explicitly write <code>(int) price</code>, acknowledging that decimals will be truncated (19.99 becomes 19).</span>
+              </li>
+              <li>
+                <span class="step-badge">Autoboxing & Unboxing</span>
+                <span>Introduced in Java 5. The compiler automatically converts primitives (<code>int</code>) to their wrapper objects (<code>Integer</code>) and back. <strong>Warning for Backend Engineers:</strong> Unboxing a <code>null</code> wrapper object (e.g. <code>Integer val = null; int x = val;</code>) throws a hidden <code>NullPointerException</code>!</span>
+              </li>
+              <li>
+                <span class="step-badge">var (Local Type Inference)</span>
+                <span>Introduced in Java 10. Java is STILL statically typed! The compiler infers the exact type at compile time based on the right-hand value. It is NOT dynamic typing like JavaScript.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.4 Operators & Precedence Hierarchy -->
+        <div id="concept-4" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.4 Operators, Bitwise Shifts & Precedence Hierarchy</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-4')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Short-Circuit AND (&&) vs Normal AND (&)</div>
+            <div class="analogy-content">
+              Imagine you have a security checklist: <em>1. Does the user have a VIP badge? AND 2. Call the manager to verify.</em>
+              <br/>• <strong>Short-circuit <code>&&</code>:</strong> If step 1 fails (user has NO VIP badge), there is zero reason to call the manager. The overall result is already false, so Java skips evaluating the second expression! This prevents null pointer crashes: <code>if (user != null && user.isActive())</code>.
+              <br/>• <strong>Bitwise / Non-short-circuit <code>&</code>:</strong> Checks both conditions unconditionally, even if the first was already false.
+            </div>
+          </div>
+
+          <!-- Code Box: OperatorDemo from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_Java_Introduction_Demos/JavaIntroductionDemos/src/com/accenture/ltt/OperatorDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">public class</span> <span class="typ">OperatorDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="kw">int</span> a = <span class="num">10</span>, b = <span class="num">5</span>;
+
+        <span class="cmt">// Arithmetic operators</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Addition: "</span> + (a + b));         <span class="cmt">// 15</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Multiplication: "</span> + (a * b));   <span class="cmt">// 50</span>
+
+        <span class="cmt">// Relational operator</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Is a > b? "</span> + (a > b));         <span class="cmt">// true</span>
+
+        <span class="cmt">// Short-circuit Logical AND (b < 10 is evaluated ONLY because a > 5 is true)</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Logical AND: "</span> + (a > <span class="num">5</span> && b &lt; <span class="num">10</span>)); <span class="cmt">// true</span>
+
+        <span class="cmt">// Bitwise shift operators: Left shift (a << 1) multiplies by 2</span>
+        <span class="kw">int</span> shifted = a &lt;&lt; <span class="num">1</span>; <span class="cmt">// 10 * 2 = 20</span>
+        <span class="typ">System</span>.out.println(<span class="str">"10 << 1 = "</span> + shifted);
+
+        <span class="cmt">// Ternary conditional operator: (condition) ? if_true : if_false</span>
+        <span class="typ">String</span> status = (a >= <span class="num">10</span>) ? <span class="str">"Eligible"</span> : <span class="str">"Ineligible"</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"Status: "</span> + status);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Line-by-Line Operator Mechanics & In-Memory Evaluation</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Line 12</span>
+                <span><code>(a > 5 && b < 10)</code> &mdash; <strong>Short-Circuit Evaluation:</strong> The JVM evaluates <code>a > 5</code> first. Since it evaluates to <code>true</code>, it proceeds to check <code>b < 10</code>. If the left side were <code>false</code>, the right side would NEVER be executed. This is vital in production: <code>if (order != null && order.isValid())</code> will never throw a <code>NullPointerException</code> because <code>order.isValid()</code> is skipped if <code>order</code> is null!</span>
+              </li>
+              <li>
+                <span class="step-badge">Line 15</span>
+                <span><code>a &lt;&lt; 1</code> &mdash; <strong>Bitwise Left Shift:</strong> Shifts bits in binary representation of 10 (<code>00001010</code>) 1 position left to become 20 (<code>00010100</code>). Mathematically equivalent to multiplying by <code>2^1</code>. Right shift (<code>>> 1</code>) divides by 2. This is the fastest arithmetic operation at the CPU register level.</span>
+              </li>
+              <li>
+                <span class="step-badge">Line 19</span>
+                <span><code>(a >= 10) ? "Eligible" : "Ineligible"</code> &mdash; <strong>Ternary Operator:</strong> A compact inline <code>if-else</code> expression. Returns one of two values based on a boolean condition. Preferred in clean Java for simple assignments without verbose <code>if-else</code> branching.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.5 Control Flow, Loops & Modern Switch -->
+        <div id="concept-5" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.5 Control Flow, Loops, Labeled Breaks & Switch Pattern Matching</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-5')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <!-- Code Box: LoopDemo from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../01_Java_Introduction_Demos/JavaIntroductionDemos/src/com/accenture/ltt/LoopDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">public class</span> <span class="typ">LoopDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. Classic for loop: Used when exact iteration count is known</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">3</span>; i++) {
+            <span class="typ">System</span>.out.println(<span class="str">"For loop count: "</span> + i);
+        }
+
+        <span class="cmt">// 2. While loop: Pre-tested condition (might execute 0 times if condition false)</span>
+        <span class="kw">int</span> j = <span class="num">1</span>;
+        <span class="kw">while</span> (j &lt;= <span class="num">3</span>) {
+            <span class="typ">System</span>.out.println(<span class="str">"While count: "</span> + j);
+            j++;
+        }
+
+        <span class="cmt">// 3. Do-While loop: Post-tested condition (GUARANTEED at least 1 execution)</span>
+        <span class="kw">int</span> k = <span class="num">10</span>;
+        <span class="kw">do</span> {
+            <span class="typ">System</span>.out.println(<span class="str">"Do-While executes once even though 10 < 5 is false!"</span>);
+        } <span class="kw">while</span> (k &lt; <span class="num">5</span>);
+
+        <span class="cmt">// 4. Labeled Break: Break completely out of NESTED outer loop directly</span>
+        searchBlock:
+        <span class="kw">for</span> (<span class="kw">int</span> row = <span class="num">0</span>; row &lt; <span class="num">3</span>; row++) {
+            <span class="kw">for</span> (<span class="kw">int</span> col = <span class="num">0</span>; col &lt; <span class="num">3</span>; col++) {
+                <span class="kw">if</span> (row == <span class="num">1</span> && col == <span class="num">1</span>) {
+                    <span class="typ">System</span>.out.println(<span class="str">"Target found at row 1, col 1! Breaking searchBlock..."</span>);
+                    <span class="kw">break</span> searchBlock; <span class="cmt">// Exits BOTH loops immediately</span>
+                }
+            }
+        }
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Loop Constructs & Labeled Jump Control Explained</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">For vs While</span>
+                <span>Use a <code>for</code> loop when bounds are deterministic. Use a <code>while</code> loop when waiting for an external event or dynamic state change (e.g. reading from a socket buffer until EOF).</span>
+              </li>
+              <li>
+                <span class="step-badge">Do-While Guarantee</span>
+                <span>The condition <code>(k &lt; 5)</code> is checked <em>after</em> the body executes. Even if initial conditions fail, the body runs at least once (ideal for interactive CLI menus: prompt user at least once before validating).</span>
+              </li>
+              <li>
+                <span class="step-badge">Labeled Break</span>
+                <span>Line 24: <code>break searchBlock;</code> &mdash; Normally, <code>break</code> only exits the innermost loop. By labeling the outer loop (<code>searchBlock:</code>), Java jumps entirely out of both nested loops without needing messy boolean flags!</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Pattern Matching Switch from Module 2 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../PatternSwitchDemo.java &mdash; Modern Java 17+ Switch</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.ui.tester.java17;
+
+<span class="kw">public class</span> <span class="typ">PatternSwitchDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">Object</span> obj = <span class="str">"Java 17 LTS Backend"</span>;
+
+        <span class="cmt">// Modern Java 17+ Pattern Matching Switch:</span>
+        <span class="cmt">// 1. No break statements needed (arrow syntax -> prevents fall-through bugs)</span>
+        <span class="cmt">// 2. Directly tests object type and binds cast variable (String s) in 1 step!</span>
+        <span class="cmt">// 3. Handles 'null' safely without NullPointerException</span>
+        <span class="typ">String</span> result = <span class="kw">switch</span> (obj) {
+            <span class="kw">case</span> <span class="typ">String</span> s -> <span class="str">"String of length "</span> + s.length() + <span class="str">": "</span> + s.toUpperCase();
+            <span class="kw">case</span> <span class="typ">Integer</span> i -> <span class="str">"Integer multiplied: "</span> + (i * <span class="num">2</span>);
+            <span class="kw">case null</span> -> <span class="str">"Safe null handling"</span>;
+            <span class="kw">default</span> -> <span class="str">"Other object type: "</span> + obj.getClass().getSimpleName();
+        };
+
+        <span class="typ">System</span>.out.println(result);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Java 17+ Pattern Matching Switch Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Switch as an Expression</span>
+                <span>Notice <code>String result = switch (obj) { ... };</code>. The switch evaluates directly to a value and assigns it to <code>result</code>. In older Java, switch was only a statement requiring mutable accumulator variables outside the block.</span>
+              </li>
+              <li>
+                <span class="step-badge">Pattern Matching (Type Test + Cast)</span>
+                <span><code>case String s -> ...</code> tests whether <code>obj</code> is an instance of <code>String</code> AND automatically casts it into variable <code>s</code> in one atomic step. Eliminates tedious, bug-prone manual casting (<code>if (obj instanceof String) { String s = (String) obj; }</code>).</span>
+              </li>
+              <li>
+                <span class="step-badge">Arrow Syntax (No Fall-Through)</span>
+                <span>The <code>-></code> operator executes only the matching branch and immediately returns. No <code>break;</code> statement is required, eliminating 30 years of accidental switch fall-through bugs.</span>
+              </li>
+              <li>
+                <span class="step-badge">Safe Null Handling</span>
+                <span>Historically, passing <code>null</code> into a switch statement threw an immediate <code>NullPointerException</code>. Java 17+ allows an explicit <code>case null -></code> branch to cleanly handle missing values.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.6 Methods, Arrays, Jagged Arrays & Varargs -->
+        <div id="concept-6" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.6 Methods, Arrays, Jagged Matrices & Variable-Length Arguments (Varargs)</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-6')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Jagged Arrays vs Regular 2D Arrays</div>
+            <div class="analogy-content">
+              • <strong>Regular 2D Array:</strong> A square grid or spreadsheet. Every row has the exact same number of columns (e.g. 3x3).
+              <br/>• <strong>Jagged (Ragged) Array:</strong> An apartment building where the 1st floor has 2 apartments, the 2nd floor has 5 apartments, and the 3rd floor has 1 penthouse apartment. In Java, a 2D array is simply an "array of arrays" &mdash; each inner array can have a completely different length!
+            </div>
+          </div>
+
+          <!-- Code Box: ArrayDemo from Module 1 -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 1.../02_Arrays_Strings_Demos/ArraysDemo/src/com/accenture/ltt/ArrayDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt;
+
+<span class="kw">import</span> java.util.Arrays;
+
+<span class="kw">public class</span> <span class="typ">ArrayDemo</span> {
+
+    <span class="cmt">// Varargs (int... numbers): Under the hood, the compiler creates an int[] array!</span>
+    <span class="kw">public static int</span> <span class="fn">calculateSum</span>(<span class="typ">String</span> label, <span class="kw">int</span>... numbers) {
+        <span class="kw">int</span> total = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> n : numbers) {
+            total += n;
+        }
+        <span class="typ">System</span>.out.println(label + <span class="str">": "</span> + total);
+        <span class="kw">return</span> total;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. One-dimensional array</span>
+        <span class="kw">int</span>[] scores = { <span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">95</span>, <span class="num">88</span> };
+
+        <span class="cmt">// Arrays utility class</span>
+        <span class="typ">Arrays</span>.sort(scores);
+        <span class="typ">System</span>.out.println(<span class="str">"Sorted scores: "</span> + <span class="typ">Arrays</span>.toString(scores));
+
+        <span class="cmt">// 2. Jagged (Ragged) Multidimensional Array</span>
+        <span class="kw">int</span>[][] jaggedMatrix = <span class="kw">new int</span>[<span class="num">3</span>][];
+        jaggedMatrix[<span class="num">0</span>] = <span class="kw">new int</span>[] { <span class="num">10</span>, <span class="num">20</span> };             <span class="cmt">// 2 elements</span>
+        jaggedMatrix[<span class="num">1</span>] = <span class="kw">new int</span>[] { <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>, <span class="num">60</span> };     <span class="cmt">// 4 elements</span>
+        jaggedMatrix[<span class="num">2</span>] = <span class="kw">new int</span>[] { <span class="num">70</span> };                 <span class="cmt">// 1 element</span>
+
+        <span class="cmt">// 3. Varargs method call: Can pass 0, 1, or many arguments</span>
+        calculateSum(<span class="str">"Department A Total"</span>, <span class="num">100</span>, <span class="num">250</span>, <span class="num">400</span>);
+        calculateSum(<span class="str">"Single Item"</span>, <span class="num">50</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Arrays, Jagged Matrices & Varargs Mechanics</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Memory Layout</span>
+                <span>In Java, arrays are objects stored on the <strong>Heap</strong>. An array variable (<code>int[] scores</code>) on the stack holds only a reference to the contiguous memory block on the heap. Accessing an index outside <code>[0, length - 1]</code> throws <code>ArrayIndexOutOfBoundsException</code> at runtime.</span>
+              </li>
+              <li>
+                <span class="step-badge">Jagged Array Structure</span>
+                <span>Line 24: <code>int[][] jaggedMatrix = new int[3][];</code> &mdash; This allocates an outer array of 3 object references on the heap, all initially <code>null</code>. Lines 25-27 allocate 3 separate inner arrays of varying lengths (2, 4, 1). This saves significant memory compared to allocating a rigid, oversized rectangular matrix.</span>
+              </li>
+              <li>
+                <span class="step-badge">Varargs Compilation</span>
+                <span>Line 6: <code>public static int calculateSum(String label, int... numbers)</code> &mdash; At compile time, <code>javac</code> replaces <code>int... numbers</code> with an actual array <code>int[] numbers</code>. When called with <code>calculateSum("Total", 100, 250, 400)</code>, Java quietly generates <code>new int[]{100, 250, 400}</code> behind the scenes.</span>
+              </li>
+              <li>
+                <span class="step-badge">Varargs Constraints</span>
+                <span>A method can have <strong>only ONE varargs parameter</strong>, and it <strong>MUST be the LAST parameter</strong> in the argument list. Otherwise, the compiler cannot disambiguate where ordinary arguments end and variable arguments begin.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.7 Method Overloading & Recursion with Call Stack Breakdown -->
+        <div id="concept-7" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">1.7 Method Overloading, Recursion & Call Stack Lifecycle</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-7')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <!-- Code Box: Method Overloading & Recursion with Call Stack Breakdown -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; MethodOverloadingAndRecursionDemo.java &mdash; Overloading vs Recursion</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">public class</span> <span class="typ">MethodOverloadingAndRecursionDemo</span> {
+
+    <span class="cmt">// Method Overloading: Same method name, different parameter signatures</span>
+    <span class="kw">public static int</span> <span class="fn">multiply</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+        <span class="kw">return</span> a * b;
+    }
+
+    <span class="kw">public static double</span> <span class="fn">multiply</span>(<span class="kw">double</span> a, <span class="kw">double</span> b) {
+        <span class="kw">return</span> a * b;
+    }
+
+    <span class="kw">public static int</span> <span class="fn">multiply</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, <span class="kw">int</span> c) {
+        <span class="kw">return</span> a * b * c;
+    }
+
+    <span class="cmt">// Recursion: Method calling itself with a mandatory Base Case</span>
+    <span class="kw">public static long</span> <span class="fn">factorial</span>(<span class="kw">int</span> n) {
+        <span class="cmt">// 1. BASE CASE: Stops infinite recursion and prevents StackOverflowError!</span>
+        <span class="kw">if</span> (n &lt;= <span class="num">1</span>) {
+            <span class="kw">return</span> <span class="num">1</span>;
+        }
+        <span class="cmt">// 2. RECURSIVE STEP: Method calls itself with smaller subproblem (n - 1)</span>
+        <span class="kw">return</span> n * factorial(n - <span class="num">1</span>);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// Compile-time polymorphism resolves the exact method from argument types:</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Overloaded int: "</span> + multiply(<span class="num">5</span>, <span class="num">4</span>));
+        <span class="typ">System</span>.out.println(<span class="str">"Overloaded double: "</span> + multiply(<span class="num">2.5</span>, <span class="num">4.0</span>));
+
+        <span class="cmt">// Recursion: 5! = 5 * 4 * 3 * 2 * 1 = 120</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Factorial of 5: "</span> + factorial(<span class="num">5</span>));
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Line-by-Line Breakdown: Method Overloading & The Recursive Call Stack</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Overloading Rule</span>
+                <span>Overloading is resolved at <strong>compile time</strong> by <code>javac</code> based on method name + parameter types/count. <strong>Warning:</strong> Changing ONLY the return type (e.g. <code>int foo()</code> vs <code>void foo()</code>) is NOT valid overloading and causes a compile error!</span>
+              </li>
+              <li>
+                <span class="step-badge">Recursion Base Case</span>
+                <span>Line 18: <code>if (n &lt;= 1) return 1;</code> &mdash; The crucial exit condition. Every recursive call pushes a new stack frame onto the thread stack. If the base case is omitted or unreachable, stack frames multiply endlessly until the JVM throws a fatal <strong><code>StackOverflowError</code></strong>!</span>
+              </li>
+              <li>
+                <span class="step-badge">Stack Unwinding</span>
+                <span><code>factorial(5)</code> pauses and calls <code>factorial(4)</code>, which calls <code>factorial(3)</code>... down to <code>factorial(1)</code>. Once the base case returns 1, each paused frame on the stack multiplies and unwinds back up to <code>main()</code> yielding 120.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        <div style="flex:1;"></div>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase02-oop.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Object-Oriented Programming (OOP) & Modern Class Design</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

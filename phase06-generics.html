@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generics & Compile-Time Type Safety &mdash; Core Java Enterprise Roadmap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle navigation">&#9776;</button>
+      <a href="index.html" class="brand-link">
+        <span class="brand-icon">&#9749;</span>
+        <span>Core Java Roadmap</span>
+      </a>
+      <span class="brand-badge">Enterprise Edition</span>
+      <div class="header-breadcrumbs">
+        <span class="sep">/</span>
+        <a href="index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span>Phase 6: Generics & PECS</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="global-tracker-pill">
+        <span class="progress-dot"></span>
+        <span id="globalProgressCount">0 / 35 (0%)</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <a href="phase07-functional-streams.html" class="nav-btn primary">Next &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <!-- Backdrop for mobile drawer -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+    <!-- Sidebar TOC -->
+    <aside class="sidebar-toc">
+      
+      <div class="sidebar-title">Phase Contents</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="#concept-1" class="toc-link" title="6.1 The PECS Principle (Producer Extends, Consumer Super) Explained Simply">
+            <span>6.1 The PECS Principle (Producer E...</span>
+            <span class="toc-badge">1</span>
+          </a>
+        </li>
+    
+      </ul>
+      <div class="sidebar-title" style="margin-top: 2rem;">Phase Switcher</div>
+      <ul class="toc-nav-list">
+  
+        <li>
+          <a href="phase01-fundamentals.html" class="toc-link ">
+            <span>Phase 1: Fundamentals</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase02-oop.html" class="toc-link ">
+            <span>Phase 2: OOP & Class Design</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase03-strings-objects.html" class="toc-link ">
+            <span>Phase 3: Strings & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase04-exceptions.html" class="toc-link ">
+            <span>Phase 4: Exception Handling</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase05-collections.html" class="toc-link ">
+            <span>Phase 5: Collections Framework</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase06-generics.html" class="toc-link active">
+            <span>Phase 6: Generics & PECS</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase07-functional-streams.html" class="toc-link ">
+            <span>Phase 7: Lambdas & Streams</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase08-multithreading.html" class="toc-link ">
+            <span>Phase 8: Multithreading</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase09-jvm-memory.html" class="toc-link ">
+            <span>Phase 9: JVM & Memory</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase10-io-serialization.html" class="toc-link ">
+            <span>Phase 10: File I/O & NIO.2</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase11-jdbc-persistence.html" class="toc-link ">
+            <span>Phase 11: JDBC Persistence</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="phase12-design-patterns.html" class="toc-link ">
+            <span>Phase 12: Design Patterns</span>
+          </a>
+        </li>
+    
+        <li>
+          <a href="projects-stages.html" class="toc-link ">
+            <span>Practice Projects & Stages</span>
+          </a>
+        </li>
+    </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="phase-hero-header">
+        <div class="phase-meta-bar">
+          <span class="phase-pill">Phase 6: Generics & PECS</span>
+          <span class="module-tag">&#128194; Module 1_ Collections part1 demos & Generic Type Safety</span>
+        </div>
+        <h1 class="page-title">Generics & Compile-Time Type Safety</h1>
+        <div class="textbook-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 8: Generic Programming (Type Parameters, Wildcards, and Erasure)</span>
+        </div>
+      </div>
+
+      <!-- Phase Body Content -->
+      <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-6">Phase 6</span>
+            <h2 class="section-title">Generics & Compile-Time Type Safety</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 1... \ Collections part1 demos & Generic Type Safety</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I — Chapter 8: Generic Programming (Type Parameters, Wildcards, and Erasure)</span>
+        </div>
+
+        <div id="concept-1" class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">6.1 The PECS Principle (Producer Extends, Consumer Super) Explained Simply</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p6-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Fruit Basket (PECS Decoded)</div>
+            <div class="analogy-content">
+              • <strong>Producer Extends (<code>? extends Fruit</code>):</strong> Imagine a basket that <em>produces</em> fruit for you to eat. You can reach in, pull out any item, and safely eat it as a <code>Fruit</code> (Apple, Orange, Banana). But you <strong>CANNOT put fruit into the basket</strong>! Why? Because the basket might specifically be a <code>List&lt;Apple&gt;</code> &mdash; if you tried putting an Orange in, you'd violate type safety!
+              <br/>• <strong>Consumer Super (<code>? super Apple</code>):</strong> Imagine a container that <em>consumes</em> apples (you deposit apples into it). It might be an Apple container, a Fruit container, or an Object container. You can safely deposit <code>Apple</code> objects into it all day! But when you read from it, you only get back <code>Object</code> because you don't know the exact parent container type.
+            </div>
+          </div>
+
+          <!-- Code Box: Generics and PECS -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; GenericsPecsDemo.java &mdash; PECS Principle in Action</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.generics;
+
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="typ">GenericsPecsDemo</span> {
+
+    <span class="cmt">// PRODUCER EXTENDS (? extends Number):</span>
+    <span class="cmt">// The list PRODUCES numbers for us to read and calculate the sum.</span>
+    <span class="kw">public static double</span> <span class="fn">sumOfList</span>(<span class="typ">List</span>&lt;? <span class="kw">extends</span> <span class="typ">Number</span>&gt; list) {
+        <span class="kw">double</span> sum = <span class="num">0.0</span>;
+        <span class="kw">for</span> (<span class="typ">Number</span> n : list) {
+            sum += n.doubleValue(); <span class="cmt">// Safe to read!</span>
+        }
+        <span class="cmt">// list.add(10); // COMPILE ERROR: Cannot add to a producer collection!</span>
+        <span class="kw">return</span> sum;
+    }
+
+    <span class="cmt">// CONSUMER SUPER (? super Integer):</span>
+    <span class="cmt">// The list CONSUMES integers we write into it.</span>
+    <span class="kw">public static void</span> <span class="fn">addIntegers</span>(<span class="typ">List</span>&lt;? <span class="kw">super</span> <span class="typ">Integer</span>&gt; list) {
+        list.add(<span class="num">100</span>); <span class="cmt">// Safe to write!</span>
+        list.add(<span class="num">200</span>);
+        <span class="cmt">// Number n = list.get(0); // COMPILE ERROR: Can only read as Object!</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; The PECS Principle (Effective Java Item 31) Breakdown</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Producer Extends (? extends T)</span>
+                <span>Lines 6-13: Use when your method reads items <strong>out</strong> of the collection. You can pass a <code>List&lt;Integer&gt;</code>, <code>List&lt;Double&gt;</code>, or <code>List&lt;BigDecimal&gt;</code> into <code>sumOfList</code>, and every element is guaranteed to be a <code>Number</code>. Writing to it is banned by the compiler because Java cannot verify the actual underlying list type.</span>
+              </li>
+              <li>
+                <span class="step-badge">Consumer Super (? super T)</span>
+                <span>Lines 17-21: Use when your method writes items <strong>into</strong> the collection. You can pass <code>List&lt;Integer&gt;</code>, <code>List&lt;Number&gt;</code>, or <code>List&lt;Object&gt;</code>, and safely append <code>Integer</code> objects. Reading yields only <code>Object</code> references.</span>
+              </li>
+              <li>
+                <span class="step-badge">Type Invariance</span>
+                <span>Remember: In Java, <code>List&lt;Integer&gt;</code> is NOT a subtype of <code>List&lt;Number&gt;</code> (Generics are invariant). Wildcards (<code>? extends</code> / <code>? super</code>) provide the covariance and contravariance needed for flexible enterprise APIs.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Core Collections in Action -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; CollectionsCoreDemo.java &mdash; ArrayList, LinkedList, HashSet, TreeSet</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="typ">CollectionsCoreDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. ArrayList: O(1) random access, backed by resizable array</span>
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; arrayList = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+        arrayList.add(<span class="str">"Java"</span>);
+        arrayList.add(<span class="str">"Spring"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"ArrayList get(0): "</span> + arrayList.get(<span class="num">0</span>));
+
+        <span class="cmt">// 2. HashSet: O(1) average lookup, eliminates duplicates using HashMap keys</span>
+        <span class="typ">Set</span>&lt;<span class="typ">String</span>&gt; hashSet = <span class="kw">new</span> <span class="typ">HashSet</span>&lt;&gt;();
+        hashSet.add(<span class="str">"Duplicate"</span>);
+        hashSet.add(<span class="str">"Duplicate"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"HashSet size: "</span> + hashSet.size()); <span class="cmt">// Prints 1!</span>
+
+        <span class="cmt">// 3. TreeSet: O(log n) lookup, elements always sorted via Red-Black Tree</span>
+        <span class="typ">Set</span>&lt;<span class="typ">Integer</span>&gt; treeSet = <span class="kw">new</span> <span class="typ">TreeSet</span>&lt;&gt;(java.util.List.of(<span class="num">50</span>, <span class="num">10</span>, <span class="num">30</span>));
+        <span class="typ">System</span>.out.println(<span class="str">"TreeSet automatically sorted: "</span> + treeSet); <span class="cmt">// [10, 30, 50]</span>
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Core Collections Time Complexities & Memory Footprints</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">ArrayList (O(1) Get / O(N) Insert)</span>
+                <span>Lines 4-7: Contiguous memory layout. Random access by index (<code>get(i)</code>) is blazing fast O(1). Inserting into the middle requires shifting subsequent elements (<code>System.arraycopy</code>) taking O(N) time. Grows by 50% (<code>oldCapacity + (oldCapacity >> 1)</code>) when full.</span>
+              </li>
+              <li>
+                <span class="step-badge">HashSet (O(1) Average Put/Get)</span>
+                <span>Lines 10-14: Backed by an internal <code>HashMap</code> instance where your elements serve as map keys and a dummy constant <code>PRESENT = new Object()</code> serves as the value. Guarantees uniqueness through <code>hashCode()</code> and <code>equals()</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">TreeSet (O(log N) Sorted Navigable)</span>
+                <span>Lines 17-19: Backed by a <strong>Red-Black Tree</strong> (self-balancing binary search tree). Elements are kept in sorted order at all times. Search, insertion, and deletion are guaranteed O(log N).</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Fail-Fast Iterator & ConcurrentModificationException -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; FailFastIteratorDemo.java &mdash; How to Avoid ConcurrentModificationException</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="typ">FailFastIteratorDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; list = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;(java.util.List.of(<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>));
+
+        <span class="cmt">// BUG: Modifying collection directly inside foreach loop throws ConcurrentModificationException!</span>
+        <span class="kw">try</span> {
+            <span class="kw">for</span> (<span class="typ">String</span> item : list) {
+                <span class="kw">if</span> (item.equals(<span class="str">"B"</span>)) list.remove(item); <span class="cmt">// modCount mismatch!</span>
+            }
+        } <span class="kw">catch</span> (<span class="typ">ConcurrentModificationException</span> e) {
+            <span class="typ">System</span>.err.println(<span class="str">"Crash: Modifying list during enhanced for-loop!"</span>);
+        }
+
+        <span class="cmt">// SOLUTION: Use explicit Iterator.remove() or Collection.removeIf()</span>
+        <span class="typ">Iterator</span>&lt;<span class="typ">String</span>&gt; it = list.iterator();
+        <span class="kw">while</span> (it.hasNext()) {
+            <span class="kw">if</span> (it.next().equals(<span class="str">"B"</span>)) {
+                it.remove(); <span class="cmt">// Safe! Updates expectedModCount cleanly.</span>
+            }
+        }
+        <span class="typ">System</span>.out.println(<span class="str">"Cleanly modified list: "</span> + list);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; The Fail-Fast Iterator & modCount Internal Trap</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">What Causes CME?</span>
+                <span>Every collection maintains an internal integer counter called <code>modCount</code> (modification count). When you call <code>list.iterator()</code>, the iterator copies this value into <code>expectedModCount</code>.</span>
+              </li>
+              <li>
+                <span class="step-badge">The modCount Mismatch</span>
+                <span>In line 8, calling <code>list.remove(item)</code> increments <code>modCount</code> on the list. But the iterator's <code>expectedModCount</code> was NOT updated. On the next loop pass, <code>it.next()</code> checks <code>if (modCount != expectedModCount)</code> and immediately throws <strong><code>ConcurrentModificationException</code></strong>!</span>
+              </li>
+              <li>
+                <span class="step-badge">The Safe Solutions</span>
+                <span>(1) Use <code>it.remove()</code>, which updates both <code>modCount</code> and <code>expectedModCount</code> simultaneously. (2) In Java 8+, use <code>list.removeIf(item -> item.equals("B"))</code>. (3) In multi-threaded systems, use <code>CopyOnWriteArrayList</code> or <code>ConcurrentLinkedQueue</code>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Generic Repository Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; GenericRepositoryDemo.java &mdash; Generic Class with Type Bounds</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">import</span> java.util.*;
+
+<span class="cmt">// Generic Class with bounded type: ID must be a Number or subclass</span>
+<span class="kw">public class</span> <span class="typ">GenericRepositoryDemo</span>&lt;<span class="typ">T</span>, <span class="typ">ID extends Number</span>&gt; {
+    <span class="kw">private final</span> <span class="typ">Map</span>&lt;<span class="typ">ID</span>, <span class="typ">T</span>&gt; storage = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="fn">save</span>(<span class="typ">ID</span> id, <span class="typ">T</span> entity) {
+        storage.put(id, entity);
+    }
+
+    <span class="kw">public</span> <span class="typ">Optional</span>&lt;<span class="typ">T</span>&gt; <span class="fn">findById</span>(<span class="typ">ID</span> id) {
+        <span class="kw">return</span> <span class="typ">Optional</span>.ofNullable(storage.get(id));
+    }
+
+    <span class="cmt">// Generic Method with independent type parameter &lt;R&gt;</span>
+    <span class="kw">public</span> &lt;<span class="typ">R</span>&gt; <span class="typ">List</span>&lt;<span class="typ">R</span>&gt; <span class="fn">transformAll</span>(java.util.function.Function&lt;<span class="typ">T</span>, <span class="typ">R</span>&gt; transformer) {
+        <span class="typ">List</span>&lt;<span class="typ">R</span>&gt; results = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="typ">T</span> item : storage.values()) {
+            results.add(transformer.apply(item));
+        }
+        <span class="kw">return</span> results;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="typ">String</span>[] args) {
+        <span class="typ">GenericRepositoryDemo</span>&lt;<span class="typ">String</span>, <span class="typ">Long</span>&gt; repo = <span class="kw">new</span> <span class="typ">GenericRepositoryDemo</span>&lt;&gt;();
+        repo.save(<span class="num">1L</span>, <span class="str">"Order-1001"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"Found: "</span> + repo.findById(<span class="num">1L</span>).orElse(<span class="str">"Not found"</span>));
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="explanation-title">&#128065; Generics Type Bounds & Type Erasure in Production</div>
+            <ul class="explanation-list">
+              <li>
+                <span class="step-badge">Bounded Type Parameters (&lt;ID extends Number&gt;)</span>
+                <span>Line 3: Bounding <code>ID</code> to <code>Number</code> guarantees that only <code>Long</code>, <code>Integer</code>, <code>Double</code>, etc. can be passed as ID keys. Passing <code>String</code> or <code>User</code> triggers an immediate compile error.</span>
+              </li>
+              <li>
+                <span class="step-badge">Generic Method (&lt;R&gt; List&lt;R&gt;)</span>
+                <span>Line 15: Demonstrates a generic method introducing its own independent type parameter <code>&lt;R&gt;</code> before the return type. Transforms entities into any caller-specified projection DTO.</span>
+              </li>
+              <li>
+                <span class="step-badge">Type Erasure Under the Hood</span>
+                <span>Java implements generics through <strong>Type Erasure</strong> for backward compatibility with pre-Java 5 bytecode. At compile time, the compiler strips <code>&lt;T&gt;</code> and replaces it with <code>Object</code> (or with the upper bound <code>Number</code> for <code>ID</code>), inserting synthetic casts where necessary. At runtime, generic type arguments do not exist in the JVM bytecode!</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      <!-- Bottom Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase05-collections.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous Phase</span>
+          <span class="page-nav-title">Collections Framework & Low-Level Data Structures</span>
+        </a>
+        
+        <a href="index.html" class="nav-btn" style="padding: 0.85rem 1.4rem;">
+          &#9776; View All Phases
+        </a>
+
+        
+        <a href="phase07-functional-streams.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">Functional Programming, Lambdas & Modern Streams</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
