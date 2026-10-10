@@ -1049,3 +1049,400 @@ pre code {
     width: 100%;
   }
 }
+
+
+/* ==========================================================================
+   ENTERPRISE CURRICULUM TOOLBAR, MATRIX CARDS & MILESTONES (MOBILE-FIRST)
+   ========================================================================== */
+
+.curriculum-toolbar {
+  margin-bottom: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.search-box-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #e6edf3;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238b949e'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.85rem center;
+  background-size: 16px;
+}
+
+.search-input:focus {
+  border-color: #58a6ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.25);
+  background-color: #0d1117;
+}
+
+.search-input::placeholder {
+  color: #6e7681;
+}
+
+/* Scrollable Horizontal Filter Carousel */
+.track-filter-pills {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.2rem 0.1rem;
+}
+
+.track-filter-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-pill {
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: #21262d;
+  color: #8b949e;
+  border: 1px solid #30363d;
+  border-radius: 20px;
+  padding: 0.45rem 0.95rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.filter-pill:hover {
+  background: #30363d;
+  color: #e6edf3;
+  border-color: #8b949e;
+}
+
+.filter-pill.active {
+  background: #1f6feb;
+  color: #ffffff;
+  border-color: #58a6ff;
+  box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
+}
+
+/* Track Sections & Header */
+.track-section {
+  margin-bottom: 2.75rem;
+}
+
+.track-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.6);
+}
+
+.track-badge {
+  background: rgba(88, 166, 255, 0.15);
+  color: #58a6ff;
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.track-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e6edf3;
+  letter-spacing: -0.01em;
+}
+
+/* Grid of Cards */
+.matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.matrix-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #1f6feb, #2ea043);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.matrix-card:hover {
+  border-color: #58a6ff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.matrix-card:hover::before {
+  opacity: 1;
+}
+
+.matrix-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.matrix-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #79c0ff;
+  background: rgba(56, 139, 253, 0.12);
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.matrix-time {
+  font-size: 0.78rem;
+  color: #8b949e;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.matrix-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.matrix-title a {
+  color: #e6edf3;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.matrix-title a:hover {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.matrix-desc {
+  font-size: 0.85rem;
+  color: #8b949e;
+  line-height: 1.55;
+  margin-bottom: 1.15rem;
+  flex-grow: 1;
+}
+
+.matrix-meta {
+  margin-bottom: 1rem;
+}
+
+.matrix-tag {
+  display: inline-block;
+  font-size: 0.74rem;
+  color: #a5d6ff;
+  background: rgba(56, 139, 253, 0.08);
+  border: 1px solid rgba(56, 139, 253, 0.2);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+.btn-matrix-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #58a6ff;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-matrix-link:hover {
+  background: #1f6feb;
+  color: #ffffff;
+  border-color: #58a6ff;
+  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.3);
+  text-decoration: none;
+}
+
+/* Master Checklist & Milestones */
+.master-checklist-section {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid #30363d;
+}
+
+.checklist-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.checklist-subtitle {
+  font-size: 0.88rem;
+  color: #8b949e;
+  margin-top: 0.25rem;
+}
+
+.milestones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.75rem;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  transition: all 0.15s ease;
+}
+
+.milestone-item:hover {
+  border-color: #8b949e;
+  background: #21262d;
+}
+
+.milestone-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.milestone-phase {
+  background: #21262d;
+  color: #58a6ff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  border: 1px solid #30363d;
+  flex-shrink: 0;
+}
+
+.milestone-title {
+  font-size: 0.85rem;
+  color: #e6edf3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   ADVANCED MOBILE RESPONSIVE OPTIMIZATIONS (Smartphones 320px - 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 0.85rem;
+  }
+  
+  .brand-tag {
+    display: none !important;
+  }
+  
+  .brand-title {
+    font-size: 0.92rem;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-actions .btn-header:not(.primary) {
+    display: none !important;
+  }
+
+  .header-actions .progress-pill {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .app-main {
+    padding: 1.25rem 0.95rem 4rem;
+  }
+
+  .phase-h1 {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .phase-lead {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .matrix-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .milestones-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .milestone-item {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .milestone-title {
+    font-size: 0.82rem;
+  }
+  
+  .concept-card {
+    padding: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1.05rem;
+  }
+}

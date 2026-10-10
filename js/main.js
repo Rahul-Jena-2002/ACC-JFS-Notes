@@ -1,12 +1,14 @@
-/* ==========================================================================
-   DEVELOPER PORTAL ENGINE (Clean Developer Edition)
+const fs = require('fs');
+
+const updatedJs = `/* ==========================================================================
+   DEVELOPER PORTAL ENGINE (Clean Enterprise Edition)
    ========================================================================== */
 
 (function() {
   'use strict';
 
   const STORAGE_PREFIX = 'java_mastery_';
-  const TOTAL_ITEMS = 40;
+  const TOTAL_ITEMS = 44;
 
   document.addEventListener('DOMContentLoaded', () => {
     initChecklist();
@@ -18,13 +20,14 @@
     updateProgressDisplay();
   });
 
+  // 1. Checklist State
   function initChecklist() {
     document.querySelectorAll('.checklist-btn').forEach(btn => {
       let itemId = btn.getAttribute('data-item-id');
       if (!itemId) {
         const onclickAttr = btn.getAttribute('onclick');
         if (onclickAttr) {
-          const match = onclickAttr.match(/toggleCompleted\(this,\s*'([^']+)'\)/);
+          const match = onclickAttr.match(/toggleCompleted\\(this,\\s*'([^']+)'\\)/);
           if (match) itemId = match[1];
         }
       }
@@ -67,61 +70,88 @@
     const pct = Math.min(100, Math.round((completed / TOTAL_ITEMS) * 100));
 
     const pill = document.getElementById('globalProgressCount');
-    if (pill) pill.textContent = completed + ' / ' + TOTAL_ITEMS + ' (' + pct + '%)';
+    if (pill) {
+      pill.textContent = \`\${completed} / \${TOTAL_ITEMS} (\${pct}%)\`;
+    }
 
-    const countStat = document.getElementById('statCompletedCount');
-    if (countStat) countStat.textContent = completed;
-
-    const pctStat = document.getElementById('statPctCount');
-    if (pctStat) pctStat.textContent = pct + '%';
-
-    const barFill = document.getElementById('statProgressBarFill');
-    if (barFill) barFill.style.width = pct + '%';
+    const counter = document.getElementById('milestoneCounter');
+    if (counter) {
+      counter.textContent = \`\${completed} / \${TOTAL_ITEMS} Completed\`;
+    }
   }
 
+  // 2. Filter Pills & Live Search
   let activeTrack = 'all';
 
   function initFilterTabs() {
-    const btns = document.querySelectorAll('.filter-btn');
-    btns.forEach(btn => {
+    const pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(btn => {
       btn.addEventListener('click', function() {
-        btns.forEach(b => b.classList.remove('active'));
+        pills.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
-        activeTrack = this.getAttribute('data-track') || 'all';
+        activeTrack = this.getAttribute('data-filter') || 'all';
         applyFilters();
       });
     });
   }
 
   function initLiveSearch() {
-    const input = document.getElementById('syllabusSearch');
-    if (!input) return;
-    input.addEventListener('input', applyFilters);
+    const searchInput = document.getElementById('curriculumSearch') || document.getElementById('syllabusSearch');
+    if (!searchInput) return;
+    searchInput.addEventListener('input', applyFilters);
   }
 
   function applyFilters() {
-    const input = document.getElementById('syllabusSearch');
-    const q = input ? input.value.toLowerCase().trim() : '';
-    const rows = document.querySelectorAll('.module-row');
+    const searchInput = document.getElementById('curriculumSearch') || document.getElementById('syllabusSearch');
+    const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    rows.forEach(row => {
-      const track = row.getAttribute('data-track') || '';
-      const matchesTrack = (activeTrack === 'all' || track.includes(activeTrack));
+    // Filter track sections & matrix cards
+    const trackSections = document.querySelectorAll('.track-section');
+    trackSections.forEach(sec => {
+      const trackId = sec.getAttribute('data-track-id');
+      const matchesTrack = (activeTrack === 'all' || activeTrack === trackId);
 
-      const title = row.querySelector('.module-row-title')?.textContent.toLowerCase() || '';
-      const desc = row.querySelector('.module-row-desc')?.textContent.toLowerCase() || '';
-      const tags = row.querySelector('.module-row-tags')?.textContent.toLowerCase() || '';
+      const cards = sec.querySelectorAll('.matrix-card');
+      let visibleCards = 0;
 
-      const matchesQuery = (!q || title.includes(q) || desc.includes(q) || tags.includes(q));
+      cards.forEach(card => {
+        const title = card.querySelector('.matrix-title')?.textContent.toLowerCase() || '';
+        const desc = card.querySelector('.matrix-desc')?.textContent.toLowerCase() || '';
+        const tag = card.querySelector('.matrix-tag')?.textContent.toLowerCase() || '';
+        const matchesQuery = (!q || title.includes(q) || desc.includes(q) || tag.includes(q));
+
+        if (matchesTrack && matchesQuery) {
+          card.style.display = 'flex';
+          visibleCards++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (matchesTrack && visibleCards > 0) {
+        sec.style.display = 'block';
+      } else {
+        sec.style.display = 'none';
+      }
+    });
+
+    // Filter milestones
+    const milestones = document.querySelectorAll('.milestone-item');
+    milestones.forEach(item => {
+      const itemTrack = item.getAttribute('data-track');
+      const matchesTrack = (activeTrack === 'all' || activeTrack === itemTrack);
+      const title = item.querySelector('.milestone-title')?.textContent.toLowerCase() || '';
+      const matchesQuery = (!q || title.includes(q));
 
       if (matchesTrack && matchesQuery) {
-        row.style.display = 'flex';
+        item.style.display = 'flex';
       } else {
-        row.style.display = 'none';
+        item.style.display = 'none';
       }
     });
   }
 
+  // 3. Copy Code Buttons
   function initCopyButtons() {
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -155,6 +185,7 @@
     });
   };
 
+  // 4. Toast Notification
   function showToast(msg) {
     let toast = document.getElementById('appToast');
     if (!toast) {
@@ -171,16 +202,44 @@
     }, 2000);
   }
 
+  // 5. Mobile Navigation Drawer
   function initMobileNav() {
     const toggle = document.getElementById('menuToggle');
     const sidebar = document.querySelector('.app-sidebar');
     if (!toggle || !sidebar) return;
 
+    let backdrop = document.getElementById('drawerBackdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'drawerBackdrop';
+      backdrop.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(3px);z-index:98;display:none;';
+      document.body.appendChild(backdrop);
+    }
+
     toggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
+      const isOpen = sidebar.classList.toggle('open');
+      backdrop.style.display = isOpen ? 'block' : 'none';
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    backdrop.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      backdrop.style.display = 'none';
+      document.body.style.overflow = '';
+    });
+
+    sidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 900) {
+          sidebar.classList.remove('open');
+          backdrop.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
     });
   }
 
+  // 6. Mermaid Init
   function initMermaid() {
     if (typeof mermaid !== 'undefined') {
       try {
@@ -189,14 +248,25 @@
           theme: 'dark',
           themeVariables: {
             darkMode: true,
-            background: '#0b0e14',
+            background: '#161b22',
             primaryColor: '#1f6feb',
             primaryTextColor: '#e6edf3',
-            lineColor: '#58a6ff'
+            lineColor: '#58a6ff',
+            secondaryColor: '#238636',
+            tertiaryColor: '#21262d'
           }
         });
-      } catch (e) {}
+      } catch(e) {}
     }
   }
 
 })();
+`;
+
+['g:/ACC Backend/js/main.js', 'G:/Projects/ACC ALV Learn/js/main.js'].forEach(p => {
+  fs.writeFileSync(p, updatedJs, 'utf8');
+  console.log('Saved updated js in', p);
+});
+`;
+
+fs.writeFileSync('C:/Users/rahul/.gemini/antigravity-ide/brain/89e13bcf-e481-4ed6-9a86-9b98a2012962/scratch/upgrade_js.js', updatedJs, 'utf8');
