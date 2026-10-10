@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java 8 LTS &bull; Functional Interfaces, Lambdas, Method References & Streams &bull; Core Java Developer Reference</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 07</span>
+    </div>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
+      </div>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase08-lts-java11.html" class="btn-header primary">Next: P08 &rarr;</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="active">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
+
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 07</span>
+        </div>
+        <h1 class="phase-h1">Java 8 LTS &bull; Functional Interfaces, Lambdas, Method References & Streams</h1>
+        <div class="source-mapping-bar">
+          <span>&#128194; <strong>Repository Module:</strong> Module 2_ Java LTS Features \ 01_Java8_Demos</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I — Chapter 6: Interfaces and Lambda Expressions &bull; Volume II — Chapter 1: Streams</span>
+        </div>
+      </div>
+
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+      <section id="phase-7" class="phase-section" data-phase-id="7">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-7">Phase 7</span>
+            <h2 class="section-title">Java 8 LTS &bull; Functional Interfaces, Lambdas, Method References & Streams</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 2_ Java LTS Features \ 01_Java8_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Cay S. Horstmann &bull; Volume I &mdash; Chapter 6: Interfaces, Lambda Expressions &bull; Volume II &mdash; Chapter 1: Streams</span>
+        </div>
+
+        <!-- 7.1 Functional Interfaces & Lambdas -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">7.1 Single Abstract Method (SAM) Interfaces, Lambdas & Method References</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p7-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 6, Section 6.2 ("Lambda Expressions")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;A lambda expression is a block of code with parameters that can be passed to other methods. In Java, you can pass code around by using lambda expressions with functional interfaces—interfaces with a single abstract method. The Java compiler translates a lambda expression into a private method inside the containing class and invokes it using the invokedynamic bytecode instruction, avoiding the class generation overhead of anonymous inner classes.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">SAM Axiom</span>
+                <span><strong>Single Abstract Method Requirement:</strong> Any interface with exactly one abstract method is a Functional Interface (annotated with <code>@FunctionalInterface</code>). Default and static methods do not count toward this limit.</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Method Reference Syntax</span>
+                <span><strong>Four Forms:</strong> <code>Class::staticMethod</code>, <code>instance::instanceMethod</code>, <code>Class::instanceMethod</code>, and Constructor References <code>Class::new</code>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: Passing Code as a Recipe vs Hiring a Chef</div>
+            <div class="analogy-content">
+              In Java 7, if you wanted to tell a method how to sort pizzas, you had to hire an entire temporary chef (create an Anonymous Inner Class with boilerplate <code>new Comparator&lt;Pizza&gt;() { public int compare(...) {...} }</code>).
+              <br/>In <strong>Java 8</strong>, you simply text the recipe directly: <code>(p1, p2) -> p1.getPrice() - p2.getPrice()</code>! You pass pure behavior as data.
+            </div>
+          </div>
+
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Lambda vs Anonymous Inner Class Memory Secret</div>
+            <div class="protip-content">
+              <strong>Anonymous Inner Classes:</strong> Generate a physical <code>Outer$1.class</code> file on disk and allocate a distinct object on the Heap every single time!
+              <br/><strong>Lambdas:</strong> Do NOT generate separate class files. The HotSpot compiler uses the <code>invokedynamic</code> (INDY) bytecode opcode with <code>LambdaMetafactory</code>, generating lightweight function pointers that avoid heap allocation overhead!
+            </div>
+          </div>
+
+          <!-- Code Box: Workspace Constructor Reference Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../Tester1003NeedOfMethodReferenceConstructor.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.mr.custom.interfaces;
+
+<span class="kw">class</span> <span class="typ">Customer</span> {
+    <span class="kw">private</span> <span class="typ">String</span> name;
+    <span class="kw">public</span> <span class="typ">Customer</span>(<span class="typ">String</span> name) {
+        <span class="kw">this</span>.name = name;
+    }
+    <span class="kw">public</span> <span class="typ">String</span> getName() { <span class="kw">return</span> name; }
+}
+
+<span class="annotation">@FunctionalInterface</span>
+<span class="kw">interface</span> <span class="typ">CustomerFactory</span> {
+    <span class="typ">Customer</span> create(<span class="typ">String</span> name);
+}
+
+<span class="kw">public class</span> <span class="typ">Tester1003NeedOfMethodReferenceConstructor</span> {
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. Traditional Lambda syntax</span>
+        <span class="typ">CustomerFactory</span> f1 = name -> <span class="kw">new</span> <span class="typ">Customer</span>(name);
+        
+        <span class="cmt">// 2. Elegant Java 8 Constructor Method Reference: Class::new</span>
+        <span class="typ">CustomerFactory</span> f2 = <span class="typ">Customer</span>::<span class="kw">new</span>;
+        
+        <span class="typ">Customer</span> c = f2.create(<span class="str">"Mohpreet Singh"</span>);
+        <span class="typ">System</span>.out.println(<span class="str">"Created customer: "</span> + c.getName());
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Method Reference Mechanics</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Line 15:</span> <code>Customer::new</code> binds directly to the single-argument constructor <code>Customer(String)</code> matching the SAM signature of <code>CustomerFactory.create(String)</code>.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Runtime:</span> No intermediate adapter class is loaded. The JVM invokes the constructor directly through the invokedynamic call site.
+            </div>
+          </div>
+        </div>
+
+        <!-- 7.2 Modern Streams & Lazy Pipelines -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">7.2 Java 8 Streams API: Pipelines, Lazy Evaluation & Collectors</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p7-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume II &mdash; Chapter 1, Section 1.1 ("From Iterating to Stream Operations")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Streams differ from collections in three crucial ways:
+              1. A stream does not store its elements; they may be stored in an underlying collection or generated on demand.
+              2. Stream operations do not mutate their source; they return a new stream with the results.
+              3. Stream operations are lazily evaluated when possible. They are not carried out until an ultimate terminal operation requests the result.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Lazy Pipeline Rule</span>
+                <span><strong>No Terminal = Zero Execution:</strong> Intermediate operations (<code>filter()</code>, <code>map()</code>, <code>peek()</code>) execute NOTHING until a terminal operation (<code>collect()</code>, <code>count()</code>, <code>forEach()</code>) pulls elements.</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Short-Circuiting</span>
+                <span><strong>O(1) Optimization:</strong> Operations like <code>findFirst()</code>, <code>anyMatch()</code>, and <code>limit(n)</code> terminate the pipeline immediately without traversing remaining stream elements.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Factory Assembly Line Conveyor Belt</div>
+            <div class="analogy-content">
+              Imagine an automated car manufacturing line:
+              <br/>• <strong>Intermediate Operations (filter, map):</strong> These are robotic arms stationed along the conveyor belt (e.g., "paint blue", "reject defective parts"). If the conveyor belt is turned off, the robots do nothing!
+              <br/>• <strong>Terminal Operation (collect):</strong> Turning on the master switch at the shipping warehouse. Parts are pulled down the conveyor belt one by one, transformed in-flight, and packed into shipping crates!
+            </div>
+          </div>
+
+          <!-- Code Box: Stream Filtering & Collecting from Workspace -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../Tester1001Filter.java & Tester1003Collect.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.nonterminal;
+
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Map;
+<span class="kw">import</span> java.util.stream.Collectors;
+
+<span class="kw">public class</span> <span class="typ">StreamMasteryDemo</span> {
+    <span class="kw">record</span> <span class="typ">Product</span>(<span class="typ">int</span> id, <span class="typ">String</span> name, <span class="typ">String</span> category, <span class="typ">double</span> price) {}
+
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) {
+        <span class="typ">List</span>&lt;<span class="typ">Product</span>&gt; products = <span class="typ">List</span>.of(
+            <span class="kw">new</span> <span class="typ">Product</span>(<span class="num">101</span>, <span class="str">"Laptop"</span>, <span class="str">"Electronics"</span>, <span class="num">1200.0</span>),
+            <span class="kw">new</span> <span class="typ">Product</span>(<span class="num">102</span>, <span class="str">"Smartphone"</span>, <span class="str">"Electronics"</span>, <span class="num">800.0</span>),
+            <span class="kw">new</span> <span class="typ">Product</span>(<span class="num">103</span>, <span class="str">"Desk Chair"</span>, <span class="str">"Furniture"</span>, <span class="num">150.0</span>),
+            <span class="kw">new</span> <span class="typ">Product</span>(<span class="num">104</span>, <span class="str">"Coffee Maker"</span>, <span class="str">"Appliances"</span>, <span class="num">90.0</span>)
+        );
+
+        <span class="cmt">// 1. Filter + Map + Collect to List</span>
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; premiumElectronics = products.stream()
+            .filter(p -> p.category().equals(<span class="str">"Electronics"</span>))
+            .filter(p -> p.price() > <span class="num">500.0</span>)
+            .map(<span class="typ">Product</span>::name)
+            .collect(<span class="typ">Collectors</span>.toList());
+        <span class="typ">System</span>.out.println(<span class="str">"Premium Electronics: "</span> + premiumElectronics);
+
+        <span class="cmt">// 2. GroupingBy Category & Calculating Average Price</span>
+        <span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">Double</span>&gt; avgPricePerCategory = products.stream()
+            .collect(<span class="typ">Collectors</span>.groupingBy(
+                <span class="typ">Product</span>::category,
+                <span class="typ">Collectors</span>.averagingDouble(<span class="typ">Product</span>::price)
+            ));
+        <span class="typ">System</span>.out.println(<span class="str">"Average Prices: "</span> + avgPricePerCategory);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Stream Lazy Evaluation</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1 (Spliterator Pipeline):</span> <code>products.stream()</code> creates a Spliterator over the source array without copying elements into a new buffer.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2 (Fusing Stages):</span> The HotSpot JIT compiler fuses the two <code>filter()</code> predicates and the <code>map()</code> transformation into a single unified loop pass, eliminating intermediate heap collections.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <!-- Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase06-generics.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">P06: 06. Generics & PECS</span>
+        </a>
+        
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
+        </a>
+
+        
+        <a href="phase08-lts-java11.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">P08: 08. Java 11 LTS</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

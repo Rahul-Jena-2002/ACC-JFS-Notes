@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java 11 LTS (with 9 & 10) &bull; var, Unmodifiable Collections, String Suite & Files API &bull; Core Java Developer Reference</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 08</span>
+    </div>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
+      </div>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase09-lts-java17.html" class="btn-header primary">Next: P09 &rarr;</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="active">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
+
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 08</span>
+        </div>
+        <h1 class="phase-h1">Java 11 LTS (with 9 & 10) &bull; var, Unmodifiable Collections, String Suite & Files API</h1>
+        <div class="source-mapping-bar">
+          <span>&#128194; <strong>Repository Module:</strong> Module 2_ Java LTS Features \ 01_Java11_Demos (and 9 & 10)</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I — Chapter 3: Fundamental Programming Structures (var & String API) &bull; Volume II — Chapter 2: Input/Output</span>
+        </div>
+      </div>
+
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+      <section id="phase-8" class="phase-section" data-phase-id="8">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-8">Phase 8</span>
+            <h2 class="section-title">Java 11 LTS (with 9 & 10) &bull; var, Unmodifiable Collections, String Suite & Files API</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 2_ Java LTS Features \ 01_Java11_Demos (and 9 & 10)</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Cay S. Horstmann &bull; Volume I &mdash; Chapter 3: Fundamental Programming Structures (var Type Inference & Strings) &bull; Volume II &mdash; Chapter 2: Input/Output (Files API)</span>
+        </div>
+
+        <!-- 8.1 var Type Inference & Unmodifiable Collections -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.1 Local-Variable Type Inference (var) & Factory Methods for Collections</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 3, Section 3.4 ("Variables and Constants")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;In Java 10 and beyond, you do not need to declare the types of local variables if they can be inferred from the initial value. Simply use the keyword var instead of the type. Note that var can only be used with local variables inside methods. You cannot use it for instance variables or parameter types. Java remains a strongly typed language: the compiler infers the exact static type and bakes it into bytecode.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Static Typing Guarantee</span>
+                <span><strong>var is NOT dynamic typing:</strong> Unlike JavaScript <code>var</code> or Python, Java <code>var</code> is strictly evaluated at compile time. <code>var x = 10; x = "hello";</code> will NOT compile!</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Immutable Collections</span>
+                <span><strong>Java 9 List.of(), Set.of(), Map.of():</strong> Creates truly immutable collections. Attempting to add, remove, or modify elements throws <code>UnsupportedOperationException</code>. Rejects null keys and values.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Smart Label Maker</div>
+            <div class="analogy-content">
+              Imagine you place an Apple in an airtight transparent box.
+              <br/>• <strong>Old Java:</strong> You must write "THIS BOX CONTAINS A HONEYCRISP APPLE" on the label, even though everyone can clearly see the Honeycrisp Apple through the glass!
+              <br/>• <strong>Java var:</strong> You slap an automated barcode (<code>var</code>) on it. The scanning machine automatically inspects what is inside and stamps the exact label instantly.
+            </div>
+          </div>
+
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Illegal Usages of var</div>
+            <div class="protip-content">
+              <strong>var is ILLEGAL in:</strong>
+              <br/>1. Class fields (instance or static variables): <code>class A { var x = 10; } // ERROR</code>
+              <br/>2. Method parameters or return types: <code>public var calculate(var a) // ERROR</code>
+              <br/>3. Uninitialized declarations: <code>var x; // ERROR, compiler cannot infer type</code>
+              <br/>4. Null initializers: <code>var x = null; // ERROR, null has no definite type</code>
+              <br/>5. Lambda expressions without explicit casts: <code>var func = x -> x * 2; // ERROR</code>
+            </div>
+          </div>
+
+          <!-- Code Box: Workspace var and Unmodifiable collections -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../Tester1002.java & Tester1005TakeDropWhile.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.ten;
+
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Map;
+<span class="kw">import</span> java.util.stream.IntStream;
+
+<span class="kw">public class</span> <span class="typ">JavaTenElevenDemo</span> {
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) {
+        <span class="cmt">// 1. Type inference for local variables (Java 10)</span>
+        <span class="kw">var</span> count = <span class="num">10</span>;                <span class="cmt">// inferred as int</span>
+        <span class="kw">var</span> message = <span class="str">"Core Java 11"</span>;  <span class="cmt">// inferred as String</span>
+        <span class="kw">var</span> items = <span class="typ">List</span>.of(<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>); <span class="cmt">// inferred as List&lt;String&gt;</span>
+        
+        <span class="cmt">// 2. var is a reserved type name, NOT a keyword!</span>
+        <span class="kw">var</span> <span class="kw">var</span> = <span class="num">20</span>; <span class="cmt">// Perfectly valid syntax!</span>
+
+        <span class="cmt">// 3. Java 9 Stream additions: takeWhile & dropWhile</span>
+        <span class="typ">System</span>.out.println(<span class="str">"takeWhile &lt; 4 (short-circuits immediately):"</span>);
+        <span class="typ">IntStream</span>.range(<span class="num">1</span>, <span class="num">10</span>)
+            .takeWhile(i -> i &lt; <span class="num">4</span>)
+            .forEach(<span class="typ">System</span>.out::print); <span class="cmt">// Prints: 123</span>
+
+        <span class="typ">System</span>.out.println(<span class="str">"
+dropWhile &lt; 4 (skips until predicate fails):"</span>);
+        <span class="typ">IntStream</span>.range(<span class="num">1</span>, <span class="num">10</span>)
+            .dropWhile(i -> i &lt; <span class="num">4</span>)
+            .forEach(<span class="typ">System</span>.out::print); <span class="cmt">// Prints: 456789</span>
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Java 11 Runtime Mechanics</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1 (strip vs trim):</span> <code>strip()</code> invokes <code>Character.isWhitespace(codePoint)</code> on each char code point, eliminating non-breaking and Unicode spaces where <code>trim()</code> silently fails.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2 (Files.writeString):</span> Directly maps memory byte buffers to the OS file channel using UTF-8 charset encoding by default, avoiding extra wrapper object allocations.
+            </div>
+          </div>
+
+        <!-- 8.2 Java 11 Modern String Suite & Files API -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">8.2 Java 11 String Suite (strip vs trim), Predicate.not() & Files.writeString()</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p8-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 3, Section 3.6 ("String Operations in Java 11")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Java 11 brought substantial enhancements to the String class: isBlank, lines, repeat, and strip. The strip method is a Unicode-aware version of trim. Whereas trim only removes characters with code values $le$ U+0020, strip removes all Unicode whitespace characters as determined by Character.isWhitespace(int). Additionally, Files.readString and Files.writeString simplify file I/O for text files, eliminating the need for intermediate reader and writer wrappers.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Unicode Whitespace Law</span>
+                <span><strong>strip() vs trim():</strong> <code>trim()</code> only strips ASCII space $le$ 32. <code>strip()</code> handles Japanese Ideographic Space (U+3000), non-breaking spaces, and tab spaces.</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Predicate.not()</span>
+                <span><strong>Readable Method References:</strong> Eliminates ugly negative lambdas. Instead of <code>filter(s -> !s.isBlank())</code>, write <code>filter(Predicate.not(String::isBlank))</code>.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Code Box: Workspace strip() and Files API demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../Tester1005_String_Strip.java & File_Additions.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.zeleven;
+
+<span class="kw">import</span> java.nio.file.Files;
+<span class="kw">import</span> java.nio.file.Path;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.function.Predicate;
+<span class="kw">import</span> java.util.stream.Collectors;
+
+<span class="kw">public class</span> <span class="typ">Java11EnterpriseSuite</span> {
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="cmt">// 1. Unicode-Aware String Strip vs Trim</span>
+        <span class="typ">String</span> messyText = <span class="str">"   Mohpreet Singh   "</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"["</span> + messyText.strip() + <span class="str">"]"</span>);         <span class="cmt">// strips both ends</span>
+        <span class="typ">System</span>.out.println(<span class="str">"["</span> + messyText.stripLeading() + <span class="str">"]"</span>);  <span class="cmt">// strips start</span>
+        <span class="typ">System</span>.out.println(<span class="str">"["</span> + messyText.stripTrailing() + <span class="str">"]"</span>); <span class="cmt">// strips end</span>
+        <span class="typ">System</span>.out.println(<span class="str">"Is blank? "</span> + <span class="str">"   "</span>.isBlank());         <span class="cmt">// true</span>
+
+        <span class="cmt">// 2. Predicate.not() with Method References</span>
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; names = <span class="typ">List</span>.of(<span class="str">"Jack"</span>, <span class="str">"Jim"</span>, <span class="str">""</span>, <span class="str">"Dan"</span>, <span class="str">"   "</span>);
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; validNames = names.stream()
+            .filter(<span class="typ">Predicate</span>.not(<span class="typ">String</span>::isBlank))
+            .collect(<span class="typ">Collectors</span>.toList());
+        <span class="typ">System</span>.out.println(<span class="str">"Non-blank names: "</span> + validNames);
+
+        <span class="cmt">// 3. Java 11 Rapid File Reading & Writing</span>
+        <span class="typ">Path</span> tempPath = <span class="typ">Path</span>.of(<span class="str">"enterprise_config.txt"</span>);
+        <span class="typ">Files</span>.writeString(tempPath, <span class="str">"SERVER_PORT=8080
+ENV=PRODUCTION"</span>);
+        <span class="typ">String</span> content = <span class="typ">Files</span>.readString(tempPath);
+        <span class="typ">System</span>.out.println(<span class="str">"File Content:
+"</span> + content);
+    }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <!-- Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase07-lts-java8.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">P07: 07. Java 8 LTS</span>
+        </a>
+        
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
+        </a>
+
+        
+        <a href="phase09-lts-java17.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">P09: 09. Java 17 LTS</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

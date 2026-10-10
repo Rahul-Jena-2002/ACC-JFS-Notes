@@ -6,7 +6,7 @@
   'use strict';
 
   const STORAGE_PREFIX = 'java_mastery_';
-  const TOTAL_ITEMS = 35;
+  const TOTAL_ITEMS = 40;
 
   document.addEventListener('DOMContentLoaded', () => {
     initChecklist();

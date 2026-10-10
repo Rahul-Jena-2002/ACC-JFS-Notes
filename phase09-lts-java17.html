@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java 17 LTS (with 12-16) &bull; Sealed Classes, Records, Pattern Matching & Switch Expressions &bull; Core Java Developer Reference</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="brand-icon">&#9749;</div>
+      <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
+      <span class="brand-tag">Phase 09</span>
+    </div>
+    <div class="header-actions">
+      <div class="progress-pill">
+        <span class="status-dot"></span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
+      </div>
+      <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
+      <a href="phase10-lts-java21.html" class="btn-header primary">Next: P10 &rarr;</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="active">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
+
+    <main class="app-main">
+      <div class="phase-masthead">
+        <div class="breadcrumb-bar">
+          <a href="index.html">Syllabus</a>
+          <span>/</span>
+          <span>Phase 09</span>
+        </div>
+        <h1 class="phase-h1">Java 17 LTS (with 12-16) &bull; Sealed Classes, Records, Pattern Matching & Switch Expressions</h1>
+        <div class="source-mapping-bar">
+          <span>&#128194; <strong>Repository Module:</strong> Module 2_ Java LTS Features \ 01_Java17_Demos</span>
+        </div>
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I — Chapter 4: Objects and Classes (Records) &bull; Chapter 5: Inheritance (Sealed Classes & Pattern Matching)</span>
+        </div>
+      </div>
+
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+      <section id="phase-9" class="phase-section" data-phase-id="9">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="phase-badge-pill phase-pill-9">Phase 9</span>
+            <h2 class="section-title">Java 17 LTS (with 12-16) &bull; Sealed Classes, Records, Pattern Matching & Switch Expressions</h2>
+          </div>
+          <div class="repo-module-indicator">
+            <span>&#128194; Module 2_ Java LTS Features \ 01_Java17_Demos</span>
+          </div>
+        </div>
+
+        <div class="textbook-badge-bar">
+          <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Cay S. Horstmann &bull; Volume I &mdash; Chapter 4: Objects and Classes (Records) &bull; Chapter 5: Inheritance (Sealed Classes & Pattern Matching)</span>
+        </div>
+
+        <!-- 9.1 Sealed Classes & Java 16 Records -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">9.1 Sealed Classes & Interfaces (permits) and Java 16 Records</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p9-1')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 5, Section 5.3 ("Sealed Classes")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Sealed classes give you control over which classes can inherit from your class. When you declare a class as sealed, you must list all permitted subclasses with the permits keyword. Every permitted subclass must declare whether it is final, sealed, or non-sealed. This allows the compiler to know the exhaustive set of all possible subclasses, enabling comprehensive compile-time checks in switch statements without requiring a default branch.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Permitted Subclass Rule</span>
+                <span><strong>Three Required Modifiers:</strong> Every subclass of a sealed class must explicitly declare itself as: <code>final</code> (no further subclasses), <code>sealed</code> (permits its own specific hierarchy), or <code>non-sealed</code> (re-opens hierarchy to arbitrary extension).</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Java 16 Records</span>
+                <span><strong>Transparent Immutable Data Carriers:</strong> <code>record Point(int x, int y) {}</code> automatically generates final fields, canonical constructor, accessors, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code> in 1 line of code!</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="analogy-box">
+            <div class="analogy-title">&#128161; Real-World Analogy: The Exclusive VIP Club with Guest List</div>
+            <div class="analogy-content">
+              • <strong>Regular Class:</strong> An open public park. Anyone can show up and build a tent (subclass) anywhere. You cannot anticipate who will arrive tomorrow.
+              <br/>• <strong>Sealed Class:</strong> An exclusive VIP event with a security guard checking a strict printed guest list (<code>permits Electronics, Beauty, Kids</code>). If an unauthorized class (e.g. <code>HomeAppliances</code>) tries to enter, the compiler security denies entry immediately!
+            </div>
+          </div>
+
+          <!-- Code Box: Workspace Sealed Class Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../Product.java & Tester1001Sealed.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.sampleclasses;
+
+<span class="cmt">// 1. Sealed Superclass: Only permitted subclasses may extend it!</span>
+<span class="kw">public sealed abstract class</span> <span class="typ">Product</span> 
+    <span class="kw">permits</span> <span class="typ">ElectronicsProducts</span>, <span class="typ">KidsProducts</span>, <span class="typ">BeautyProducts</span> {
+    
+    <span class="kw">public abstract</span> <span class="typ">String</span> getProductDescription();
+}
+
+<span class="cmt">// Subclass 1: final prevents any further subclassing</span>
+<span class="kw">public final class</span> <span class="typ">ElectronicsProducts</span> <span class="kw">extends</span> <span class="typ">Product</span> {
+    <span class="annotation">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> getProductDescription() { <span class="kw">return</span> <span class="str">"Consumer Electronics & Gadgets"</span>; }
+}
+
+<span class="cmt">// Subclass 2: non-sealed re-opens class for open subclassing</span>
+<span class="kw">public non-sealed class</span> <span class="typ">BeautyProducts</span> <span class="kw">extends</span> <span class="typ">Product</span> {
+    <span class="annotation">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> getProductDescription() { <span class="kw">return</span> <span class="str">"Cosmetics and Skincare"</span>; }
+}
+
+<span class="cmt">// Subclass 3: final</span>
+<span class="kw">public final class</span> <span class="typ">KidsProducts</span> <span class="kw">extends</span> <span class="typ">Product</span> {
+    <span class="annotation">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> getProductDescription() { <span class="kw">return</span> <span class="str">"Toys & Apparel for Children"</span>; }
+}
+
+<span class="cmt">/* Attempting to define an unauthorized subclass results in:
+class HomeAppliances extends Product {} // COMPILATION ERROR: class is not allowed to extend sealed class */</span></code></pre>
+          </div>
+        </div>
+
+        
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: Exhaustive Switch with Sealed Hierarchies</div>
+            <div class="protip-content">
+              <strong>No default branch required!</strong> When you switch over a <code>sealed</code> interface or class and provide a case for every single permitted subtype, the compiler knows all possibilities. You do not need a <code>default</code> clause! If someone later adds a new permitted subclass, the compiler alerts you at compile time wherever the switch is incomplete.
+            </div>
+          </div>
+
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Sealed Classes & Pattern Matching</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1 (Permitted Subclasses):</span> The JVM ClassLoader stores permitted subclasses in a <code>PermittedSubclasses</code> bytecode attribute; any non-listed class attempting inheritance causes an <code>IncompatibleClassChangeError</code> during verification.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2 (Pattern Matching):</span> The compiler checks the type and binds the target local variable in a single bytecode sequence, eliminating unnecessary casting opcodes.
+            </div>
+          </div>
+
+        <!-- 9.2 Pattern Matching & Switch Expressions -->
+        <div class="concept-card">
+          <div class="card-top">
+            <h3 class="card-title">9.2 Pattern Matching for instanceof, Switch Expressions & Text Blocks</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p9-2')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I &mdash; Chapter 3 & Chapter 5 ("Pattern Matching & Switch Expressions")</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Java 17 enhances pattern matching to eliminate the tedious dance of testing with instanceof and then explicitly casting. With pattern matching, the target variable is automatically bound in the branch where the test succeeds. Combined with switch expressions that yield values and arrow syntax (->) that prevents fall-through bugs, Java provides modern expressive syntax comparable to modern functional languages.&rdquo;
+            </div>
+          </div>
+
+          <!-- Code Box: Workspace Pattern Switch Demo -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; Module 2_ Java LTS Features/.../PatternSwitchDemo.java</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.ui.tester.java17;
+
+<span class="kw">public class</span> <span class="typ">PatternSwitchDemo</span> {
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) {
+        <span class="typ">Object</span> obj = <span class="str">"Java 17 LTS"</span>;
+
+        <span class="cmt">// 1. Pattern Matching in Switch Expression (No break required! Arrow syntax)</span>
+        <span class="typ">String</span> result = <span class="kw">switch</span> (obj) {
+            <span class="kw">case</span> <span class="typ">String</span> s -> <span class="str">"String of length "</span> + s.length() + <span class="str">": "</span> + s.toUpperCase();
+            <span class="kw">case</span> <span class="typ">Integer</span> i -> <span class="str">"Calculated integer: "</span> + (i * <span class="num">2</span>);
+            <span class="kw">case</span> <span class="typ">Double</span> d -> <span class="str">"Double precision: "</span> + <span class="typ">String</span>.format(<span class="str">"%.2f"</span>, d);
+            <span class="kw">default</span> -> <span class="str">"Unknown type object"</span>;
+        };
+        <span class="typ">System</span>.out.println(result);
+
+        <span class="cmt">// 2. Multi-line Text Blocks (Java 15) with automatic indentation stripping</span>
+        <span class="typ">String</span> jsonPayload = <span class="str">"""
+            {
+                "framework": "Core Java 17 LTS",
+                "status": "Production Ready",
+                "security": "Enforced"
+            }
+            """</span>;
+        <span class="typ">System</span>.out.println(<span class="str">"Text Block JSON:
+"</span> + jsonPayload);
+    }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      </div>
+
+      <!-- Pagination -->
+      <nav class="phase-pagination">
+        
+        <a href="phase08-lts-java11.html" class="page-nav-link prev">
+          <span class="page-nav-sub">&larr; Previous</span>
+          <span class="page-nav-title">P08: 08. Java 11 LTS</span>
+        </a>
+        
+        <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
+          &#9776; Back to Index
+        </a>
+
+        
+        <a href="phase10-lts-java21.html" class="page-nav-link next">
+          <span class="page-nav-sub">Next Phase &rarr;</span>
+          <span class="page-nav-title">P10: 10. Java 21 LTS</span>
+        </a>
+      </nav>
+    </main>
+  </div>
+
+  <div id="appToast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

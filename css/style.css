@@ -1,6 +1,6 @@
 /* ==========================================================================
    ENTERPRISE DEVELOPER DOCUMENTATION PORTAL
-   Style System: GitHub Docs / JetBrains / Stripe Developer Standards
+   Style System: GitHub Docs / JetBrains Developer Standards
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -9,10 +9,9 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* GitHub/VS Code Dark Theme Palette */
+  /* GitHub Dark Theme Palette */
   --bg-canvas: #0d1117;
   --bg-sidebar: #161b22;
-  --bg-subtle: #161b22;
   --bg-card: #161b22;
   --bg-card-hover: #21262d;
   --bg-code: #0b0e14;
@@ -35,9 +34,8 @@
   --accent-orange-bg: rgba(187, 128, 9, 0.15);
   --accent-purple: #bc8cff;
   --accent-purple-bg: rgba(163, 113, 247, 0.15);
-  --accent-red: #f85149;
 
-  --sidebar-width: 280px;
+  --sidebar-width: 290px;
   --header-height: 56px;
   --radius: 6px;
   --radius-lg: 8px;
@@ -72,9 +70,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ==========================================================================
-   TOP APPLICATION BAR
-   ========================================================================== */
+/* Header */
 .app-header {
   position: sticky;
   top: 0;
@@ -188,9 +184,7 @@ a:hover {
   cursor: pointer;
 }
 
-/* ==========================================================================
-   APP CONTAINER LAYOUT (SIDEBAR + CONTENT)
-   ========================================================================== */
+/* Layout */
 .app-container {
   display: flex;
   min-height: calc(100vh - var(--header-height));
@@ -265,9 +259,7 @@ a:hover {
   max-width: 1180px;
 }
 
-/* ==========================================================================
-   DASHBOARD INDEX VIEW
-   ========================================================================== */
+/* Dashboard Elements */
 .dashboard-masthead {
   padding-bottom: 1.5rem;
   margin-bottom: 1.75rem;
@@ -289,7 +281,6 @@ a:hover {
   max-width: 860px;
 }
 
-/* Compact Progress Summary Strip */
 .progress-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -335,7 +326,6 @@ a:hover {
   transition: width 0.3s ease;
 }
 
-/* Controls Bar (Filter + Search) */
 .controls-bar {
   display: flex;
   align-items: center;
@@ -404,7 +394,6 @@ a:hover {
   font-size: 0.8rem;
 }
 
-/* Track Groups & Course Rows */
 .track-section {
   margin-bottom: 2.25rem;
 }
@@ -527,9 +516,7 @@ a:hover {
   text-decoration: none;
 }
 
-/* ==========================================================================
-   PHASE DETAIL DOCUMENTATION VIEW
-   ========================================================================= */
+/* Documentation Detail Styles */
 .phase-masthead {
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
@@ -576,7 +563,139 @@ a:hover {
   font-size: 0.82rem;
 }
 
-/* Concept Sections */
+/* 1. HORSTMANN AUTHOR QUOTE BOX */
+.horstmann-quote-box {
+  background: rgba(56, 139, 253, 0.08);
+  border-left: 3px solid #58a6ff;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin: 1.25rem 0;
+}
+
+.horstmann-citation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: #79c0ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.horstmann-quote-text {
+  font-size: 0.92rem;
+  font-style: italic;
+  color: #e6edf3;
+  line-height: 1.6;
+}
+
+.horstmann-axioms-list {
+  list-style: none;
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.horstmann-axioms-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.86rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.axiom-badge {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  background: rgba(56, 139, 253, 0.2);
+  color: #58a6ff;
+  border: 1px solid rgba(56, 139, 253, 0.3);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* 2. REAL-WORLD ANALOGY BOX */
+.analogy-box {
+  background: rgba(187, 128, 9, 0.08);
+  border-left: 3px solid var(--accent-orange);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.1rem 1.35rem;
+  margin: 1.25rem 0;
+}
+
+.analogy-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #e3b341;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.analogy-content {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* 3. SHORT MEMORY PRO-TIP BOX */
+.protip-box {
+  background: rgba(46, 160, 67, 0.08);
+  border-left: 3px solid var(--accent-green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.protip-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #56d364;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.protip-content {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+/* Definition Box */
+.def-box {
+  background: rgba(56, 139, 253, 0.08);
+  border-left: 3px solid var(--accent-blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.def-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #79c0ff;
+  margin-bottom: 0.35rem;
+}
+
+.def-content {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+/* Concept Cards */
 .concept-card {
   background: var(--bg-card);
   border: 1px solid var(--border-default);
@@ -629,49 +748,6 @@ a:hover {
   color: var(--accent-green);
 }
 
-/* Formal Definitions & Real World Notes */
-.analogy-box {
-  background: rgba(187, 128, 9, 0.08);
-  border-left: 3px solid var(--accent-orange);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 1rem 1.25rem;
-  margin: 1.25rem 0;
-}
-
-.analogy-title {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #e3b341;
-  margin-bottom: 0.35rem;
-}
-
-.analogy-content {
-  font-size: 0.88rem;
-  color: var(--text-primary);
-  line-height: 1.55;
-}
-
-.def-box {
-  background: rgba(56, 139, 253, 0.08);
-  border-left: 3px solid var(--accent-blue);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 1rem 1.25rem;
-  margin: 1.25rem 0;
-}
-
-.def-title {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #79c0ff;
-  margin-bottom: 0.35rem;
-}
-
-.def-content {
-  font-size: 0.88rem;
-  color: var(--text-primary);
-  line-height: 1.55;
-}
-
 /* Diagrams */
 .diagram-container {
   background: #0b0e14;
@@ -703,7 +779,7 @@ a:hover {
   color: var(--text-muted);
 }
 
-/* Code Snippets */
+/* Code Snippet Box */
 .code-box {
   background: var(--bg-code);
   border: 1px solid var(--border-default);
@@ -768,7 +844,6 @@ pre code {
   font-size: inherit;
 }
 
-/* Syntax Highlighting */
 .kw { color: #ff7b72; font-weight: 600; }
 .typ { color: #79c0ff; }
 .fn { color: #d2a8ff; }
@@ -777,7 +852,7 @@ pre code {
 .ann { color: #ffa657; }
 .cmt { color: #8b949e; font-style: italic; }
 
-/* Line by line analysis */
+/* Line by line breakdown */
 .code-explanation-box {
   background: #161b22;
   border: 1px solid var(--border-default);
@@ -854,7 +929,7 @@ pre code {
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* Pagination Footer */
+/* Pagination */
 .phase-pagination {
   display: flex;
   align-items: center;
@@ -928,9 +1003,7 @@ pre code {
   transform: translateY(0);
 }
 
-/* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
+/* Responsive */
 @media (max-width: 900px) {
   .app-sidebar {
     position: fixed;

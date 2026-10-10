@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SOLID Design Principles, GoF Patterns & JUnit 5 &bull; Core Java Developer Reference</title>
+  <title>SOLID Design Principles, GoF Patterns & Architecture &bull; Core Java Developer Reference</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
 </head>
@@ -15,136 +15,158 @@
       <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
       <div class="brand-icon">&#9749;</div>
       <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
-      <span class="brand-tag">Phase 12</span>
+      <span class="brand-tag">Phase 15</span>
     </div>
     <div class="header-actions">
       <div class="progress-pill">
         <span class="status-dot"></span>
-        <span id="globalProgressCount">0 / 35 (0%)</span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
       </div>
       <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
-      <a href="projects-stages.html" class="btn-header primary">Next: Phase 13 &rarr;</a>
+      <a href="projects-stages.html" class="btn-header primary">Next: P16 &rarr;</a>
     </div>
   </header>
 
   <div class="app-container">
     <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase01-fundamentals.html" class="">
-              <span>01. Fundamentals</span>
-              <span class="sidebar-phase-badge">P01</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase02-oop.html" class="">
-              <span>02. OOP & Class Design</span>
-              <span class="sidebar-phase-badge">P02</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase03-strings-objects.html" class="">
-              <span>03. Strings & Memory</span>
-              <span class="sidebar-phase-badge">P03</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase04-exceptions.html" class="">
-              <span>04. Exception Handling</span>
-              <span class="sidebar-phase-badge">P04</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 2: Data Structures & Collections</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase05-collections.html" class="">
-              <span>05. Collections Framework</span>
-              <span class="sidebar-phase-badge">P05</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase06-generics.html" class="">
-              <span>06. Generics & PECS</span>
-              <span class="sidebar-phase-badge">P06</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 3: Functional & Modern LTS Features</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase07-functional-streams.html" class="">
-              <span>07. Lambdas & Streams</span>
-              <span class="sidebar-phase-badge">P07</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase10-io-serialization.html" class="">
-              <span>10. File I/O & NIO.2</span>
-              <span class="sidebar-phase-badge">P10</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase08-multithreading.html" class="">
-              <span>08. Multithreading & Loom</span>
-              <span class="sidebar-phase-badge">P08</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase09-jvm-memory.html" class="">
-              <span>09. JVM & GC Tuning</span>
-              <span class="sidebar-phase-badge">P09</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase11-jdbc-persistence.html" class="">
-              <span>11. Enterprise JDBC</span>
-              <span class="sidebar-phase-badge">P11</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase12-design-patterns.html" class="active">
-              <span>12. SOLID & Patterns</span>
-              <span class="sidebar-phase-badge">P12</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="projects-stages.html" class="">
-              <span>13. Capstone Projects</span>
-              <span class="sidebar-phase-badge">P13</span>
-            </a>
-          </li>
-        </ul></nav>
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="active">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
 
     <main class="app-main">
       <div class="phase-masthead">
         <div class="breadcrumb-bar">
           <a href="index.html">Syllabus</a>
           <span>/</span>
-          <span>Phase 12</span>
+          <span>Phase 15</span>
         </div>
-        <h1 class="phase-h1">SOLID Design Principles, GoF Patterns & JUnit 5</h1>
+        <h1 class="phase-h1">SOLID Design Principles, GoF Patterns & Architecture</h1>
         <div class="source-mapping-bar">
-          <span>&#128194; Repository Module: Module 5 \ Design Patterns &bull; Module 3 \ JUnit 5</span>
+          <span>&#128194; <strong>Repository Module:</strong> Module 1_ Class Relationship & Binding Demos \ Part-1-Demos (Testing)</span>
         </div>
         <div class="textbook-badge-bar">
-          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I & II Best Engineering Practices</span>
+          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I & II Best Engineering Practices & Design Patterns</span>
         </div>
       </div>
 
-      <!-- Phase Concepts -->
-      <div class="section-header">
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        <div class="section-header">
           <div class="section-title-wrapper">
-            <span class="phase-badge-pill phase-pill-12">Phase 12</span>
+            <span class="phase-badge-pill phase-pill-15">Phase 15</span>
             <h2 class="section-title">SOLID Design Principles, GoF Patterns & Production Architecture</h2>
           </div>
           <div class="repo-module-indicator">
-            <span>&#128194; Module 5_ Architecture and Design Patterns \ Module 3_ Unit Testing with Junit 5</span>
+            <span>&#128194; Module 5_ Architecture and Design Patterns \\ Module 3_ Unit Testing with Junit 5</span>
           </div>
         </div>
 
@@ -152,14 +174,47 @@
           <span>&#128214; <strong>Core Java Textbook Alignment:</strong> Volume I & II Best Engineering Practices &bull; Clean Architecture Standards</span>
         </div>
 
-        <!-- 12.1 SOLID Principles Deep Dive -->
-        <div id="concept-1" class="concept-card">
+        <!-- 15.1 SOLID Principles Deep Dive -->
+        <div class="concept-card">
           <div class="card-top">
-            <h3 class="card-title">12.1 The 5 SOLID Design Principles Explained with Real-World Analogies</h3>
+            <h3 class="card-title">15.1 The 5 SOLID Design Principles Explained with Real-World Analogies</h3>
             <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12a')">
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
           </div>
+
+          <div class="horstmann-quote-box">
+            <div class="horstmann-citation">
+              <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I & II &mdash; Engineering Best Practices & Design Patterns</span>
+            </div>
+            <div class="horstmann-quote-text">
+              &ldquo;Design patterns represent proven solutions to recurring object-oriented software engineering challenges. The core architectural philosophy is: favor composition over inheritance, and program to an interface, not an implementation. Patterns like Factory Method, Builder, Strategy, and Observer allow code to remain open for extension but closed for modification.&rdquo;
+            </div>
+            <ul class="horstmann-axioms-list">
+              <li>
+                <span class="axiom-badge">Singleton DCL Law</span>
+                <span><strong>volatile Requirement:</strong> In Double-Checked Locking (DCL), the singleton instance field MUST be marked <code>volatile</code> to prevent CPU instruction reordering from publishing a partially initialized instance.</span>
+              </li>
+              <li>
+                <span class="axiom-badge">Liskov Substitution</span>
+                <span><strong>Subtype Invariant:</strong> Subtypes must be substitutable for their base types without altering program correctness or violating contracts.</span>
+              </li>
+            </ul>
+          </div>
+
+
+          <div class="protip-box">
+            <div class="protip-title">&#9889; Pro-Tip / Interview Memory Hook: The 5 SOLID Laws Acronym</div>
+            <div class="protip-content">
+              <strong>S:</strong> Single Responsibility (One reason to change).
+              <br/><strong>O:</strong> Open/Closed (Open for extension, closed for modification).
+              <br/><strong>L:</strong> Liskov Substitution (Subclasses must fulfill parent promises).
+              <br/><strong>I:</strong> Interface Segregation (Small, focused interfaces).
+              <br/><strong>D:</strong> Dependency Inversion (Depend on abstractions, not concrete implementations).
+            </div>
+          </div>
+
+
 
           <div class="table-responsive">
             <table class="data-table">
@@ -242,10 +297,10 @@
           </div>
         </div>
 
-        <!-- 12.2 GoF Design Patterns Deep Dive -->
-        <div id="concept-2" class="concept-card">
+        <!-- 15.2 GoF Design Patterns Deep Dive -->
+        <div class="concept-card">
           <div class="card-top">
-            <h3 class="card-title">12.2 GoF Design Patterns: Singleton, Builder & Strategy in Action</h3>
+            <h3 class="card-title">15.2 GoF Design Patterns: Singleton, Builder & Strategy in Action</h3>
             <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12b')">
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
@@ -560,10 +615,10 @@
           </div>
         </div>
 
-        <!-- 12.3 Unit Testing with JUnit 5 -->
-        <div id="concept-3" class="concept-card">
+        <!-- 15.3 Unit Testing with JUnit 5 -->
+        <div class="concept-card">
           <div class="card-top">
-            <h3 class="card-title">12.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking</h3>
+            <h3 class="card-title">15.3 Unit Testing with JUnit 5: Assertions, Lifecycle & Mocking</h3>
             <button class="checklist-btn" onclick="toggleCompleted(this, 'p1-12c')">
               <span class="check-icon">&#9675;</span> Mark as Mastered
             </button>
@@ -615,13 +670,14 @@
             </ul>
           </div>
         </div>
+      </div>
 
       <!-- Pagination -->
       <nav class="phase-pagination">
         
-        <a href="phase11-jdbc-persistence.html" class="page-nav-link prev">
+        <a href="phase14-jdbc-persistence.html" class="page-nav-link prev">
           <span class="page-nav-sub">&larr; Previous</span>
-          <span class="page-nav-title">Phase 11: Enterprise Persistence, JDBC & Database Architecture</span>
+          <span class="page-nav-title">P14: 14. Enterprise JDBC</span>
         </a>
         
         <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
@@ -631,7 +687,7 @@
         
         <a href="projects-stages.html" class="page-nav-link next">
           <span class="page-nav-sub">Next Phase &rarr;</span>
-          <span class="page-nav-title">Phase 13: Progression Stages & 5 Capstone Projects</span>
+          <span class="page-nav-title">P16: 16. Capstone Projects</span>
         </a>
       </nav>
     </main>

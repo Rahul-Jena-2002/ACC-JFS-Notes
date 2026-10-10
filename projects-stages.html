@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Progression Stages & 5 Capstone Projects &bull; Core Java Developer Reference</title>
+  <title>Learning Stages & Enterprise Capstone Projects &bull; Core Java Developer Reference</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
 </head>
@@ -15,12 +15,12 @@
       <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
       <div class="brand-icon">&#9749;</div>
       <a href="index.html" style="color: var(--text-primary); font-weight: 600; text-decoration: none;">Core Java Roadmap</a>
-      <span class="brand-tag">Phase 13</span>
+      <span class="brand-tag">Phase 16</span>
     </div>
     <div class="header-actions">
       <div class="progress-pill">
         <span class="status-dot"></span>
-        <span id="globalProgressCount">0 / 35 (0%)</span>
+        <span id="globalProgressCount">0 / 40 (0%)</span>
       </div>
       <a href="index.html" class="btn-header">&#9776; Syllabus Index</a>
       
@@ -29,116 +29,176 @@
 
   <div class="app-container">
     <nav class="app-sidebar"><div class="sidebar-track-title">Track 1: Language Foundations & OOP</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase01-fundamentals.html" class="">
-              <span>01. Fundamentals</span>
-              <span class="sidebar-phase-badge">P01</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase02-oop.html" class="">
-              <span>02. OOP & Class Design</span>
-              <span class="sidebar-phase-badge">P02</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase03-strings-objects.html" class="">
-              <span>03. Strings & Memory</span>
-              <span class="sidebar-phase-badge">P03</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase04-exceptions.html" class="">
-              <span>04. Exception Handling</span>
-              <span class="sidebar-phase-badge">P04</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 2: Data Structures & Collections</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase05-collections.html" class="">
-              <span>05. Collections Framework</span>
-              <span class="sidebar-phase-badge">P05</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase06-generics.html" class="">
-              <span>06. Generics & PECS</span>
-              <span class="sidebar-phase-badge">P06</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 3: Functional & Modern LTS Features</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase07-functional-streams.html" class="">
-              <span>07. Lambdas & Streams</span>
-              <span class="sidebar-phase-badge">P07</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase10-io-serialization.html" class="">
-              <span>10. File I/O & NIO.2</span>
-              <span class="sidebar-phase-badge">P10</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase08-multithreading.html" class="">
-              <span>08. Multithreading & Loom</span>
-              <span class="sidebar-phase-badge">P08</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase09-jvm-memory.html" class="">
-              <span>09. JVM & GC Tuning</span>
-              <span class="sidebar-phase-badge">P09</span>
-            </a>
-          </li>
-        </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
-          <li class="sidebar-nav-item">
-            <a href="phase11-jdbc-persistence.html" class="">
-              <span>11. Enterprise JDBC</span>
-              <span class="sidebar-phase-badge">P11</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="phase12-design-patterns.html" class="">
-              <span>12. SOLID & Patterns</span>
-              <span class="sidebar-phase-badge">P12</span>
-            </a>
-          </li>
-        
-          <li class="sidebar-nav-item">
-            <a href="projects-stages.html" class="active">
-              <span>13. Capstone Projects</span>
-              <span class="sidebar-phase-badge">P13</span>
-            </a>
-          </li>
-        </ul></nav>
+        <li class="sidebar-nav-item">
+          <a href="phase01-fundamentals.html" class="">
+            <span>01. Fundamentals</span>
+            <span class="sidebar-phase-badge">P01</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase02-oop.html" class="">
+            <span>02. OOP & Class Design</span>
+            <span class="sidebar-phase-badge">P02</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase03-strings-objects.html" class="">
+            <span>03. Strings & Memory</span>
+            <span class="sidebar-phase-badge">P03</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase04-exceptions.html" class="">
+            <span>04. Exception Handling</span>
+            <span class="sidebar-phase-badge">P04</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 2: Data Structures & Generics</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase05-collections.html" class="">
+            <span>05. Collections Framework</span>
+            <span class="sidebar-phase-badge">P05</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase06-generics.html" class="">
+            <span>06. Generics & PECS</span>
+            <span class="sidebar-phase-badge">P06</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 3: The Java LTS Evolution (8, 11, 17, 21)</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase07-lts-java8.html" class="">
+            <span>07. Java 8 LTS</span>
+            <span class="sidebar-phase-badge">P07</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase08-lts-java11.html" class="">
+            <span>08. Java 11 LTS</span>
+            <span class="sidebar-phase-badge">P08</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase09-lts-java17.html" class="">
+            <span>09. Java 17 LTS</span>
+            <span class="sidebar-phase-badge">P09</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase10-lts-java21.html" class="">
+            <span>10. Java 21 LTS</span>
+            <span class="sidebar-phase-badge">P10</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 4: Concurrency & HotSpot JVM</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase11-multithreading.html" class="">
+            <span>11. Multithreading</span>
+            <span class="sidebar-phase-badge">P11</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase12-jvm-memory.html" class="">
+            <span>12. JVM & GC Tuning</span>
+            <span class="sidebar-phase-badge">P12</span>
+          </a>
+        </li>
+      </ul><div class="sidebar-track-title">Track 5: Enterprise Systems & Architecture</div><ul class="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <a href="phase13-io-serialization.html" class="">
+            <span>13. File I/O & NIO.2</span>
+            <span class="sidebar-phase-badge">P13</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase14-jdbc-persistence.html" class="">
+            <span>14. Enterprise JDBC</span>
+            <span class="sidebar-phase-badge">P14</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="phase15-design-patterns.html" class="">
+            <span>15. SOLID & Patterns</span>
+            <span class="sidebar-phase-badge">P15</span>
+          </a>
+        </li>
+      
+        <li class="sidebar-nav-item">
+          <a href="projects-stages.html" class="active">
+            <span>16. Capstone Projects</span>
+            <span class="sidebar-phase-badge">P16</span>
+          </a>
+        </li>
+      </ul></nav>
 
     <main class="app-main">
       <div class="phase-masthead">
         <div class="breadcrumb-bar">
           <a href="index.html">Syllabus</a>
           <span>/</span>
-          <span>Phase 13</span>
+          <span>Phase 16</span>
         </div>
-        <h1 class="phase-h1">Progression Stages & 5 Capstone Projects</h1>
+        <h1 class="phase-h1">Learning Stages & Enterprise Capstone Projects</h1>
         <div class="source-mapping-bar">
-          <span>&#128194; Repository Module: All ACC Modules Consolidated</span>
+          <span>&#128194; <strong>Repository Module:</strong> Complete Enterprise Curriculum \ Capstone Architectures</span>
         </div>
         <div class="textbook-badge-bar">
-          <span>&#128214; <strong>Textbook Alignment:</strong> Volume I & II Production Synthesis</span>
+          <span>&#128214; <strong>Textbook Alignment:</strong> Full Core Java Volume I & II Applied Architecture</span>
         </div>
       </div>
 
-      <!-- Phase Concepts -->
-      <div class="section-header">
+      <!-- Phase Content Body -->
+      <div class="phase-content-body">
+        
+        <div class="horstmann-quote-box">
+          <div class="horstmann-citation">
+            <span>&#128214; Cay S. Horstmann &bull; Core Java Volume I & II &mdash; Systems Architecture & Engineering Philosophy</span>
+          </div>
+          <div class="horstmann-quote-text">
+            &ldquo;Building enterprise software requires more than syntax knowledge; it demands architecture. You must understand how memory behaves under concurrency, how database transactions protect consistency, and how modular boundaries isolate change. True mastery comes from constructing production-grade systems where each layer fulfills a single responsibility.&rdquo;
+          </div>
+          <ul class="horstmann-axioms-list">
+            <li>
+              <span class="axiom-badge">Architecture Axiom</span>
+              <span><strong>End-to-End Integrity:</strong> Production systems combine clean OOP domain models, thread-safe concurrent brokers, ACID persistence, and comprehensive automated test suites.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="analogy-box">
+          <div class="analogy-title">&#128161; Real-World Analogy: From Blueprint to Skyscraper</div>
+          <div class="analogy-content">
+            Writing individual loops and methods is like laying individual bricks. But building a multi-tenant banking platform or distributed event-driven engine is like constructing a 50-story skyscraper.
+            <br/>You must have strong subterranean foundations (JVM Memory & ClassLoaders), earthquake dampers (Thread synchronization & Virtual Threads), sealed plumbing (ACID Transactions & Connection Pools), and modular structural frames (SOLID Design Patterns).
+          </div>
+        </div>
+
+        <div class="protip-box">
+          <div class="protip-title">&#9889; Pro-Tip / Senior Architect Guidance: Production Readiness Checklist</div>
+          <div class="protip-content">
+            <strong>Before deploying any backend service to production:</strong>
+            <br/>1. Are all database queries protected against SQL injection via <code>PreparedStatement</code>?
+            <br/>2. Are sensitive credentials and API tokens marked <code>transient</code> or externalized in secure environment vaults?
+            <br/>3. Are multi-threaded resources protected against race conditions using intrinsic monitors or <code>ReentrantLock</code>?
+            <br/>4. Are financial amounts computed with <code>BigDecimal</code> instead of binary floating-point numbers?
+            <br/>5. Are all I/O channels closed reliably using Try-With-Resources?
+          </div>
+        </div>
+
+
+      <section id="phase-16-stages" class="phase-section">
+        <div class="section-header">
           <div class="section-title-wrapper">
             <span class="phase-badge-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">Roadmap Strategy</span>
             <h2 class="section-title">Recommended Learning Order & Mastery Milestones</h2>
@@ -184,8 +244,9 @@
             File I/O, JDBC persistence, JUnit 5 testing, design patterns, SOLID architecture, and enterprise project integration.
           </p>
         </div>
-
-<div class="section-header">
+      </section>
+      <section id="phase-16-projects" class="phase-section" style="margin-top: 2.5rem;">
+        <div class="section-header">
           <div class="section-title-wrapper">
             <span class="phase-badge-pill" style="background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4);">Hands-On Projects</span>
             <h2 class="section-title">5 Practice Projects Mapped to ACC Backend Repository</h2>
@@ -258,13 +319,80 @@
             </div>
           </div>
         </div>
+      </section>
+
+
+        <!-- Capstone Enterprise Application Bootstrap & Diagnostic Server -->
+        <div class="concept-card" style="margin-top: 2rem;">
+          <div class="card-top">
+            <h3 class="card-title">16.3 Production Enterprise Server Bootstrap & Health Check Engine</h3>
+            <button class="checklist-btn" onclick="toggleCompleted(this, 'p16-3')">
+              <span class="check-icon">&#9675;</span> Mark as Mastered
+            </button>
+          </div>
+
+          <div class="code-box">
+            <div class="code-box-header">
+              <span class="code-filepath">&#128194; EnterpriseSystemBootstrap.java &mdash; Production Health & Diagnostic Engine</span>
+              <button class="copy-btn" onclick="copySnippet(this)">Copy Code</button>
+            </div>
+            <pre><code><span class="kw">package</span> com.accenture.ltt.capstone;
+
+<span class="kw">import</span> java.net.InetSocketAddress;
+<span class="kw">import</span> java.util.concurrent.Executors;
+<span class="kw">import</span> com.sun.net.httpserver.HttpServer;
+
+<span class="kw">public class</span> <span class="typ">EnterpriseSystemBootstrap</span> {
+    <span class="kw">public static void</span> main(<span class="typ">String</span>[] args) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="cmt">// 1. Initialize High-Throughput HTTP Health Endpoint</span>
+        <span class="typ">HttpServer</span> server = <span class="typ">HttpServer</span>.create(<span class="kw">new</span> <span class="typ">InetSocketAddress</span>(<span class="num">8080</span>), <span class="num">0</span>);
+        
+        <span class="cmt">// 2. Leverage Java 21 Virtual Threads for non-blocking I/O dispatch</span>
+        server.setExecutor(<span class="typ">Executors</span>.newVirtualThreadPerTaskExecutor());
+
+        server.createContext(<span class="str">"/api/v1/health"</span>, exchange -> {
+            <span class="typ">String</span> response = <span class="str">"""
+                {
+                    "status": "UP",
+                    "framework": "Core Java 21 LTS",
+                    "database_pool": "HikariCP Active",
+                    "thread_model": "Project Loom Virtual Threads"
+                }
+                """</span>;
+            exchange.getResponseHeaders().set(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>);
+            exchange.sendResponseHeaders(<span class="num">200</span>, response.getBytes().length);
+            <span class="kw">try</span> (<span class="kw">var</span> os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
+            }
+        });
+
+        server.start();
+        <span class="typ">System</span>.out.println(<span class="str">"Enterprise Capstone Diagnostic Server running on port 8080"</span>);
+    }
+}</code></pre>
+          </div>
+
+          <div class="code-explanation-box">
+            <div class="code-explanation-header">
+              <span>&#128065; Execution & Memory Breakdown &bull; Enterprise Microservice Bootstrap</span>
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 1:</span> Uses JDK built-in <code>HttpServer</code> paired with <code>newVirtualThreadPerTaskExecutor()</code> to handle tens of thousands of requests per second with negligible heap footprint.
+            </div>
+            <div class="explanation-step">
+              <span class="step-num">Step 2:</span> Multi-line Text Block JSON eliminates quote-escaping boilerplate and formats responses cleanly.
+            </div>
+          </div>
+        </div>
+
+      </div>
 
       <!-- Pagination -->
       <nav class="phase-pagination">
         
-        <a href="phase12-design-patterns.html" class="page-nav-link prev">
+        <a href="phase15-design-patterns.html" class="page-nav-link prev">
           <span class="page-nav-sub">&larr; Previous</span>
-          <span class="page-nav-title">Phase 12: SOLID Design Principles, GoF Patterns & JUnit 5</span>
+          <span class="page-nav-title">P15: 15. SOLID & Patterns</span>
         </a>
         
         <a href="index.html" class="btn-header" style="padding: 0.65rem 1.15rem;">
